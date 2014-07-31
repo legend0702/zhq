@@ -1,8 +1,27 @@
+# Maven #
+target/
+
+# IDEA #
+.idea/
+*.iml
+
+# Eclipse #
+.settings/
 .classpath
 .project
-.settings
-target
+
+# Log #
+logs/
+*.log
+
+# Package Files #
+
 /bin
-#*.class
+*.class
+
+
+*.jar
+
 *.war
+
 *.ear
