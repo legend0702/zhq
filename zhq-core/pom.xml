@@ -15,7 +15,6 @@
 	<name>zhq-core</name>
 
 	<properties>
-		<mine>application/schema+json</mine>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
