@@ -2,7 +2,7 @@ package cn.zhuhongqing.utils;
 
 /**
  * 
- * Some general utils.
+ * Some general utilities.
  * 
  * @author HongQing.Zhu
  *         <nl>

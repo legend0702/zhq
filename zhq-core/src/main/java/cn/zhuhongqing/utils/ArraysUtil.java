@@ -12,6 +12,17 @@ import java.lang.reflect.Array;
 public final class ArraysUtil {
 
 	/**
+	 * Creates new array of target component type. Default implementation uses
+	 * reflection to create an array of target type. Override it for better
+	 * performances.
+	 * 
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T[] createArray(Class<T> claz, int length) {
+		return (T[]) Array.newInstance(claz, length);
+	}
+
+	/**
 	 * Judge is empty array.
 	 */
 

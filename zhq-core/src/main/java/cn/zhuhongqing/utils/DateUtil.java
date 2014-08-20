@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * Some utils for date.
+ * Some utilities for date.
  * 
  * @author HongQing.Zhu
  *         <nl>

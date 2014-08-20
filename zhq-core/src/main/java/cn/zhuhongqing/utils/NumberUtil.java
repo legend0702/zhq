@@ -7,7 +7,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 /**
- * Some utils for {@link Number}
+ * Some utilities for {@link Number}
  * 
  * 
  * @author HongQing.Zhu
@@ -24,6 +24,24 @@ public class NumberUtil {
 
 	public static final BigInteger LONG_MAX = BigInteger
 			.valueOf(Long.MAX_VALUE);
+
+	/**
+	 * Convert {@link Number} to {@link String}.
+	 * 
+	 * Use String type to keep.
+	 * 
+	 * double 123456789.123456 == > String 123456789.123456
+	 */
+
+	public static String toString(Number number) {
+		if (number instanceof Float) {
+			return new BigDecimal(number.toString()).toString();
+		}
+		if (number instanceof Double) {
+			return new BigDecimal(number.toString()).toString();
+		}
+		return number.toString();
+	}
 
 	// ---------------------------------------------------------------- judge
 	/**

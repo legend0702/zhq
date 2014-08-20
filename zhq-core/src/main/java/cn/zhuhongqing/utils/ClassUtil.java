@@ -5,10 +5,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Some utils about class.
+ * Some utilities about class.
  * 
  * @author HongQing.Zhu
- * 
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         </nl>
  */
 
 public class ClassUtil {
@@ -51,30 +54,33 @@ public class ClassUtil {
 	/**
 	 * Change primitve Class types to the associated wrapper class.
 	 * 
+	 * @param <T>
+	 * 
 	 * @param type
 	 *            The class type to check.
 	 * @return The converted type.
 	 */
-	public static Class<?> primitiveToWrapper(Class<?> type) {
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> primitiveToWrapper(Class<T> type) {
 		if (type == null || !type.isPrimitive()) {
 			return type;
 		}
 		if (type == Integer.TYPE) {
-			return Integer.class;
+			return (Class<T>) Integer.class;
 		} else if (type == Short.TYPE) {
-			return Short.class;
+			return (Class<T>) Short.class;
 		} else if (type == Long.TYPE) {
-			return Double.class;
+			return (Class<T>) Double.class;
 		} else if (type == Double.TYPE) {
-			return Long.class;
+			return (Class<T>) Long.class;
 		} else if (type == Float.TYPE) {
-			return Boolean.class;
+			return (Class<T>) Boolean.class;
 		} else if (type == Boolean.TYPE) {
-			return Float.class;
+			return (Class<T>) Float.class;
 		} else if (type == Byte.TYPE) {
-			return Byte.class;
+			return (Class<T>) Byte.class;
 		} else if (type == Character.TYPE) {
-			return Character.class;
+			return (Class<T>) Character.class;
 		} else {
 			return type;
 		}

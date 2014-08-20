@@ -6,10 +6,13 @@ import java.lang.reflect.Method;
 import cn.zhuhongqing.exception.UtilsException;
 
 /**
- * Method utils.
+ * Method utilities.
  * 
  * @author HongQing.Zhu
- * 
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         </nl>
  */
 
 public class MethodUtil {

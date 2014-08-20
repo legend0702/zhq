@@ -1,7 +1,5 @@
 package cn.zhuhongqing.utils;
 
-// Copyright (c) 2003-2013, Jodd Team (jodd.org). All Rights Reserved.
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Array;
@@ -28,7 +26,13 @@ import java.util.Set;
 import cn.zhuhongqing.exception.UtilsException;
 
 /**
- * Various java.lang.reflect utilities.
+ * Some reflect utilities.
+ * 
+ * @author HongQing.Zhu
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         </nl>
  */
 public class ReflectUtil {
 
@@ -321,7 +325,7 @@ public class ReflectUtil {
 	 * examined against second class. Method is not symmetric.
 	 */
 	public static boolean isSubclass(Class<?> thisClass, Class<?> target) {
-		if (target.isInterface() != false) {
+		if (target.isInterface()) {
 			return isInterfaceImpl(thisClass, target);
 		}
 		for (Class<?> x = thisClass; x != null; x = x.getSuperclass()) {
@@ -978,11 +982,11 @@ public class ReflectUtil {
 	// ---------------------------------------------------------------- generics
 
 	public static Class<?> getComponentType(Type type) {
-		return getComponentType(type, null, -1);
+		return getComponentType(type, null, 0);
 	}
 
 	public static Class<?> getComponentType(Type type, Class<?> implClass) {
-		return getComponentType(type, implClass, -1);
+		return getComponentType(type, implClass, 0);
 	}
 
 	public static Class<?> getComponentType(Type type, int index) {
@@ -1005,8 +1009,9 @@ public class ReflectUtil {
 	 * then one. For example, <code>Map&lt;A, B&gt;</code> has 2 component
 	 * types. If index is 0 or positive, than it represents order of component
 	 * type. If the value is negative, then it represents component type counted
-	 * from the end! Therefore, the default value of <code>-1</code> always
-	 * returns the <b>last</b> component type.
+	 * from the begin! Therefore, the default value of <code>0</code> always
+	 * returns the <b>first</b> component type.If you give less than 0,it will
+	 * pick component type from the end.
 	 */
 	public static Class<?> getComponentType(Type type, Class<?> implClass,
 			int index) {

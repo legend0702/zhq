@@ -7,7 +7,7 @@ import java.util.TimeZone;
 import cn.zhuhongqing.Core;
 
 /**
- * Some utils for {@link TimeZone}.
+ * Utilities for {@link TimeZone}.
  * 
  * @author HongQing.Zhu
  *         <nl>

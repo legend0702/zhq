@@ -15,10 +15,13 @@ import java.util.Map.Entry;
 import cn.zhuhongqing.exception.UtilsException;
 
 /**
- * Some utils for JavaBean.
+ * Some utilities for JavaBean.
  * 
  * @author HongQing.Zhu
- * 
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         </nl>
  */
 
 public class BeanUtil {

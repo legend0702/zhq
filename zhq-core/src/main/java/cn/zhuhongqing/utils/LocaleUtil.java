@@ -8,7 +8,7 @@ import java.util.TimeZone;
 import cn.zhuhongqing.Core;
 
 /**
- * Some utils for {@link Locale} and {@link TimeZone}
+ * Some utilities for {@link Locale} and {@link TimeZone}
  * 
  * If method's parameters has {@link Locale},put one most,please.
  * 

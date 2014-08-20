@@ -7,10 +7,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Generic utilities for String.
+ * Utilities for String.
  * 
  * @author HongQing.Zhu
- * 
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         </nl>
  */
 
 public class StringUtil {

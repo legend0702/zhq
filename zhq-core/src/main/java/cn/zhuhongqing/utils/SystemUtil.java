@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 /**
- * Various system utilities.
+ * Utilities for system.
  */
 public class SystemUtil {
 
