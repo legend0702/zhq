@@ -8,9 +8,10 @@
 		<artifactId>zhq-parent</artifactId>
 		<version>0.0.1</version>
 	</parent>
+
 	<artifactId>zhq-logger</artifactId>
 
-	<name>pack slf4j and log4j all in one</name>
+	<description>Pack slf4j and log4j all in one</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
