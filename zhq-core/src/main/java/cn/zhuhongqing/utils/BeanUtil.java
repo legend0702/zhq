@@ -1,18 +1,10 @@
 package cn.zhuhongqing.utils;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import cn.zhuhongqing.exception.UtilsException;
 
 /**
  * Some utilities for JavaBean.
@@ -25,13 +17,6 @@ import cn.zhuhongqing.exception.UtilsException;
  */
 
 public class BeanUtil {
-
-	static List<PropertyDescriptor> OBJECT_PROPERTY = new ArrayList<PropertyDescriptor>(
-			0);
-
-	static {
-		OBJECT_PROPERTY = Arrays.asList(getPropertyDescriptors(Object.class));
-	}
 
 	@SuppressWarnings("unchecked")
 	public static <T> T copy(T bean) {
@@ -46,7 +31,8 @@ public class BeanUtil {
 			MapToBean((Map<String, Object>) origin, target);
 			return;
 		}
-		PropertyDescriptor[] props = getPropertyDescriptors(origin.getClass());
+		PropertyDescriptor[] props = BeanInfoUtil.getPropertyDescriptors(origin
+				.getClass());
 		for (int i = 0; i < props.length; i++) {
 			PropertyDescriptor propertyDescriptor = props[i];
 			setProperty(origin, target, propertyDescriptor);
@@ -64,7 +50,8 @@ public class BeanUtil {
 			MapToBean((Map<String, Object>) target, origin);
 			return;
 		}
-		PropertyDescriptor[] props = getPropertyDescriptors(target.getClass());
+		PropertyDescriptor[] props = BeanInfoUtil.getPropertyDescriptors(target
+				.getClass());
 		for (int i = 0; i < props.length; i++) {
 			PropertyDescriptor propertyDescriptor = props[i];
 			Object value = getProperty(target, propertyDescriptor);
@@ -91,7 +78,7 @@ public class BeanUtil {
 
 	static void setProperty(Object target, PropertyDescriptor descriptor,
 			Object value) {
-		if (OBJECT_PROPERTY.contains(descriptor))
+		if (BeanInfoUtil.OBJECT_PROPERTY.contains(descriptor))
 			return;
 		Method setMethod = descriptor.getWriteMethod();
 		if (GeneralUtil.isNull(setMethod))
@@ -109,7 +96,8 @@ public class BeanUtil {
 	public static Object getProperty(Object target, String name) {
 		if (Map.class.isAssignableFrom(target.getClass()))
 			return ((Map<?, ?>) target).get(name);
-		return getProperty(target, findPropertyDescriptor(target, name));
+		return getProperty(target,
+				BeanInfoUtil.findPropertyDescriptor(target, name));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -118,31 +106,8 @@ public class BeanUtil {
 			((Map<String, Object>) target).put(name, value);
 			return;
 		}
-		setProperty(target, findPropertyDescriptor(target, name), value);
+		setProperty(target, BeanInfoUtil.findPropertyDescriptor(target, name),
+				value);
 	}
 
-	static BeanInfo getBeanInfo(Class<?> beanClass) {
-		try {
-			return Introspector.getBeanInfo(beanClass);
-		} catch (IntrospectionException e) {
-			throw new UtilsException(e);
-		}
-	}
-
-	static PropertyDescriptor[] getPropertyDescriptors(Class<?> beanClass) {
-		BeanInfo beanInfo = getBeanInfo(beanClass);
-		return beanInfo.getPropertyDescriptors();
-	}
-
-	static PropertyDescriptor findPropertyDescriptor(Object target, String name) {
-		PropertyDescriptor[] props = getPropertyDescriptors(target.getClass());
-		for (PropertyDescriptor prop : props) {
-			if (OBJECT_PROPERTY.contains(prop))
-				continue;
-			if (prop.getName().equals(name))
-				return prop;
-		}
-		throw new UtilsException("Can not find [" + name + "] property from"
-				+ target.getClass());
-	}
 }
