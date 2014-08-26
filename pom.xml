@@ -13,7 +13,7 @@
 
 	<description>Some modules for future develop,it's free to use. :)</description>
 
-	<url>http://www.zhuhongqing.cn</url>
+	<url>www.zhuhongqing.cn</url>
 
 	<developers>
 		<developer>
@@ -30,6 +30,8 @@
 	</scm>
 
 	<properties>
+		<jetty.version>9.2.0.M0</jetty.version>
+		<javax.websocket>1.1</javax.websocket>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -40,6 +42,10 @@
 		<module>zhq-converter</module>
 		<module>zhq-bean</module>
 		<module>zhq-generator</module>
+		<module>zhq-security</module>
+		<module>zhq-encrypt</module>
+		<module>zhq-validate</module>
+		<module>zhq-websocket-deploy</module>
 	</modules>
 
 	<dependencyManagement>
@@ -50,6 +56,38 @@
 				<version>4.11</version>
 				<scope>test</scope>
 			</dependency>
+			<!-- webServer src -->
+			<dependency>
+				<groupId>org.eclipse.jetty.aggregate</groupId>
+				<artifactId>jetty-all</artifactId>
+				<version>${jetty.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- javax servlet -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>3.1.0</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- websocket -->
+			<dependency>
+				<groupId>javax.websocket</groupId>
+				<artifactId>javax.websocket-api</artifactId>
+				<version>${javax.websocket}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.websocket</groupId>
+				<artifactId>javax.websocket-client-api</artifactId>
+				<version>${javax.websocket}</version>
+				<scope>provided</scope>
+			</dependency>
+			<!-- json converter -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>1.1.40</version>
+			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-logger</artifactId>
@@ -58,6 +96,11 @@
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-core</artifactId>
+				<version>0.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-validate</artifactId>
 				<version>0.0.1</version>
 			</dependency>
 			<dependency>
@@ -82,5 +125,54 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>cn.zhuhongqing</groupId>
+			<artifactId>zhq-core</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>${jetty.version}</version>
+				<configuration>
+					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<httpConnector>
+						<port>80</port>
+					</httpConnector>
+					<webApp>
+						<contextPath>/</contextPath>
+						<defaultsDescriptor>
+							H:\git\ZHQ\config\web.xml
+						</defaultsDescriptor>
+					</webApp>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

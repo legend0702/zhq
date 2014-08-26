@@ -1,0 +1,18 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+
+	<servlet>
+		<!-- Override init parameter to avoid nasty -->
+		<!-- file locking issue on windows. -->
+		<servlet-name>default</servlet-name>
+		<servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
+		<init-param>
+			<param-name>useFileMappedBuffer</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</servlet>
+
+</web-app>
