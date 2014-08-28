@@ -33,7 +33,7 @@ import cn.zhuhongqing.websocket.WSConfig;
  * &lt;listener>
  * 	&lt;listener-class>cn.zhuhongqing.websocket.WebSocketContainerListener&lt;/listener-class>
  * &lt;/listener>
- * Use {@link #addWebSocket(Config)} or {@link #addWebSocketServer(Class, String)} to add WebSocketServer. :)
+ * Use {@link #addWebSocketServer(WSConfig)} or {@link #addWebSocketServer(Class, String)} to add WebSocketServer. :)
  * </pre>
  * 
  * @author HongQing.Zhu
