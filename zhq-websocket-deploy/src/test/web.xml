@@ -5,7 +5,7 @@
 <web-app>
 
 	<listener>
-		<listener-class>cn.zhuhongqing.websocket.WebSocketListener</listener-class>
+		<listener-class>cn.zhuhongqing.websocket.WebSocketContainerListener</listener-class>
 	</listener>
 
 </web-app>

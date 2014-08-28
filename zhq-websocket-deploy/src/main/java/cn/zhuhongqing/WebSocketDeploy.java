@@ -18,7 +18,7 @@ import cn.zhuhongqing.websocket.WSConfig;
  * 
  * <pre>
  * <h3>Think about it:</h3>
- * WebSocket use {@link ServerEndpoint} to deploy a WebSocketServer
+ * WebSocket use {@link ServerEndpoint} to deploy a WebSocketServer.
  * I have a WebSocketServer just have to mapping URI.
  * Also a common WebSocketServer just need a URI.
  * OK,How can I do?Modify source code?
@@ -31,9 +31,9 @@ import cn.zhuhongqing.websocket.WSConfig;
  * Before all,you must have a Web Application Container which support WebSocket.
  * Open your app's web.xml add:
  * &lt;listener>
- * 	&lt;listener-class>cn.zhuhongqing.websocket.WebSocketListener</listener-class>
+ * 	&lt;listener-class>cn.zhuhongqing.websocket.WebSocketContainerListener&lt;/listener-class>
  * &lt;/listener>
- * Use {@link #addWebSocket(Config)} or {@link #addWebSocketServer(Class, String)} to add WebSocketServer.
+ * Use {@link #addWebSocket(Config)} or {@link #addWebSocketServer(Class, String)} to add WebSocketServer. :)
  * </pre>
  * 
  * @author HongQing.Zhu

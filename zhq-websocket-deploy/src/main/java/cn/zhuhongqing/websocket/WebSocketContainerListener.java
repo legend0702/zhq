@@ -24,7 +24,7 @@ import cn.zhuhongqing.WebSocketDeploy;
  *         </nl>
  */
 
-public class WebSocketListener extends Endpoint implements
+public class WebSocketContainerListener extends Endpoint implements
 		ServletContextListener {
 
 	private ServletContext CONTEXT;
@@ -45,7 +45,7 @@ public class WebSocketListener extends Endpoint implements
 						.getName());
 		if (WebSocketDeploy.SERVER_CONTAINER == null) {
 			throw new RuntimeException(
-					"Init WebSocketServerContainer fail.May be this application server is not support WebSocket or not obey the rules.");
+					"Init WebSocketContainer fail.May be this application server is not support WebSocket or not obey the rules.");
 		}
 	}
 
