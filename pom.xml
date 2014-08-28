@@ -133,18 +133,6 @@
 		</dependencies>
 	</dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>cn.zhuhongqing</groupId>
-			<artifactId>zhq-core</artifactId>
-		</dependency>
-	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
