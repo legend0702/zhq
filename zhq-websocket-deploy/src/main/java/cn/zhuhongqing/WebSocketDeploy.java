@@ -15,7 +15,6 @@ import cn.zhuhongqing.websocket.WSConfig;
 /**
  * <h3>Use to dynamic deploy WebSocketServer.</h3>
  * 
- * 
  * <pre>
  * <h3>Think about it:</h3>
  * WebSocket use {@link ServerEndpoint} to deploy a WebSocketServer.
@@ -58,6 +57,7 @@ public class WebSocketDeploy extends Module {
 	}
 
 	/**
+	 * @see WSConfig
 	 * @see ServerContainer#addEndpoint(javax.websocket.server.ServerEndpointConfig)
 	 */
 

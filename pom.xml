@@ -46,6 +46,7 @@
 		<module>zhq-encrypt</module>
 		<module>zhq-validate</module>
 		<module>zhq-websocket-deploy</module>
+		<module>zhq-aop</module>
 	</modules>
 
 	<dependencyManagement>
@@ -87,6 +88,12 @@
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
 				<version>1.1.40</version>
+			</dependency>
+			<!-- cglib -->
+			<dependency>
+				<groupId>cglib</groupId>
+				<artifactId>cglib-nodep</artifactId>
+				<version>3.1</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
