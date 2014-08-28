@@ -43,9 +43,9 @@ public class BeanInfoUtil {
 		}
 	}
 
-	public static PropertyDescriptor findPropertyDescriptor(Object target,
+	public static PropertyDescriptor findPropertyDescriptor(Class<?> target,
 			String name) {
-		PropertyDescriptor[] props = getPropertyDescriptors(target.getClass());
+		PropertyDescriptor[] props = getPropertyDescriptors(target);
 		for (PropertyDescriptor prop : props) {
 			if (OBJECT_PROPERTY.contains(prop))
 				continue;

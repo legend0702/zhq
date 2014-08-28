@@ -97,7 +97,7 @@ public class BeanUtil {
 		if (Map.class.isAssignableFrom(target.getClass()))
 			return ((Map<?, ?>) target).get(name);
 		return getProperty(target,
-				BeanInfoUtil.findPropertyDescriptor(target, name));
+				BeanInfoUtil.findPropertyDescriptor(target.getClass(), name));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -106,7 +106,8 @@ public class BeanUtil {
 			((Map<String, Object>) target).put(name, value);
 			return;
 		}
-		setProperty(target, BeanInfoUtil.findPropertyDescriptor(target, name),
+		setProperty(target,
+				BeanInfoUtil.findPropertyDescriptor(target.getClass(), name),
 				value);
 	}
 
