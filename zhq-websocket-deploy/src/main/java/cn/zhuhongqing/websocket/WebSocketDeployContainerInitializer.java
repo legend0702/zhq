@@ -1,10 +1,11 @@
 package cn.zhuhongqing.websocket;
 
 import java.io.IOException;
+import java.util.Set;
 
+import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.ServletException;
 import javax.websocket.Endpoint;
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
@@ -24,14 +25,15 @@ import cn.zhuhongqing.WebSocketDeploy;
  *         </nl>
  */
 
-public class WebSocketContainerListener extends Endpoint implements
-		ServletContextListener {
+public class WebSocketDeployContainerInitializer extends Endpoint implements
+		ServletContainerInitializer {
 
 	private ServletContext CONTEXT;
 
 	@Override
-	public void contextInitialized(ServletContextEvent sce) {
-		CONTEXT = sce.getServletContext();
+	public void onStartup(Set<Class<?>> c, ServletContext ctx)
+			throws ServletException {
+		CONTEXT = ctx;
 		initWebSocektServerContainer();
 	}
 
@@ -47,12 +49,6 @@ public class WebSocketContainerListener extends Endpoint implements
 			throw new RuntimeException(
 					"Init WebSocketContainer fail.May be this application server is not support WebSocket or not obey the rules.");
 		}
-	}
-
-	@Override
-	public void contextDestroyed(ServletContextEvent sce) {
-		CONTEXT = null;
-		WebSocketDeploy.SERVER_CONTAINER = null;
 	}
 
 	/**

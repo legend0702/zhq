@@ -5,10 +5,6 @@
 <web-app>
 
 	<listener>
-		<listener-class>cn.zhuhongqing.websocket.WebSocketContainerListener</listener-class>
-	</listener>
-
-	<listener>
 		<listener-class>cn.zhuhongqing.websocket.ContextLis</listener-class>
 	</listener>
 

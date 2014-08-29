@@ -76,6 +76,7 @@
 				<groupId>javax.websocket</groupId>
 				<artifactId>javax.websocket-api</artifactId>
 				<version>${javax.websocket}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>javax.websocket</groupId>
@@ -98,37 +99,37 @@
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-logger</artifactId>
-				<version>0.0.1</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-core</artifactId>
-				<version>0.0.1</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-validate</artifactId>
-				<version>0.0.1</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-script</artifactId>
-				<version>0.0.1</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-converter</artifactId>
-				<version>0.0.1</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-bean</artifactId>
-				<version>0.0.1</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-generator</artifactId>
-				<version>0.0.1</version>
+				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

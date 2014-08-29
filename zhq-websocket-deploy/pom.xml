@@ -44,7 +44,7 @@
 					</httpConnector>
 					<webApp>
 						<contextPath>/</contextPath>
-						<descriptor>${project.basedir}/src/test/web.xml</descriptor>
+						<descriptor>${project.basedir}/src/test/resources/web.xml</descriptor>
 					</webApp>
 				</configuration>
 			</plugin>

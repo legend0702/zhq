@@ -2,6 +2,8 @@ package cn.zhuhongqing.utils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,30 +46,34 @@ public class BeanUtil {
 		setProperty(target, name, value);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static void extend(Object origin, Object target) {
-		if (Map.class.isAssignableFrom(target.getClass())) {
-			MapToBean((Map<String, Object>) target, origin);
-			return;
-		}
-		PropertyDescriptor[] props = BeanInfoUtil.getPropertyDescriptors(target
-				.getClass());
-		for (int i = 0; i < props.length; i++) {
-			PropertyDescriptor propertyDescriptor = props[i];
-			Object value = getProperty(target, propertyDescriptor);
-			if (GeneralUtil.isNull(value))
-				continue;
-			setProperty(origin, propertyDescriptor, value);
-		}
-	}
-
-	static void MapToBean(Map<String, Object> beanMap, Object target) {
+	public static void MapToBean(Map<String, Object> beanMap, Object target) {
 		Iterator<Entry<String, Object>> originItr = beanMap.entrySet()
 				.iterator();
 		while (originItr.hasNext()) {
 			Entry<String, Object> entry = originItr.next();
 			setProperty(target, entry.getKey(), entry.getValue());
 		}
+	}
+
+	public static <T extends Collection<String>> Map<String, Object> populateRequestMap(
+			Map<String, T> requestMap) {
+		Map<String, Object> parmsMap = new HashMap<String, Object>(
+				requestMap.size());
+		Iterator<Entry<String, T>> mapItr = requestMap.entrySet().iterator();
+		while (mapItr.hasNext()) {
+			Entry<String, T> entry = mapItr.next();
+			String name = entry.getKey();
+			T value = entry.getValue();
+			if (value.isEmpty()) {
+				continue;
+			}
+			if (value.size() == 1) {
+				parmsMap.put(name, value.iterator().next());
+				continue;
+			}
+			parmsMap.put(name, value);
+		}
+		return parmsMap;
 	}
 
 	static void setProperty(Object origin, Object target,

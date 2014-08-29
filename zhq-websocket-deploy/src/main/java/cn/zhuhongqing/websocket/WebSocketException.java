@@ -6,4 +6,8 @@ public class WebSocketException extends ZHQRuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
+	public WebSocketException(Throwable cause) {
+		super(cause);
+	}
+
 }

@@ -7,10 +7,10 @@ import javax.websocket.DeploymentException;
 import javax.websocket.Endpoint;
 import javax.websocket.server.ServerContainer;
 import javax.websocket.server.ServerEndpoint;
-import javax.xml.ws.WebServiceException;
 
 import cn.zhuhongqing.module.Module;
 import cn.zhuhongqing.websocket.WSConfig;
+import cn.zhuhongqing.websocket.WebSocketException;
 
 /**
  * <h3>Use to dynamic deploy WebSocketServer.</h3>
@@ -28,10 +28,7 @@ import cn.zhuhongqing.websocket.WSConfig;
  * 
  * <pre>
  * Before all,you must have a Web Application Container which support WebSocket.
- * Open your app's web.xml add:
- * &lt;listener>
- * 	&lt;listener-class>cn.zhuhongqing.websocket.WebSocketContainerListener&lt;/listener-class>
- * &lt;/listener>
+ * Add this jar add to WEB-INF/lib.
  * Use {@link #addWebSocketServer(WSConfig)} or {@link #addWebSocketServer(Class, String)} to add WebSocketServer. :)
  * </pre>
  * 
@@ -65,7 +62,7 @@ public class WebSocketDeploy extends Module {
 		try {
 			SERVER_CONTAINER.addEndpoint(config.build());
 		} catch (DeploymentException e) {
-			throw new WebServiceException(e);
+			throw new WebSocketException(e);
 		}
 	}
 
