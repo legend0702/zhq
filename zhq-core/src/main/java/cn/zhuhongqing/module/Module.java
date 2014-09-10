@@ -1,6 +1,7 @@
 package cn.zhuhongqing.module;
 
 import cn.zhuhongqing.exception.ModuleException;
+import cn.zhuhongqing.utils.ReflectUtil;
 
 /**
  * ZHQ module's design and config-store.
@@ -48,17 +49,12 @@ public abstract class Module {
 	}
 
 	/**
-	 * Get subclass's top superClass of {@link #Module}.
+	 * Get class's top subClass of {@link #Module}.
 	 */
 
-	@SuppressWarnings("unchecked")
 	public static final Class<? extends Module> getModuleType(
 			Class<? extends Module> claz) {
-		Class<? extends Module> moduleClass = claz;
-		while (!Module.class.equals(moduleClass.getSuperclass())) {
-			moduleClass = (Class<? extends Module>) moduleClass.getSuperclass();
-		}
-		return moduleClass;
+		return ReflectUtil.getTopClass(claz, Module.class);
 	}
 
 	/**

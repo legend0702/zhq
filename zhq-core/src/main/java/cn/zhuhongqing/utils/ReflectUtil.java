@@ -47,6 +47,10 @@ public class ReflectUtil {
 
 	public static final int MEMBER_ABSTRACT = 1025;
 
+	/** Object's class. */
+	public static final Class<?> OBJECT_CLASS = Object.class;
+
+	/** Bean's operate prefix. */
 	public static final String METHOD_GET_PREFIX = "get";
 	public static final String METHOD_IS_PREFIX = "is";
 	public static final String METHOD_SET_PREFIX = "set";
@@ -369,6 +373,44 @@ public class ReflectUtil {
 	}
 
 	/**
+	 * Get topClass's direct subClass.
+	 * 
+	 * Don't put same class.
+	 */
+
+	@SuppressWarnings("unchecked")
+	public static <T, S extends T> Class<T> getTopClass(Class<S> subClass,
+			Class<T> topClass) {
+		if (topClass.isInterface()) {
+			return getTopClassOfInterface(subClass, topClass);
+		}
+		Class<T> tClass = (Class<T>) subClass;
+		while (!topClass.equals(tClass.getSuperclass())) {
+			tClass = (Class<T>) tClass.getSuperclass();
+		}
+		return tClass;
+	}
+
+	/**
+	 * @see ReflectUtil#getTopClass(Class, Class)
+	 */
+
+	@SuppressWarnings("unchecked")
+	public static <T, S extends T> Class<T> getTopClassOfInterface(
+			Class<S> subClass, Class<T> topInterface) {
+		for (Class<T> x = (Class<T>) subClass; x != OBJECT_CLASS; x = (Class<T>) x
+				.getSuperclass()) {
+			Class<?>[] interfaces = x.getInterfaces();
+			for (Class<?> i : interfaces) {
+				if (i == topInterface) {
+					return x;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Is abstract class?
 	 */
 
@@ -394,7 +436,7 @@ public class ReflectUtil {
 	 * @see #getAccessibleMethods(Class, Class)
 	 */
 	public static Method[] getAccessibleMethods(Class<?> clazz) {
-		return getAccessibleMethods(clazz, Object.class);
+		return getAccessibleMethods(clazz, OBJECT_CLASS);
 	}
 
 	/**
@@ -473,7 +515,7 @@ public class ReflectUtil {
 	// accessible fields
 
 	public static Field[] getAccessibleFields(Class<?> clazz) {
-		return getAccessibleFields(clazz, Object.class);
+		return getAccessibleFields(clazz, OBJECT_CLASS);
 	}
 
 	public static Field[] getAccessibleFields(Class<?> clazz, Class<?> limit) {
@@ -535,7 +577,7 @@ public class ReflectUtil {
 	// supported methods
 
 	public static Method[] getSupportedMethods(Class<?> clazz) {
-		return getSupportedMethods(clazz, Object.class);
+		return getSupportedMethods(clazz, OBJECT_CLASS);
 	}
 
 	/**
@@ -566,7 +608,7 @@ public class ReflectUtil {
 	}
 
 	public static Field[] getSupportedFields(Class<?> clazz) {
-		return getSupportedFields(clazz, Object.class);
+		return getSupportedFields(clazz, OBJECT_CLASS);
 	}
 
 	public static Field[] getSupportedFields(Class<?> clazz, Class<?> limit) {
@@ -839,14 +881,14 @@ public class ReflectUtil {
 	 * <code>Object</code> class.
 	 */
 	public static boolean isUserDefinedMethod(final Method method) {
-		return method.getDeclaringClass() != Object.class;
+		return method.getDeclaringClass() != OBJECT_CLASS;
 	}
 
 	/**
 	 * Returns <code>true</code> if method defined in <code>Object</code> class.
 	 */
 	public static boolean isObjectMethod(final Method method) {
-		return method.getDeclaringClass() == Object.class;
+		return method.getDeclaringClass() == OBJECT_CLASS;
 	}
 
 	/**
@@ -1092,7 +1134,7 @@ public class ReflectUtil {
 				return getRawType(upperTypes[0], implClass);
 			}
 
-			return Object.class;
+			return OBJECT_CLASS;
 		}
 		if (type instanceof GenericArrayType) {
 			Type genericComponentType = ((GenericArrayType) type)
@@ -1112,7 +1154,7 @@ public class ReflectUtil {
 			}
 			Type[] boundsTypes = varType.getBounds();
 			if (boundsTypes.length == 0) {
-				return Object.class;
+				return OBJECT_CLASS;
 			}
 			return getRawType(boundsTypes[0], implClass);
 		}
@@ -1166,7 +1208,7 @@ public class ReflectUtil {
 						: rawType.getGenericSuperclass();
 
 				if (type instanceof Class) {
-					return Object.class;
+					return OBJECT_CLASS;
 				}
 
 				if (type instanceof ParameterizedType) {

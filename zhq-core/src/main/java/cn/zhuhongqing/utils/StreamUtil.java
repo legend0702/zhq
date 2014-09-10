@@ -6,6 +6,7 @@ import static cn.zhuhongqing.ZHQ.DEFAULT_ENCODING;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,7 +14,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.nio.CharBuffer;
 
 import cn.zhuhongqing.io.FastByteArrayOutputStream;
 
@@ -315,21 +315,16 @@ public class StreamUtil {
 		return output.toByteArray();
 	}
 
-	public static String readString(Reader reader) throws IOException {
-		CharBuffer charBuffer = CharBuffer.allocate(1024);
-		while ((reader.read(charBuffer)) != -1) {
-			int capacity = charBuffer.position();
-			if (capacity == charBuffer.capacity()) {
-				CharBuffer newCharBuffer = CharBuffer.allocate(capacity * 2);
-				charBuffer.flip();
-				newCharBuffer.put(charBuffer.duplicate());
-				newCharBuffer.position(capacity);
-				charBuffer.clear();
-				charBuffer = newCharBuffer;
-			}
-		}
-		charBuffer.flip();
-		return charBuffer.toString();
+	public static String toString(InputStream input, String encoding)
+			throws IOException {
+		return (null == encoding) ? toString(new InputStreamReader(input))
+				: toString(new InputStreamReader(input, encoding));
+	}
+
+	public static String toString(Reader reader) throws IOException {
+		CharArrayWriter sw = new CharArrayWriter();
+		copy(reader, sw);
+		return sw.toString();
 	}
 
 	// ---------------------------------------------------------------- compare
