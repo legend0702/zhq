@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.utils.ClassUtil;
 
 public abstract class I18nResource implements Message {
 
@@ -72,7 +72,7 @@ public abstract class I18nResource implements Message {
 			return ResourceBundle.getBundle(messageFileName, locale);
 		}
 
-		return ResourceBundle.getBundle(GeneralUtil.getClassRootPath(rootClass)
+		return ResourceBundle.getBundle(ClassUtil.getPackageName(rootClass)
 				+ messageFileName, locale);
 	}
 

@@ -118,4 +118,11 @@ public class ModuleTest {
 		System.out.println(GDateFormat.format(calendar, SIMPLE_FORMAT));
 		System.out.println(HTTP_DATE_FORMAT.format(calendar.getTime()));
 	}
+
+	// @Test
+	// public void staticMethod() {
+	// Object obj = ReflectUtil.invoke(ReflectUtil.class, "autoNewInstance",
+	// Person.class);
+	// System.out.println(obj);
+	// }
 }
