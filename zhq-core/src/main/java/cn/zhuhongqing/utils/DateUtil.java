@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Date;
 
+import cn.zhuhongqing.utils.date.GenericDateFormat;
+
 /**
  * Some utilities for date.
  * 
@@ -15,6 +17,10 @@ import java.util.Date;
  */
 
 public class DateUtil {
+
+	private static final GenericDateFormat DEFAULT_DATE_FORMAT = new GenericDateFormat();
+
+	public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
 	public static Calendar getCurrentCalendar() {
 		return Calendar.getInstance(TimeZoneUtil.getTimeZone(),
@@ -89,5 +95,13 @@ public class DateUtil {
 			c.set(Calendar.DATE, 31);
 		}
 		return c.getTime();
+	}
+
+	public static Date defaultParse(String date) {
+		return parse(date, YYYY_MM_DD);
+	}
+
+	public static Date parse(String date, String format) {
+		return DEFAULT_DATE_FORMAT.parseToDate(date, format);
 	}
 }

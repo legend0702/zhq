@@ -19,24 +19,19 @@ import cn.zhuhongqing.utils.matcher.PathMatcher;
  * 
  */
 
-public class ClassScan extends AbstractScan<Class<?>> implements
-		ResourceScan<Class<?>> {
+public class ClassScan extends AbstractScan<Class<?>> {
 
 	private FileAbstractScan<Class<?>> fileScan = new ClassFileScan();
 
 	private ThreadLocal<String> rootPackage = new ThreadLocal<String>();
 
 	/**
-	 * {@link Class#forName(String)}
+	 * {@link ClassUtil#forName(String)}
 	 */
 
 	@Override
 	public Class<?> getResource(String className) {
-		try {
-			return Class.forName(className);
-		} catch (ClassNotFoundException e) {
-			return null;
-		}
+		return ClassUtil.forName(className);
 	}
 
 	/**
@@ -53,7 +48,7 @@ public class ClassScan extends AbstractScan<Class<?>> implements
 			returnClass.add(isClass);
 			return returnClass;
 		}
-		String rePath = replacePath(packagePattern);
+		String rePath = ClassUtil.classPathToFilePath(packagePattern);
 		/**
 		 * If the pattern is root-pattern.
 		 * 
@@ -70,40 +65,12 @@ public class ClassScan extends AbstractScan<Class<?>> implements
 	}
 
 	/**
-	 * Replace "." to "\".
-	 * 
-	 * @param path
-	 * @return
-	 */
-
-	String replacePath(String path) {
-		return path.replace(StringPool.DOT, StringPool.BACK_SLASH);
-	}
-
-	/**
-	 * Replace "\" to ".".
-	 * 
-	 * @param path
-	 * @return
-	 */
-
-	String reReplacePath(String path) {
-		return path.replace(StringPool.BACK_SLASH, StringPool.DOT);
-	}
-
-	/**
 	 * "ClassName.class" --> "ClassName"
-	 * 
-	 * @param file
-	 * @return
 	 */
 
-	Class<?> classFileToClassName(File file) {
-		String className = reReplacePath(file.getPath().substring(
-				file.getPath().indexOf(rootPackage.get())));
-		className = className.substring(0, className.length()
-				- ClassUtil.CLASS_FILE_SUFFIX.length());
-		return getResource(className);
+	Class<?> classFileToClass(File file) {
+		return getResource(ClassUtil.filePathToClassPath(file.getPath()
+				.substring(file.getPath().indexOf(rootPackage.get()))));
 	}
 
 	/**
@@ -124,7 +91,7 @@ public class ClassScan extends AbstractScan<Class<?>> implements
 		@Override
 		Class<?> convert(File file) {
 			if (file.getName().endsWith(ClassUtil.CLASS_FILE_SUFFIX))
-				return classFileToClassName(file);
+				return classFileToClass(file);
 			return null;
 		}
 

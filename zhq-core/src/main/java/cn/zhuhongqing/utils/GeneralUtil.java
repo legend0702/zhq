@@ -45,23 +45,6 @@ public class GeneralUtil {
 	}
 
 	/**
-	 * 得到一个类的根路径
-	 * 
-	 * @param clazz
-	 * @return
-	 */
-
-	public static String getClassRootPath(Class<?> clazz) {
-		int index = clazz.getCanonicalName().lastIndexOf(StringPool.DOT);
-		if (index != -1) {
-			index++;
-		} else {
-			index = 0;
-		}
-		return clazz.getCanonicalName().substring(0, index);
-	}
-
-	/**
 	 * To determine whether the package name.
 	 * 
 	 * @param packageName
@@ -69,8 +52,14 @@ public class GeneralUtil {
 	 */
 
 	public static boolean isPackageName(String packageName) {
-		Package pkg = Package.getPackage(packageName);
-		return (pkg != null);
+		return (Package.getPackage(packageName) != null);
+	}
+
+	// ----------------------------------------------------------------
+	// System.print
+
+	public static void report(String msg) {
+		System.err.println("ZHQ: " + msg);
 	}
 
 	// ---------------------------------------------------------------- pad

@@ -22,7 +22,7 @@ import cn.zhuhongqing.module.ModuleStore;
 public class Core extends Module {
 
 	/**
-	 * mode-name.
+	 * module-name.
 	 */
 
 	public static String CORE = Module.getModuleName(Core.class);
@@ -36,10 +36,10 @@ public class Core extends Module {
 	}
 
 	/**
-	 * Default byte size (1 KB).
+	 * Default byte size (4 KB).
 	 */
 
-	public static int BYTE_SIZE = 1024;
+	public static int BYTE_SIZE = 4096;
 
 	/**
 	 * Default TimeZone,use id like "Asia/Shanghai".

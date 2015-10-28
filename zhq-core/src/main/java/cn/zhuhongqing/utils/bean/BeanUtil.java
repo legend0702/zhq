@@ -1,4 +1,4 @@
-package cn.zhuhongqing.utils;
+package cn.zhuhongqing.utils.bean;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.utils.MethodUtil;
+import cn.zhuhongqing.utils.ReflectUtil;
 
 /**
  * Some utilities for JavaBean.
@@ -36,8 +40,7 @@ public class BeanUtil {
 		PropertyDescriptor[] props = BeanInfoUtil.getPropertyDescriptors(origin
 				.getClass());
 		for (int i = 0; i < props.length; i++) {
-			PropertyDescriptor propertyDescriptor = props[i];
-			setProperty(origin, target, propertyDescriptor);
+			setProperty(origin, target, props[i]);
 		}
 	}
 

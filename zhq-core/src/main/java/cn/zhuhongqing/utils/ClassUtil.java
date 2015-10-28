@@ -17,7 +17,7 @@ import java.util.Set;
 public class ClassUtil {
 
 	/** The package separator String "." */
-	public static final String PACKAGE_SEPARATOR = ".";
+	public static final String PACKAGE_SEPARATOR = StringPool.DOT;
 
 	/** The ".class" file suffix */
 	public static final String CLASS_FILE_SUFFIX = ".class";
@@ -49,6 +49,19 @@ public class ClassUtil {
 			cl = ClassUtil.class.getClassLoader();
 		}
 		return cl;
+	}
+
+	/**
+	 * Like {@link Class#forName(String)},but it will't throw an exception,it
+	 * will return null instead;
+	 */
+
+	public static Class<?> forName(String className) {
+		try {
+			return Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
 	}
 
 	/**
@@ -135,6 +148,57 @@ public class ClassUtil {
 		int lastDotIndex = fqClassName.lastIndexOf(PACKAGE_SEPARATOR);
 		return (lastDotIndex != -1 ? fqClassName.substring(0, lastDotIndex)
 				: "");
+	}
+
+	/**
+	 * Replace "." to "\"
+	 */
+
+	public static String classPathToFilePath(String path) {
+		return path.replace(StringPool.DOT, StringPool.BACK_SLASH);
+	}
+
+	/**
+	 * Replace "\" to "." and cut {@value #CLASS_FILE_SUFFIX}
+	 */
+
+	public static String filePathToClassPath(String path) {
+		String className = path.replace(StringPool.BACK_SLASH, StringPool.DOT);
+		int cutIndex = className.lastIndexOf(CLASS_FILE_SUFFIX);
+		if (cutIndex == -1)
+			return className;
+		return className.substring(0, cutIndex);
+	}
+
+	/**
+	 * Check if the right-hand side type may be assigned to the left-hand side
+	 * type, assuming setting by reflection. Considers primitive wrapper classes
+	 * as assignable to the corresponding primitive types.
+	 * 
+	 * @param lhsType
+	 *            the target type
+	 * @param rhsType
+	 *            the value type that should be assigned to the target type
+	 * @return if the target type is assignable from the value type
+	 * @see TypeUtils#isAssignable
+	 */
+	public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
+		if (lhsType.isAssignableFrom(rhsType)) {
+			return true;
+		}
+		if (lhsType.isPrimitive()) {
+			Class<?> resolvedPrimitive = primitiveToWrapper(rhsType);
+			if (resolvedPrimitive != null && lhsType.equals(resolvedPrimitive)) {
+				return true;
+			}
+		} else {
+			Class<?> resolvedWrapper = primitiveToWrapper(rhsType);
+			if (resolvedWrapper != null
+					&& lhsType.isAssignableFrom(resolvedWrapper)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -254,6 +318,54 @@ public class ClassUtil {
 	public static Class<?> createCompositeInterface(Class<?>[] interfaces,
 			ClassLoader classLoader) {
 		return Proxy.getProxyClass(classLoader, interfaces);
+	}
+
+	/**
+	 * @see ClassContextSecurityManager
+	 */
+
+	public static Class<?>[] getClassContext() {
+		return ClassContextSecurityManager.SINGLE_INSTANCE.getClassContext();
+	}
+
+	/**
+	 * @return the name of the class which called the invoking method.
+	 */
+	public static Class<?> getCallingClass() {
+		Class<?>[] trace = getClassContext();
+		String thisClassName = ClassUtil.class.getName();
+
+		// Advance until cn.zhuhongqing.utils.ClassUtil is found
+		int i;
+		for (i = 0; i < trace.length; i++) {
+			if (thisClassName.equals(trace[i].getName()))
+				break;
+		}
+
+		// trace[i] = cn.zhuhongqing.utils.ClassUtil;
+		// trace[i+1] = caller;
+		// trace[i+2] = caller's caller
+		if (i >= trace.length || i + 2 >= trace.length) {
+			throw new IllegalStateException(
+					"Failed to find cn.zhuhongqing.utils.ClassUtil or its caller in the stack; "
+							+ "this should not happen");
+		}
+
+		return trace[i + 2];
+	}
+
+	/**
+	 * In order to call {@link SecurityManager#getClassContext()}, which is a
+	 * protected method, we add this wrapper which allows the method to be
+	 * visible inside this package.
+	 */
+	private static final class ClassContextSecurityManager extends
+			SecurityManager {
+		protected static final ClassContextSecurityManager SINGLE_INSTANCE = new ClassContextSecurityManager();
+
+		protected Class<?>[] getClassContext() {
+			return super.getClassContext();
+		}
 	}
 
 	// public static Set<Class<?>> findAllClassPathResources(String localPath){

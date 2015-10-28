@@ -1,4 +1,4 @@
-package cn.zhuhongqing.utils;
+package cn.zhuhongqing.utils.bean;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -31,8 +31,7 @@ public class BeanInfoUtil {
 	}
 
 	public static PropertyDescriptor[] getPropertyDescriptors(Class<?> beanClass) {
-		BeanInfo beanInfo = getBeanInfo(beanClass);
-		return beanInfo.getPropertyDescriptors();
+		return getBeanInfo(beanClass).getPropertyDescriptors();
 	}
 
 	static BeanInfo getBeanInfo(Class<?> beanClass) {
@@ -46,14 +45,14 @@ public class BeanInfoUtil {
 	public static PropertyDescriptor findPropertyDescriptor(Class<?> target,
 			String name) {
 		PropertyDescriptor[] props = getPropertyDescriptors(target);
-		for (PropertyDescriptor prop : props) {
-			if (OBJECT_PROPERTY.contains(prop))
+		for (int i = 0; i < props.length; i++) {
+			if (OBJECT_PROPERTY.contains(props[i]))
 				continue;
-			if (prop.getName().equals(name))
-				return prop;
+			if (props[i].getName().equals(name))
+				return props[i];
 		}
 		throw new UtilsException("Can not find [" + name + "] property from"
-				+ target.getClass());
+				+ target);
 	}
 
 }

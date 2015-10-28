@@ -739,7 +739,7 @@ public class ReflectUtil {
 	 * @param <T>
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T newInstance(Class<T> type) {
+	public static <T> T newInstance(Class<T> type, Object... args) {
 		Object returnObj = null;
 		if (type.isPrimitive()) {
 			if (type == int.class) {
@@ -823,19 +823,75 @@ public class ReflectUtil {
 
 		if (returnObj != null)
 			return (T) returnObj;
-
-		try {
-			returnObj = type.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			throw new UtilsException(e);
-		}
+		returnObj = autoNewInstance(type, args);
 		return (T) returnObj;
 	}
 
-	public static Object newInstance(String classFullName) {
+	public static Object newInstance(String classFullName, Object... args) {
 		try {
-			return newInstance(Class.forName(classFullName));
+			return newInstance(Class.forName(classFullName), args);
 		} catch (ClassNotFoundException e) {
+			throw new UtilsException(e);
+		}
+	}
+
+	/**
+	 * 以参数匹配构造函数创建对象并返回(支持无参)
+	 * 
+	 * 如果有构造参数类型一样 则返回第一个匹配到的
+	 * 
+	 * @param tClass
+	 *            创建的对象类型
+	 * @param args
+	 *            构造器参数
+	 * @throws UtilsException
+	 */
+
+	@SuppressWarnings("unchecked")
+	public static <T> T autoNewInstance(Class<T> tClass, Object... args) {
+
+		if (null == args || args.length == 0) {
+			return newInstanceWithoutArgs(tClass);
+		}
+
+		Constructor<?> finalConstructor = null;
+		Constructor<?>[] constructors = tClass.getConstructors();
+		for (Constructor<?> constructor : constructors) {
+			Class<?>[] paramTypes = constructor.getParameterTypes();
+			// 参数长度不一样直接忽略
+			if (paramTypes.length != args.length)
+				continue;
+			for (int i = 0; i < paramTypes.length; i++) {
+				// 参数类型错误直接忽略
+				if (!paramTypes[i].isInstance(args[i]))
+					break;
+				if (i == paramTypes.length) {
+					finalConstructor = constructor;
+				}
+			}
+		}
+
+		if (null == finalConstructor) {
+			throw new UtilsException(new NoSuchMethodException(
+					"Can not find a constructor for:" + tClass + ":" + args));
+		}
+
+		makeAccessible(finalConstructor);
+		try {
+			return (T) finalConstructor.newInstance(args);
+		} catch (InstantiationException | IllegalAccessException
+				| IllegalArgumentException | InvocationTargetException e) {
+			throw new UtilsException(e);
+		} finally {
+			finalConstructor.setAccessible(false);
+		}
+
+	}
+
+	public static <T> T newInstanceWithoutArgs(Class<T> tClass) {
+		try {
+			return tClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
 			throw new UtilsException(e);
 		}
 	}
@@ -1070,6 +1126,22 @@ public class ReflectUtil {
 			return getRawType(gat.getGenericComponentType(), implClass);
 		}
 		return null;
+	}
+
+	/**
+	 * Get implement interface index in type's interfaces.
+	 */
+
+	public static int getInterfaceIndex(Class<?> type, Class<?> interfaceClass) {
+		if (interfaceClass.isAssignableFrom(type)) {
+			Class<?>[] interfaces = type.getInterfaces();
+			for (int i = 0; i < interfaces.length; i++) {
+				if (interfaces[i].equals(interfaceClass)) {
+					return i;
+				}
+			}
+		}
+		throw new IllegalArgumentException();
 	}
 
 	/**
