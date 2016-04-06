@@ -16,39 +16,22 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>cn.zhuhongqing</groupId>
-			<artifactId>zhq-core</artifactId>
-		</dependency>
 		<!-- javax servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- websocket -->
 		<dependency>
 			<groupId>javax.websocket</groupId>
 			<artifactId>javax.websocket-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>cn.zhuhongqing</groupId>
+			<artifactId>zhq-core</artifactId>
 		</dependency>
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.eclipse.jetty</groupId>
-				<artifactId>jetty-maven-plugin</artifactId>
-				<configuration>
-					<scanIntervalSeconds>10</scanIntervalSeconds>
-					<httpConnector>
-						<port>80</port>
-					</httpConnector>
-					<webApp>
-						<contextPath>/</contextPath>
-						<descriptor>${project.basedir}/src/test/resources/web.xml</descriptor>
-					</webApp>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>

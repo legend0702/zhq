@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Utilities for String.
@@ -19,16 +20,16 @@ import java.util.List;
 public class StringUtil {
 
 	// /
-	private static final String FOLDER_SEPARATOR = StringPool.SLASH;
+	public static final String FOLDER_SEPARATOR = StringPool.SLASH;
 
 	// \\
-	private static final String WINDOWS_FOLDER_SEPARATOR = StringPool.BACK_SLASH;
+	public static final String WINDOWS_FOLDER_SEPARATOR = StringPool.BACK_SLASH;
 
 	// .
-	private static final String CURRENT_PATH = StringPool.DOT;
+	public static final String CURRENT_PATH = StringPool.DOT;
 
 	// ..
-	private static final String TOP_PATH = StringPool.DOTDOT;
+	public static final String TOP_PATH = StringPool.DOTDOT;
 
 	// ---------------------------------------------------------------- empty
 
@@ -38,6 +39,18 @@ public class StringUtil {
 
 	public static boolean isEmpty(CharSequence str) {
 		return (str == null || str.toString().trim().isEmpty());
+	}
+
+	/**
+	 * Has empty string.
+	 */
+
+	public static boolean hasEmpty(CharSequence... strs) {
+		for (CharSequence s : strs) {
+			if (isEmpty(s))
+				return true;
+		}
+		return false;
 	}
 
 	/**
@@ -244,7 +257,8 @@ public class StringUtil {
 	 */
 	public static String collectionToDelimitedString(Collection<?> coll,
 			String delim) {
-		return collectionToDelimitedString(coll, delim, "", "");
+		return collectionToDelimitedString(coll, delim, StringPool.EMPTY,
+				StringPool.EMPTY);
 	}
 
 	/**
@@ -327,7 +341,7 @@ public class StringUtil {
 			return new String[] { str };
 		}
 		List<String> result = new ArrayList<String>();
-		if ("".equals(delimiter)) {
+		if (isEmpty(delimiter)) {
 			for (int i = 0; i < str.length(); i++) {
 				result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
 			}
@@ -371,6 +385,41 @@ public class StringUtil {
 	}
 
 	/**
+	 * 将一个String依照reg进行截断存入一个List中,最后返回List
+	 * 
+	 * @param str
+	 * @param reg
+	 * @return List<String>
+	 */
+
+	public static List<String> split(String str, String reg) {
+		List<String> strList = new ArrayList<String>();
+		if (isEmpty(str)) {
+			return strList;
+		}
+		StringTokenizer st = new StringTokenizer(str, reg);
+		while (st.hasMoreElements()) {
+			strList.add(st.nextToken().trim());
+		}
+		return strList;
+	}
+
+	/**
+	 * 以{@link StringPool#COMMA}分割字符串
+	 */
+
+	public static List<String> split(String str) {
+		return split(str, StringPool.COMMA);
+	}
+
+	public static void main(String[] args) {
+		String[] ss = delimitedListToStringArray("1,2,3,", ",");
+		for (String s : ss) {
+			System.out.println(s);
+		}
+	}
+
+	/**
 	 * Copy the given Collection into a String array. The Collection must
 	 * contain String elements only.
 	 * 
@@ -384,6 +433,146 @@ public class StringUtil {
 			return null;
 		}
 		return collection.toArray(new String[collection.size()]);
+	}
+
+	// ---------------------------------------------------------------- pad
+
+	public static String startPad(String str, String start) {
+		if (!str.startsWith(start))
+			str = start + str;
+		return str;
+	}
+
+	public static String endPad(String str, String end) {
+		if (!str.endsWith(end))
+			str = str + end;
+		return str;
+	}
+
+	/**
+	 * forwardFilling value 00 - 99.
+	 */
+	public static String forwardFilling2(int value) {
+		if (value < 0) {
+			throw new IllegalArgumentException("Value must be positive: "
+					+ value);
+		}
+		if (value < 10) {
+			return '0' + Integer.toString(value);
+		}
+		if (value < 100) {
+			return Integer.toString(value);
+		}
+		throw new IllegalArgumentException("Value too big: " + value);
+	}
+
+	/**
+	 * forwardFilling value 00 - 999.
+	 */
+	public static String forwardFilling3(int value) {
+		if (value < 0) {
+			throw new IllegalArgumentException("Value must be positive: "
+					+ value);
+		}
+		if (value < 10) {
+			return "00" + Integer.toString(value);
+		}
+		if (value < 100) {
+			return '0' + Integer.toString(value);
+		}
+		if (value < 1000) {
+			return Integer.toString(value);
+		}
+		throw new IllegalArgumentException("Value too big: " + value);
+	}
+
+	/**
+	 * Prints 4 digits and optional minus sign.
+	 */
+	public static String forwardFilling4(int value) {
+		char[] result = new char[4];
+		int count = 0;
+
+		if (value < 0) {
+			result[count++] = '-';
+			value = -value;
+		}
+
+		String str = Integer.toString(value);
+
+		if (value < 10) {
+			result[count++] = '0';
+			result[count++] = '0';
+			result[count++] = '0';
+			result[count++] = str.charAt(0);
+		} else if (value < 100) {
+			result[count++] = '0';
+			result[count++] = '0';
+			result[count++] = str.charAt(0);
+			result[count++] = str.charAt(1);
+		} else if (value < 1000) {
+			result[count++] = '0';
+			result[count++] = str.charAt(0);
+			result[count++] = str.charAt(1);
+			result[count++] = str.charAt(2);
+		} else {
+			if (count > 0) {
+				return '-' + str;
+			}
+			return str;
+		}
+		return new String(result, 0, count);
+	}
+
+	/**
+	 * backFilling value 0 - 99
+	 */
+
+	public static int backFilling2(int value) {
+		if (value < 10) {
+			return value * 10;
+		}
+		if (value < 100) {
+			return value;
+		}
+		throw new IllegalArgumentException("Value too big: " + value);
+	}
+
+	/**
+	 * backFilling value 0 - 999
+	 */
+
+	public static int backFilling3(int value) {
+		if (value < 10) {
+			return value * 100;
+		}
+		if (value < 100) {
+			return value * 10;
+		}
+		if (value < 1000) {
+			return value;
+		}
+		throw new IllegalArgumentException("Value too big: " + value);
+	}
+
+	/**
+	 * backFilling value 0 - 9999
+	 */
+
+	public static int backFilling4(int value) {
+		if (value < 10) {
+			return value * 1000;
+		}
+		if (value < 100) {
+			return value * 100;
+		}
+		if (value < 1000) {
+			return value * 10;
+		}
+		if (value < 10000) {
+			return value;
+		}
+		throw new IllegalArgumentException("Value too big: " + value);
 	}
 
 	// ---------------------------------------------------------------- fix

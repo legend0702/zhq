@@ -1,7 +1,10 @@
 package cn.zhuhongqing.utils;
 
 import java.lang.reflect.Proxy;
+import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -58,7 +61,7 @@ public class ClassUtil {
 
 	public static Class<?> forName(String className) {
 		try {
-			return Class.forName(className);
+			return Class.forName(className, true, getDefaultClassLoader());
 		} catch (ClassNotFoundException e) {
 			return null;
 		}
@@ -199,6 +202,54 @@ public class ClassUtil {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Is map assignable
+	 * 
+	 * @param clazz
+	 * @return
+	 * @see ClassUtil#isAssignable(Class, Class)
+	 */
+
+	public static boolean isMap(Class<?> clazz) {
+		return isAssignable(Map.class, clazz);
+	}
+
+	/**
+	 * Is collection assignable
+	 * 
+	 * @param clazz
+	 * @return
+	 * @see ClassUtil#isAssignable(Class, Class)
+	 */
+
+	public static boolean isCollection(Class<?> clazz) {
+		return isAssignable(Collection.class, clazz);
+	}
+
+	/**
+	 * Is set assignable
+	 * 
+	 * @param clazz
+	 * @return
+	 * @see ClassUtil#isAssignable(Class, Class)
+	 */
+
+	public static boolean isSet(Class<?> clazz) {
+		return isAssignable(Set.class, clazz);
+	}
+
+	/**
+	 * Is list assignable
+	 * 
+	 * @param clazz
+	 * @return
+	 * @see ClassUtil#isAssignable(Class, Class)
+	 */
+
+	public static boolean isList(Class<?> clazz) {
+		return isAssignable(List.class, clazz);
 	}
 
 	/**

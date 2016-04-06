@@ -2,13 +2,11 @@ package cn.zhuhongqing;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Test;
 
-import cn.zhuhongqing.io.FileUtil;
 import cn.zhuhongqing.reflect.FieldReference;
 import cn.zhuhongqing.utils.StreamUtil;
 
@@ -37,8 +35,8 @@ public class FieldUtilTest {
 	public static void test3() throws IOException {
 		long ts = System.currentTimeMillis();
 		for (int i = 0; i < 1000; i++) {
-			byte[] temp = FileUtil
-					.readBytes("D:\\MyProgram\\directx-aug2009-redist.rar");
+//			byte[] temp = FileUtil
+//					.readBytes("D:\\MyProgram\\directx-aug2009-redist.rar");
 			// System.out.println(temp.length);
 			// System.out.println("error:" + temp.length);
 		}

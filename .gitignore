@@ -4,8 +4,8 @@
 *.jar
 *.war
 *.ear
-/build/
-/target/
+build/
+target/
 
 # Log 
 logs/

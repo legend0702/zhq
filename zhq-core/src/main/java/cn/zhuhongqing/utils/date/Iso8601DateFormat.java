@@ -3,7 +3,7 @@ package cn.zhuhongqing.utils.date;
 import java.util.Calendar;
 import java.util.Locale;
 
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.utils.StringUtil;
 import cn.zhuhongqing.utils.LocaleUtil;
 import cn.zhuhongqing.utils.NumberUtil;
 
@@ -44,8 +44,7 @@ import cn.zhuhongqing.utils.NumberUtil;
 
 public class Iso8601DateFormat extends DateFormat {
 
-	private static final String[] patterns = new String[] { 
-			"YYYY", // 0 + year
+	private static final String[] patterns = new String[] { "YYYY", // 0 + year
 			"MM", // 1 + month
 			"DD", // 2 + day of month
 			"D", // 3 - day of week
@@ -80,10 +79,9 @@ public class Iso8601DateFormat extends DateFormat {
 		case 0:
 			return String.valueOf((calendar.get(Calendar.YEAR)));
 		case 1:
-			return GeneralUtil
-					.forwardFilling2(calendar.get(Calendar.MONTH) + 1);
+			return StringUtil.forwardFilling2(calendar.get(Calendar.MONTH) + 1);
 		case 2:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.DATE));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.DATE));
 		case 3:
 			return Integer.toString(calendar.get(Calendar.DAY_OF_WEEK));
 		case 4:
@@ -99,23 +97,23 @@ public class Iso8601DateFormat extends DateFormat {
 			return LocaleUtil.getShortWeekday(
 					calendar.get(Calendar.DAY_OF_WEEK), locale);
 		case 8:
-			return GeneralUtil.forwardFilling2(calendar
+			return StringUtil.forwardFilling2(calendar
 					.get(Calendar.HOUR_OF_DAY));
 		case 9:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.MINUTE));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.MINUTE));
 		case 10:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.SECOND));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.SECOND));
 		case 11:
-			return GeneralUtil.forwardFilling3(calendar
+			return StringUtil.forwardFilling3(calendar
 					.get(Calendar.MILLISECOND));
 		case 12:
-			return GeneralUtil.forwardFilling3(calendar
+			return StringUtil.forwardFilling3(calendar
 					.get(Calendar.DAY_OF_YEAR));
 		case 13:
-			return GeneralUtil.forwardFilling2(calendar
+			return StringUtil.forwardFilling2(calendar
 					.get(Calendar.WEEK_OF_YEAR));
 		case 14:
-			return 'W' + GeneralUtil.forwardFilling2(calendar
+			return 'W' + StringUtil.forwardFilling2(calendar
 					.get(Calendar.WEEK_OF_YEAR));
 		case 15:
 			return Integer.toString(calendar.get(Calendar.WEEK_OF_MONTH));

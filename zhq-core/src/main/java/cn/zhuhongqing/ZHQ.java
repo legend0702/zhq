@@ -12,6 +12,7 @@ import cn.zhuhongqing.utils.StringUtil;
  *         <nl>
  *         <li>Mail:qwepoidjdj(a)gmail.com</li>
  *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         <li>Github:github.com/legend0702</li>
  *         </nl>
  */
 

@@ -32,6 +32,7 @@
 	<properties>
 		<jetty.version>9.2.0.M0</jetty.version>
 		<javax.websocket>1.1</javax.websocket>
+		<poi.version>3.13</poi.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -39,14 +40,21 @@
 		<module>zhq-core</module>
 		<module>zhq-logger</module>
 		<module>zhq-script</module>
-		<module>zhq-converter</module>
-		<module>zhq-bean</module>
-		<module>zhq-generator</module>
-		<module>zhq-security</module>
-		<module>zhq-encrypt</module>
+		<!-- <module>zhq-converter</module> <module>zhq-bean</module> <module>zhq-generator</module> 
+			<module>zhq-security</module> <module>zhq-encrypt</module> -->
 		<module>zhq-validate</module>
 		<module>zhq-websocket-deploy</module>
-		<module>zhq-aop</module>
+		<!-- <module>zhq-aop</module> <module>zhq-mq-kafka</module> -->
+		<module>zhq-socket-api</module>
+		<module>zhq-socket-nio-common</module>
+		<module>zhq-socket-nio-server</module>
+		<module>zhq-socket-aio-common</module>
+		<module>zhq-socket-aio-server</module>
+		<module>zhq-codec</module>
+		<module>zhq-codec-msgpack</module>
+		<module>zhq-codec-kryo</module>
+		<module>zhq-excel</module>
+		<module>zhq-dbmeta</module>
 	</modules>
 
 	<dependencyManagement>
@@ -90,12 +98,62 @@
 				<artifactId>fastjson</artifactId>
 				<version>1.1.40</version>
 			</dependency>
+			<dependency>
+				<groupId>org.msgpack</groupId>
+				<artifactId>msgpack</artifactId>
+				<version>0.6.11</version>
+			</dependency>
 			<!-- cglib -->
 			<dependency>
 				<groupId>cglib</groupId>
 				<artifactId>cglib-nodep</artifactId>
 				<version>3.1</version>
 			</dependency>
+			<!-- mq -->
+			<dependency>
+				<groupId>org.apache.kafka</groupId>
+				<artifactId>kafka_2.9.2</artifactId>
+				<version>0.8.1.1</version>
+				<exclusions>
+					<exclusion>
+						<artifactId>jmxtools</artifactId>
+						<groupId>com.sun.jdmk</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jmxtools</artifactId>
+						<groupId>com.sun.jdmk</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jmxri</artifactId>
+						<groupId>com.sun.jmx</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jms</artifactId>
+						<groupId>javax.jms</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- poi -->
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml-schemas</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+
+			<!-- child module -->
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-logger</artifactId>
@@ -128,7 +186,27 @@
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-codec</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-generator</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-socket-api</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-socket-nio-common</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-socket-aio-common</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 		</dependencies>
@@ -142,20 +220,27 @@
 				<version>${jetty.version}</version>
 				<configuration>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
+					<useFileMappedBuffer>false</useFileMappedBuffer>
 					<httpConnector>
 						<port>80</port>
 					</httpConnector>
 					<webApp>
 						<contextPath>/</contextPath>
-						<defaultsDescriptor>
-							H:\git\ZHQ\config\web.xml
-						</defaultsDescriptor>
 					</webApp>
 				</configuration>
 			</plugin>
 			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>UTF8</encoding>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.3</version>
+				<version>3.0.0</version>
 				<configuration>
 					<attach>true</attach>
 				</configuration>
@@ -167,6 +252,15 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

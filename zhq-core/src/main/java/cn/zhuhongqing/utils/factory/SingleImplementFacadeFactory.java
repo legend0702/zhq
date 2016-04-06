@@ -107,9 +107,4 @@ public final class SingleImplementFacadeFactory {
 		}
 		return implClass;
 	}
-
-	public static void main(String[] args) {
-		File file = new File("E:/music/Human-christina perri.mp3");
-		System.out.println(file.getPath());
-	}
 }

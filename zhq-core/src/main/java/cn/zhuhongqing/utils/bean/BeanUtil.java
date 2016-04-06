@@ -5,9 +5,11 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.GeneralUtil;
 import cn.zhuhongqing.utils.MethodUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
@@ -33,8 +35,8 @@ public class BeanUtil {
 
 	@SuppressWarnings("unchecked")
 	public static void copy(Object origin, Object target) {
-		if (Map.class.isAssignableFrom(origin.getClass())) {
-			MapToBean((Map<String, Object>) origin, target);
+		if (ClassUtil.isMap(origin.getClass())) {
+			mapToBean((Map<String, Object>) origin, target);
 			return;
 		}
 		PropertyDescriptor[] props = BeanInfoUtil.getPropertyDescriptors(origin
@@ -49,7 +51,24 @@ public class BeanUtil {
 		setProperty(target, name, value);
 	}
 
-	public static void MapToBean(Map<String, Object> beanMap, Object target) {
+	@SuppressWarnings("unchecked")
+	public static Map<String, Object> beanToMap(Object bean) {
+		if (ClassUtil.isMap(bean.getClass()))
+			return (Map<String, Object>) bean;
+		PropertyDescriptor[] propds = BeanInfoUtil.getPropertyDescriptors(bean
+				.getClass());
+		LinkedHashMap<String, Object> beanMap = new LinkedHashMap<String, Object>(
+				propds.length);
+		for (PropertyDescriptor pd : propds) {
+			Object val = getProperty(bean, pd);
+			if (GeneralUtil.isNull(val))
+				continue;
+			beanMap.put(pd.getName(), val);
+		}
+		return beanMap;
+	}
+
+	public static void mapToBean(Map<String, Object> beanMap, Object target) {
 		Iterator<Entry<String, Object>> originItr = beanMap.entrySet()
 				.iterator();
 		while (originItr.hasNext()) {
@@ -96,14 +115,16 @@ public class BeanUtil {
 	}
 
 	static Object getProperty(Object target, PropertyDescriptor descriptor) {
+		if (BeanInfoUtil.OBJECT_PROPERTY.contains(descriptor))
+			return null;
 		Method getMethod = descriptor.getReadMethod();
 		if (GeneralUtil.isNull(getMethod))
 			return null;
-		return MethodUtil.invoke(descriptor.getReadMethod(), target);
+		return MethodUtil.invoke(getMethod, target);
 	}
 
 	public static Object getProperty(Object target, String name) {
-		if (Map.class.isAssignableFrom(target.getClass()))
+		if (ClassUtil.isMap(target.getClass()))
 			return ((Map<?, ?>) target).get(name);
 		return getProperty(target,
 				BeanInfoUtil.findPropertyDescriptor(target.getClass(), name));
@@ -111,7 +132,7 @@ public class BeanUtil {
 
 	@SuppressWarnings("unchecked")
 	public static void setProperty(Object target, String name, Object value) {
-		if (Map.class.isAssignableFrom(target.getClass())) {
+		if (ClassUtil.isMap(target.getClass())) {
 			((Map<String, Object>) target).put(name, value);
 			return;
 		}

@@ -202,7 +202,7 @@ public class MethodUtil {
 			MethodType methodType, Class<?>... parameterTypes) {
 
 		// 参数为空就抛出异常
-		if (GeneralUtil.isNull(methodName, clazz, methodType)) {
+		if (GeneralUtil.hasNull(methodName, clazz, methodType)) {
 			throw new IllegalArgumentException(new ExceptionMessage(
 					GeneralExceptionType.DEBUG1001).toString());
 		}

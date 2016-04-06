@@ -2,7 +2,7 @@ package cn.zhuhongqing.utils.date;
 
 import java.util.Calendar;
 
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.utils.StringUtil;
 import cn.zhuhongqing.utils.LocaleUtil;
 import cn.zhuhongqing.utils.NumberUtil;
 import cn.zhuhongqing.utils.TimeZoneUtil;
@@ -33,8 +33,7 @@ import cn.zhuhongqing.utils.TimeZoneUtil;
 
 public class UTCDateFormat extends DateFormat {
 
-	private static final String[] patterns = new String[] { 
-			"YYYY",// 0 + year
+	private static final String[] patterns = new String[] { "YYYY",// 0 + year
 			"MM",// 1 + month
 			"DD",// 2 + day of month
 			"HH",// 3 + hour
@@ -55,17 +54,16 @@ public class UTCDateFormat extends DateFormat {
 		case 0:
 			return String.valueOf((calendar.get(Calendar.YEAR)));
 		case 1:
-			return GeneralUtil
-					.forwardFilling2(calendar.get(Calendar.MONTH) + 1);
+			return StringUtil.forwardFilling2(calendar.get(Calendar.MONTH) + 1);
 		case 2:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.DATE));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.DATE));
 		case 3:
-			return GeneralUtil.forwardFilling2(calendar
+			return StringUtil.forwardFilling2(calendar
 					.get(Calendar.HOUR_OF_DAY));
 		case 4:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.MINUTE));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.MINUTE));
 		case 5:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.SECOND));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.SECOND));
 		case 6:
 			return TimeZoneUtil.getRFC822TimeZoneShort(calendar);
 		case 7:
