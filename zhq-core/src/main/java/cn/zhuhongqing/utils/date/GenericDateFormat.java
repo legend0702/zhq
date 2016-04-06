@@ -3,7 +3,7 @@ package cn.zhuhongqing.utils.date;
 import java.util.Calendar;
 import java.util.Locale;
 
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.utils.StringUtil;
 import cn.zhuhongqing.utils.LocaleUtil;
 import cn.zhuhongqing.utils.NumberUtil;
 import cn.zhuhongqing.utils.TimeZoneUtil;
@@ -124,13 +124,12 @@ public class GenericDateFormat extends DateFormat {
 		case 1:
 			return Integer.toString((calendar.get(Calendar.YEAR)));
 		case 2:
-			return GeneralUtil.forwardFilling4((calendar.get(Calendar.YEAR)))
+			return StringUtil.forwardFilling4((calendar.get(Calendar.YEAR)))
 					.substring(2, 4);
 		case 3:
 			return Integer.toString(calendar.get(Calendar.MONTH) + 1);
 		case 4:
-			return GeneralUtil
-					.forwardFilling2(calendar.get(Calendar.MONTH) + 1);
+			return StringUtil.forwardFilling2(calendar.get(Calendar.MONTH) + 1);
 		case 5:
 			return LocaleUtil.getShortMonthNames(calendar.get(Calendar.MONTH),
 					locale);
@@ -140,7 +139,7 @@ public class GenericDateFormat extends DateFormat {
 		case 7:
 			return Integer.toString(calendar.get(Calendar.WEEK_OF_YEAR));
 		case 8:
-			return GeneralUtil.forwardFilling2(calendar
+			return StringUtil.forwardFilling2(calendar
 					.get(Calendar.WEEK_OF_YEAR));
 		case 9:
 			return Integer.toString(calendar.get(Calendar.WEEK_OF_MONTH));
@@ -149,12 +148,12 @@ public class GenericDateFormat extends DateFormat {
 		case 11:
 			return Integer.toString(calendar.get(Calendar.DAY_OF_YEAR));
 		case 12:
-			return GeneralUtil.forwardFilling3(calendar
+			return StringUtil.forwardFilling3(calendar
 					.get(Calendar.DAY_OF_YEAR));
 		case 13:
 			return Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
 		case 14:
-			return GeneralUtil.forwardFilling2(calendar
+			return StringUtil.forwardFilling2(calendar
 					.get(Calendar.DAY_OF_MONTH));
 		case 15:
 			return LocaleUtil.getShortWeekday(
@@ -172,33 +171,33 @@ public class GenericDateFormat extends DateFormat {
 		case 20:
 			return Integer.toString(calendar.get(Calendar.HOUR_OF_DAY));
 		case 21:
-			return GeneralUtil.forwardFilling2(calendar
+			return StringUtil.forwardFilling2(calendar
 					.get(Calendar.HOUR_OF_DAY));
 		case 22:
 			return Integer.toString(calendar.get(Calendar.HOUR_OF_DAY) + 1);
 		case 23:
-			return GeneralUtil.forwardFilling2(calendar
+			return StringUtil.forwardFilling2(calendar
 					.get(Calendar.HOUR_OF_DAY) + 1);
 		case 24:
 			return Integer.toString(calendar.get(Calendar.HOUR));
 		case 25:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.HOUR));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.HOUR));
 		case 26:
 			return Integer.toString(calendar.get(Calendar.HOUR) + 1);
 		case 27:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.HOUR) + 1);
+			return StringUtil.forwardFilling2(calendar.get(Calendar.HOUR) + 1);
 		case 28:
 			return Integer.toString(calendar.get(Calendar.MINUTE));
 		case 29:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.MINUTE));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.MINUTE));
 		case 30:
 			return Integer.toString(calendar.get(Calendar.SECOND));
 		case 31:
-			return GeneralUtil.forwardFilling2(calendar.get(Calendar.SECOND));
+			return StringUtil.forwardFilling2(calendar.get(Calendar.SECOND));
 		case 32:
 			return Integer.toString(calendar.get(Calendar.MILLISECOND));
 		case 33:
-			return GeneralUtil.forwardFilling3(calendar
+			return StringUtil.forwardFilling3(calendar
 					.get(Calendar.MILLISECOND));
 		case 34:
 			return LocaleUtil.getShortTimeZone(calendar.getTime(),

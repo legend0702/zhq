@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
+import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.utils.StringPool;
 
 /**
@@ -29,7 +30,7 @@ public class WebResourceLoader implements ResourceLoader {
 					.getCanonicalPath();
 			root = root == null ? StringPool.EMPTY : root;
 		} catch (IOException | URISyntaxException e) {
-			throw new RuntimeException(e);
+			throw new UtilsException(e);
 		}
 
 	}
@@ -42,7 +43,7 @@ public class WebResourceLoader implements ResourceLoader {
 		try {
 			return new FileInputStream(loadAsFile(path));
 		} catch (FileNotFoundException e) {
-			return null;
+			throw new UtilsException(e);
 		}
 	}
 

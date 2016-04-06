@@ -33,7 +33,7 @@ public class TimeZoneUtil {
 	}
 
 	public static String getGMTTimeZoneID(String gmt) {
-		return TimeZone.getTimeZone(GeneralUtil.startPad(gmt, GMT)).getID();
+		return TimeZone.getTimeZone(StringUtil.startPad(gmt, GMT)).getID();
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class TimeZoneUtil {
 			buffer.append(StringPool.MINUS);
 			value = -value;
 		}
-		buffer.append(GeneralUtil.forwardFilling4((int) (value * 100)));
+		buffer.append(StringUtil.forwardFilling4((int) (value * 100)));
 		return buffer.toString();
 	}
 

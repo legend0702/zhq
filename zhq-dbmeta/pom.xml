@@ -8,25 +8,32 @@
 		<artifactId>zhq-parent</artifactId>
 		<version>0.0.1</version>
 	</parent>
-	<artifactId>zhq-websocket-deploy</artifactId>
-	<name>zhq-websocket-deploy</name>
+
+	<artifactId>zhq-dbmeta</artifactId>
+
+	<name>zhq-dbmeta</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
-		<!-- javax servlet -->
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
 		</dependency>
-		<!-- websocket -->
 		<dependency>
-			<groupId>javax.websocket</groupId>
-			<artifactId>javax.websocket-api</artifactId>
-			<scope>provided</scope>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.4-1205-jdbc42</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>11.2.0.1.0</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>cn.zhuhongqing</groupId>

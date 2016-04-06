@@ -412,6 +412,10 @@ public class ReflectUtil {
 		return MEMBER_ABSTRACT == claz.getModifiers();
 	}
 
+	public static boolean isAbstract(Member member) {
+		return MEMBER_ABSTRACT == member.getModifiers();
+	}
+
 	/**
 	 * A class is not Interface and abstract.
 	 * 
@@ -679,6 +683,19 @@ public class ReflectUtil {
 		return true;
 	}
 
+	/**
+	 * 得到无参构造函数
+	 */
+
+	public static <T> Constructor<T> getNoParamAndUsableConstructor(
+			Class<T> claz) {
+		try {
+			return claz.getConstructor();
+		} catch (NoSuchMethodException | SecurityException e) {
+			return null;
+		}
+	}
+
 	// ---------------------------------------------------------------- force
 
 	/**
@@ -828,11 +845,7 @@ public class ReflectUtil {
 	}
 
 	public static Object newInstance(String classFullName, Object... args) {
-		try {
-			return newInstance(Class.forName(classFullName), args);
-		} catch (ClassNotFoundException e) {
-			throw new UtilsException(e);
-		}
+		return newInstance(ClassUtil.forName(classFullName), args);
 	}
 
 	/**

@@ -97,6 +97,14 @@ public class DateUtil {
 		return c.getTime();
 	}
 
+	public static String defaultFormat(Date date) {
+		return format(date, YYYY_MM_DD);
+	}
+
+	public static String format(Date date, String format) {
+		return DEFAULT_DATE_FORMAT.format(date, format);
+	}
+
 	public static Date defaultParse(String date) {
 		return parse(date, YYYY_MM_DD);
 	}
