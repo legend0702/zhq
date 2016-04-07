@@ -264,18 +264,38 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	/** 描述该类是用于哪种数据库的 用于匹配数据库类型 */
 	protected abstract String getDBDesign();
 
+	/**
+	 * 返回默认目录<br/>
+	 * 不能为null或者空值
+	 */
+
 	protected String initDefCatalog() throws Exception {
 		return conn.getCatalog();
 	}
+
+	/**
+	 * 返回所有目录<br/>
+	 * 没有请返回空列表
+	 */
 
 	protected Set<String> initCatalogs() throws Exception {
 		return UnCatchSQLExceptionUtil.getReslutSetNextOneColumn(
 				dbMetaData.getCatalogs(), TABLE_CATALOG);
 	}
 
+	/**
+	 * 返回默认表空间<br/>
+	 * 不能为null或者空值
+	 */
+
 	protected String initDefSchema() throws Exception {
 		return conn.getSchema();
 	}
+
+	/**
+	 * 返回所有表空间<br/>
+	 * 没有请返回空列表
+	 */
 
 	protected Set<String> initSchemas() throws Exception {
 		return UnCatchSQLExceptionUtil.getReslutSetNextOneColumn(
@@ -284,7 +304,6 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	/**
 	 * 初始化参数
-	 * 
 	 */
 
 	protected DBMetaInfo init(Connection conn) throws Exception {

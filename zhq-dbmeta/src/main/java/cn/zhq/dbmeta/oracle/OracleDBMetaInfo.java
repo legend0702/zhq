@@ -20,7 +20,7 @@ public class OracleDBMetaInfo extends DBMetaInfo {
 
 	@Override
 	protected String initDefCatalog() throws Exception {
-		return null;
+		return "UNSUPPORT";
 	}
 
 	@Override
