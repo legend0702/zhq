@@ -1,6 +1,5 @@
 package cn.zhuhongqing.utils.factory;
 
-import java.io.File;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,7 +10,7 @@ import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
 import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.scan.FileScan;
+import cn.zhuhongqing.utils.scan.ClassScan;
 
 /**
  * 一个简单的门面工具类 <br>
@@ -39,10 +38,7 @@ public final class SingleImplementFacadeFactory {
 
 	private static final ConcurrentHashMap<Class<?>, Class<?>> SINGLE_IMPLEMENT_PAIR = new ConcurrentHashMap<Class<?>, Class<?>>();
 
-	private static final FileScan FILE_SCAN = new FileScan();
-
 	private static final String DEFAULT_PACKAGE_SUFFIX = "impl";
-	private static final String DEFAULT_CLASS_SUFFIX = "Impl";
 
 	/**
 	 * 
@@ -72,16 +68,17 @@ public final class SingleImplementFacadeFactory {
 	/**
 	 * Example:<br>
 	 * in:java.lang.Object<br>
-	 * out:java.lang.impl.ObjectImpl
+	 * out:java.lang.impl.* out:java.lang.impl.ObjectImpl
 	 */
 
-	static String createImplementClassName(Class<?> ifs) {
+	static String createImplPackagePattern(Class<?> ifs) {
 		StringBuilder sb = new StringBuilder(ifs.getPackage().getName());
 		sb.append(StringPool.DOT);
 		sb.append(DEFAULT_PACKAGE_SUFFIX);
 		sb.append(StringPool.DOT);
-		sb.append(ifs.getSimpleName());
-		sb.append(DEFAULT_CLASS_SUFFIX);
+		sb.append(StringPool.ASTERISK);
+		// sb.append(ifs.getSimpleName());
+		// sb.append(DEFAULT_CLASS_SUFFIX);
 		return sb.toString();
 	}
 
@@ -92,19 +89,22 @@ public final class SingleImplementFacadeFactory {
 	 */
 
 	static Class<?> tryToCheckMutliImplAndGetOne(Class<?> ifs) {
-		String implClassName = createImplementClassName(ifs);
-		Set<File> files = FILE_SCAN.getResources(ClassUtil
-				.classPathToFilePath(implClassName));
-		if (files.isEmpty()) {
-			throw new UtilsException("Can not find class: [" + implClassName
-					+ "]!");
+		String packName = createImplPackagePattern(ifs);
+		Set<Class<?>> clazs = new ClassScan(c -> {
+			if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(ifs, c)) {
+				return c;
+			}
+			return null;
+		}).getResources(packName);
+		if (clazs.isEmpty()) {
+			throw new UtilsException("Can not find implment class for : ["
+					+ ifs.getClass() + "]!");
 		}
-		Class<?> implClass = ClassUtil.forName(implClassName);
-		if (files.size() > 1) {
+		Class<?> reClaz = clazs.iterator().next();
+		if (clazs.size() > 1) {
 			log.warn("Class path contains multiple [" + ifs + "] implments:"
-					+ files
-					+ " So use most nearly one,but I don't know which one :(");
+					+ clazs + " So use most nearly one -> " + reClaz);
 		}
-		return implClass;
+		return reClaz;
 	}
 }

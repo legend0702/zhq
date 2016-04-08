@@ -5,9 +5,11 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Set;
 
+import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.exception.UncheckedException;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.StringPool;
@@ -15,13 +17,12 @@ import cn.zhuhongqing.utils.matcher.FilePathMatcher;
 import cn.zhuhongqing.utils.matcher.PathMatcher;
 
 /**
- * Scan file and convert.
- * 
- * It's thread-safe.
+ * Scan file.<br/>
  * 
  * @author HongQing.Zhu
  */
 
+@NotThreadSafe
 public abstract class FileAbstractScan<T> extends AbstractScan<T> {
 
 	/**
@@ -34,7 +35,7 @@ public abstract class FileAbstractScan<T> extends AbstractScan<T> {
 	 * Path match.
 	 */
 
-	private static final PathMatcher PATH_MATCHER = new FilePathMatcher();
+	private final PathMatcher PATH_MATCHER = new FilePathMatcher();
 
 	/**
 	 * @see FileFilter
@@ -47,15 +48,17 @@ public abstract class FileAbstractScan<T> extends AbstractScan<T> {
 	 * 
 	 * @see #getResources(String)
 	 */
-	private ThreadLocal<Set<T>> RETURN_SET = new ThreadLocal<Set<T>>();
+	private Set<T> RETURN_SET = Collections.emptySet();;
 
 	/**
 	 * Use to choose subFile.
-	 * 
-	 * @see #PATH_PATTERN
 	 */
 
-	private ThreadLocal<String> PATH_PATTERN = new ThreadLocal<String>();
+	private String PATH_PATTERN = null;
+
+	/**
+	 * Scan file.
+	 */
 
 	@Override
 	public Set<T> getResources(String pattern) {
@@ -78,14 +81,15 @@ public abstract class FileAbstractScan<T> extends AbstractScan<T> {
 				setFile(rootFile);
 				continue;
 			}
-			PATH_PATTERN.set(rootFile.getPath() + PATH_PATTERN.get());
+			PATH_PATTERN = rootFile.getPath() + PATH_PATTERN;
 			findFile(rootFile);
 		}
-		return RETURN_SET.get();
+		return RETURN_SET;
 	}
 
 	/**
-	 * 
+	 * @see ClassLoader#getResource(String)
+	 * @see FileAbstractScan#chooseAndConvert(File)
 	 */
 
 	@Override
@@ -111,7 +115,7 @@ public abstract class FileAbstractScan<T> extends AbstractScan<T> {
 	private void setFile(File subFile) {
 		T addE = chooseAndConvert(subFile);
 		if (addE != null)
-			RETURN_SET.get().add(addE);
+			RETURN_SET.add(addE);
 	}
 
 	/**
@@ -121,10 +125,10 @@ public abstract class FileAbstractScan<T> extends AbstractScan<T> {
 	 * 
 	 */
 
-	String initLocalParams(String pattern) {
+	private String initLocalParams(String pattern) {
 		String rootPath = determineRootDir(pattern);
-		RETURN_SET.set(getSet());
-		PATH_PATTERN.set(pattern.substring(rootPath.length()));
+		PATH_PATTERN = pattern.substring(rootPath.length());
+		RETURN_SET = getSet();
 		return rootPath;
 	}
 
@@ -169,7 +173,7 @@ public abstract class FileAbstractScan<T> extends AbstractScan<T> {
 		public boolean accept(File file, String name) {
 			if (file.isDirectory())
 				return true;
-			return getPathMatcher().match(PATH_PATTERN.get(), file.getPath());
+			return getPathMatcher().match(PATH_PATTERN, file.getPath());
 		}
 	}
 

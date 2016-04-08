@@ -1,6 +1,5 @@
 package cn.zhuhongqing.dbmeta;
 
-import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.JDBCType;
@@ -16,8 +15,8 @@ import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 import cn.zhuhongqing.dbmeta.struct.Column;
 import cn.zhuhongqing.dbmeta.struct.Table;
 import cn.zhuhongqing.dbmeta.struct.TableType;
-import cn.zhuhongqing.dbmeta.utils.UnCatchSQLExceptionUtil;
 import cn.zhuhongqing.dbmeta.utils.DBUtil.CloseHelper;
+import cn.zhuhongqing.dbmeta.utils.UnCatchSQLExceptionUtil;
 import cn.zhuhongqing.exception.ValidationException;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.GeneralUtil;
@@ -51,18 +50,15 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	/** 扫描{DEF_PACKAGE}包下所有DBMetaInfo的子类 并注册进数据库信息管理中 */
 	static {
-		ClassScan cs = new ClassScan();
-		Set<Class<?>> classes = cs.getResources(_DEF_PACKAGE);
-		classes.forEach(c -> {
-			if (ClassUtil.isAssignable(DBMetaInfo.class, c)
-					&& ReflectUtil.isOrdinaryClass(c)) {
-				Constructor<?> con = ReflectUtil
-						.getNoParamAndUsableConstructor(c);
-				if (GeneralUtil.isNull(con)) {
-					return;
-				}
-				addDBMetaInfo((DBMetaInfo) ReflectUtil.autoNewInstance(c));
+		Set<Class<?>> classes = new ClassScan(c -> {
+			if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(DBMetaInfo.class,
+					c)) {
+				return c;
 			}
+			return null;
+		}).getResources(_DEF_PACKAGE);
+		classes.forEach(c -> {
+			addDBMetaInfo((DBMetaInfo) ReflectUtil.autoNewInstance(c));
 		});
 	}
 

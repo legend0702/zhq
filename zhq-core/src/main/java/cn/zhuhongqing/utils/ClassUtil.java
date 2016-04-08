@@ -1,5 +1,6 @@
 package cn.zhuhongqing.utils;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -198,6 +199,29 @@ public class ClassUtil {
 			Class<?> resolvedWrapper = primitiveToWrapper(rhsType);
 			if (resolvedWrapper != null
 					&& lhsType.isAssignableFrom(resolvedWrapper)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 主要对于Child的判断<br>
+	 * 1.是否是ifs的子类或实现<br/>
+	 * 2.是否是一个可以创建对象并且有无参构造函数的类<br/>
+	 * 
+	 * @param ifs
+	 * @param child
+	 * @return
+	 */
+
+	public static boolean isOrdinaryAndDiectNewAndAssignable(Class<?> ifs,
+			Class<?> child) {
+		if (ClassUtil.isAssignable(ifs, child)
+				&& ReflectUtil.isOrdinaryClass(child)) {
+			Constructor<?> con = ReflectUtil
+					.getNoParamAndUsableConstructor(child);
+			if (!GeneralUtil.isNull(con)) {
 				return true;
 			}
 		}

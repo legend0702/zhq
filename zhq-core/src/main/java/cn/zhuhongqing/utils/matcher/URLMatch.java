@@ -1,5 +1,6 @@
 package cn.zhuhongqing.utils.matcher;
 
+import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.utils.StringPool;
 
 /**
@@ -9,6 +10,7 @@ import cn.zhuhongqing.utils.StringPool;
  * 
  */
 
+@NotThreadSafe
 public class URLMatch extends AbstractMatcher {
 
 	@Override

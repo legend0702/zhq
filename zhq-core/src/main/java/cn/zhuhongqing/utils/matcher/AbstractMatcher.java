@@ -9,16 +9,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.StringUtil;
 
 /**
- * AbstractMatcher.
+ * AbstractMatcher.<br/>
  * 
  * @author HongQing.Zhu
  * 
  */
 
+@NotThreadSafe
 public abstract class AbstractMatcher implements PathMatcher {
 
 	static final String EMPTY_STRING = StringPool.EMPTY;

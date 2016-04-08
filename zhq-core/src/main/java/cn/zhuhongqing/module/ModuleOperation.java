@@ -8,7 +8,6 @@ import cn.zhuhongqing.ZHQ;
 import cn.zhuhongqing.exception.ModuleException;
 import cn.zhuhongqing.utils.ReflectUtil;
 import cn.zhuhongqing.utils.scan.ClassScan;
-import cn.zhuhongqing.utils.scan.ResourceScan;
 
 /**
  * Load and init {@link Module}.
@@ -22,8 +21,6 @@ import cn.zhuhongqing.utils.scan.ResourceScan;
  */
 
 public class ModuleOperation {
-
-	private static final ResourceScan<Class<?>> classScanner = new ClassScan();
 
 	private ModuleOperation() {
 	};
@@ -73,7 +70,7 @@ public class ModuleOperation {
 	public static void loadModule(String... packageNames) {
 		Set<Class<?>> moduleClasses = new LinkedHashSet<Class<?>>();
 		for (String packageName : packageNames) {
-			moduleClasses.addAll(classScanner.getResources(packageName));
+			moduleClasses.addAll(new ClassScan().getResources(packageName));
 		}
 		Iterator<Class<?>> classItr = moduleClasses.iterator();
 		while (classItr.hasNext()) {

@@ -3,27 +3,38 @@ package cn.zhuhongqing.utils.scan;
 import java.io.File;
 import java.util.Set;
 
+import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.matcher.FilePathMatcher;
 import cn.zhuhongqing.utils.matcher.PathMatcher;
 
 /**
- * ClassScan.
- * 
- * Scan ClassPath-Resource.
- * 
- * It's thread-safe.
+ * Class Scan.<br/>
  * 
  * @author HongQing.Zhu
  * 
  */
 
+@NotThreadSafe
 public class ClassScan extends AbstractScan<Class<?>> {
 
 	private FileAbstractScan<Class<?>> fileScan = new ClassFileScan();
+	private ClassScanFilter filter;
+	private String rootPackage;
 
-	private ThreadLocal<String> rootPackage = new ThreadLocal<String>();
+	public ClassScan() {
+		filter = new ClassScanFilter() {
+			@Override
+			public Class<?> after(Class<?> claz) {
+				return claz;
+			}
+		};
+	}
+
+	public ClassScan(ClassScanFilter filter) {
+		this.filter = filter;
+	}
 
 	/**
 	 * {@link ClassUtil#forName(String)}
@@ -60,7 +71,7 @@ public class ClassScan extends AbstractScan<Class<?>> {
 			rePath = rePath.concat(PathMatcher.ALL_WORD_PATTERN);
 		}
 		rePath = rePath.concat(ClassUtil.CLASS_FILE_SUFFIX);
-		rootPackage.set(fileScan.determineRootDir(rePath));
+		rootPackage = fileScan.determineRootDir(rePath);
 		return fileScan.getResources(rePath);
 	}
 
@@ -69,8 +80,9 @@ public class ClassScan extends AbstractScan<Class<?>> {
 	 */
 
 	Class<?> classFileToClass(File file) {
-		return getResource(ClassUtil.filePathToClassPath(file.getPath()
-				.substring(file.getPath().indexOf(rootPackage.get()))));
+		Class<?> claz = getResource(ClassUtil.filePathToClassPath(file
+				.getPath().substring(file.getPath().indexOf(rootPackage))));
+		return filter.after(claz);
 	}
 
 	/**
@@ -94,7 +106,24 @@ public class ClassScan extends AbstractScan<Class<?>> {
 				return classFileToClass(file);
 			return null;
 		}
+	}
 
+	public ClassScanFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(ClassScanFilter filter) {
+		this.filter = filter;
+	}
+
+	/**
+	 * 类扫描过滤器<br/>
+	 * 用来根据类的属性 过滤不要的类<br/>
+	 * 返回Null就会被丢弃
+	 */
+
+	public static interface ClassScanFilter {
+		public Class<?> after(Class<?> claz);
 	}
 
 }
