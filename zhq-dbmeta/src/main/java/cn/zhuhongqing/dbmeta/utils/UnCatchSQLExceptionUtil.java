@@ -1,4 +1,4 @@
-package cn.zhq.dbmeta.utils;
+package cn.zhuhongqing.dbmeta.utils;
 
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import cn.zhq.dbmeta.excetion.DBMetaException;
 import cn.zhuhongqing.call.CallBack;
+import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 
 public class UnCatchSQLExceptionUtil {
 

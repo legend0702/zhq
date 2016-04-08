@@ -1,11 +1,11 @@
-package cn.zhq.dbmeta.cfg;
+package cn.zhuhongqing.dbmeta.cfg;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.Properties;
 
-import cn.zhq.dbmeta.excetion.DBMetaException;
-import cn.zhq.dbmeta.utils.DBUtil;
+import cn.zhuhongqing.dbmeta.exception.DBMetaException;
+import cn.zhuhongqing.dbmeta.utils.DBUtil;
 
 /**
  * 链接数据库用的属性

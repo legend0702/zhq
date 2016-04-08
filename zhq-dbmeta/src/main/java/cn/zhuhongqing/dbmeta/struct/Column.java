@@ -1,4 +1,4 @@
-package cn.zhq.dbmeta.struct;
+package cn.zhuhongqing.dbmeta.struct;
 
 import java.sql.JDBCType;
 

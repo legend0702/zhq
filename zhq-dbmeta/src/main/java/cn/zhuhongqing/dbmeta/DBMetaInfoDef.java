@@ -1,4 +1,4 @@
-package cn.zhq.dbmeta;
+package cn.zhuhongqing.dbmeta;
 
 /**
  * 默认的操作类

@@ -1,4 +1,4 @@
-package cn.zhq.dbmeta;
+package cn.zhuhongqing.dbmeta;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
@@ -11,13 +11,13 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import cn.zhq.dbmeta.excetion.DBMetaException;
-import cn.zhq.dbmeta.struct.Column;
-import cn.zhq.dbmeta.struct.Table;
-import cn.zhq.dbmeta.struct.TableType;
-import cn.zhq.dbmeta.utils.UnCatchSQLExceptionUtil;
-import cn.zhq.dbmeta.utils.DBUtil.CloseHelper;
 import cn.zhuhongqing.call.CallBack;
+import cn.zhuhongqing.dbmeta.exception.DBMetaException;
+import cn.zhuhongqing.dbmeta.struct.Column;
+import cn.zhuhongqing.dbmeta.struct.Table;
+import cn.zhuhongqing.dbmeta.struct.TableType;
+import cn.zhuhongqing.dbmeta.utils.UnCatchSQLExceptionUtil;
+import cn.zhuhongqing.dbmeta.utils.DBUtil.CloseHelper;
 import cn.zhuhongqing.exception.ValidationException;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.GeneralUtil;

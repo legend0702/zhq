@@ -1,11 +1,11 @@
-package cn.zhq.dbmeta.oracle;
+package cn.zhuhongqing.dbmeta.oracle;
 
 import java.sql.ResultSet;
 
-import cn.zhq.dbmeta.DBMetaInfo;
-import cn.zhq.dbmeta.struct.Column;
-import cn.zhq.dbmeta.struct.Table;
-import cn.zhq.dbmeta.utils.DBUtil;
+import cn.zhuhongqing.dbmeta.DBMetaInfo;
+import cn.zhuhongqing.dbmeta.struct.Column;
+import cn.zhuhongqing.dbmeta.struct.Table;
+import cn.zhuhongqing.dbmeta.utils.DBUtil;
 
 public class OracleDBMetaInfo extends DBMetaInfo {
 

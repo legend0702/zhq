@@ -1,8 +1,8 @@
-package cn.zhq.dbmeta;
+package cn.zhuhongqing.dbmeta;
 
 import java.sql.Connection;
 
-import cn.zhq.dbmeta.cfg.ConnectionInfo;
+import cn.zhuhongqing.dbmeta.cfg.ConnectionInfo;
 
 /**
  * 一个读取数据库元属性工具包

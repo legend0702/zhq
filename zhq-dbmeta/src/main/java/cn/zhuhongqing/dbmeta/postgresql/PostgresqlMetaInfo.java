@@ -1,6 +1,6 @@
-package cn.zhq.dbmeta.postgresql;
+package cn.zhuhongqing.dbmeta.postgresql;
 
-import cn.zhq.dbmeta.DBMetaInfo;
+import cn.zhuhongqing.dbmeta.DBMetaInfo;
 
 public class PostgresqlMetaInfo extends DBMetaInfo {
 

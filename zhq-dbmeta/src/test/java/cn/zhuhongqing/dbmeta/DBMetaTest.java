@@ -1,6 +1,10 @@
-package cn.zhq.dbmeta;
+package cn.zhuhongqing.dbmeta;
 
-import cn.zhq.dbmeta.struct.Table;
+import org.junit.Test;
+
+import cn.zhuhongqing.dbmeta.DBMeta;
+import cn.zhuhongqing.dbmeta.DBMetaInfo;
+import cn.zhuhongqing.dbmeta.struct.Table;
 
 /**
  * Test
@@ -11,11 +15,11 @@ import cn.zhq.dbmeta.struct.Table;
 public class DBMetaTest {
 
 	public static DBMetaInfo createDBDbMetaInfo() {
-		return DBMeta.createDBMetaInfo("postgresql.properties");
-		// return DBMeta.createDBMetaInfo("oracle.properties");
+		// return DBMeta.createDBMetaInfo("postgresql.properties");
+		return DBMeta.createDBMetaInfo("oracle.properties");
 	}
 
-	// @Test
+	@Test
 	public void showDefTables() {
 		DBMetaInfo metaInfo = createDBDbMetaInfo();
 		metaInfo.getTables().forEach(t -> {
@@ -24,7 +28,7 @@ public class DBMetaTest {
 		});
 	}
 
-	// @Test
+	@Test
 	public void showAppointTable() {
 		DBMetaInfo metaInfo = createDBDbMetaInfo();
 		Table t = metaInfo.getTable("stock_day_deal");

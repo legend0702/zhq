@@ -1,4 +1,4 @@
-package cn.zhq.dbmeta.utils;
+package cn.zhuhongqing.dbmeta.utils;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -9,8 +9,8 @@ import java.sql.Statement;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import cn.zhq.dbmeta.cfg.ConnectionInfo;
-import cn.zhq.dbmeta.excetion.DBMetaException;
+import cn.zhuhongqing.dbmeta.cfg.ConnectionInfo;
+import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 import cn.zhuhongqing.utils.ArraysUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
 import cn.zhuhongqing.utils.StringUtil;

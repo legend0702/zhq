@@ -1,33 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>cn.zhuhongqing</groupId>
+	<artifactId>zhq-parent</artifactId>
 	<version>0.0.1</version>
 	<packaging>pom</packaging>
-
-	<artifactId>zhq-parent</artifactId>
-
-	<name>HongQing.Zhu</name>
-
+	<name>zhq</name>
 	<description>Some modules for future develop,it's free to use. :)</description>
+	<url>https://github.com/legend0702/zhq</url>
 
-	<url>www.zhuhongqing.cn</url>
+	<issueManagement>
+    	<system>GitHub</system>
+    	<url>https://github.com/legend0702/zhq/issues</url>
+  	</issueManagement>		
 
 	<developers>
 		<developer>
 			<name>HongQing.Zhu</name>
-			<url>http://zhuhongqing.com</url>
+			<url>http://www.zhuhongqing.cn</url>
 			<email>qwepoidjdj@gmail.com</email>
 			<timezone>+08:00</timezone>
 		</developer>
 	</developers>
-
-	<scm>
-		<url>https://git.oschina.net/border/ZHQ</url>
-		<developerConnection>git@git.oschina.net:border/ZHQ.git</developerConnection>
-	</scm>
 
 	<properties>
 		<jetty.version>9.2.0.M0</jetty.version>
@@ -40,7 +35,7 @@
 		<module>zhq-core</module>
 		<module>zhq-logger</module>
 		<module>zhq-script</module>
-		<!-- <module>zhq-converter</module> <module>zhq-bean</module> <module>zhq-generator</module> 
+		<!-- <module>zhq-converter</module> <module>zhq-bean</module>
 			<module>zhq-security</module> <module>zhq-encrypt</module> -->
 		<module>zhq-validate</module>
 		<module>zhq-websocket-deploy</module>
@@ -55,7 +50,9 @@
 		<module>zhq-codec-kryo</module>
 		<module>zhq-excel</module>
 		<module>zhq-dbmeta</module>
-	</modules>
+    	<module>zhq-template</module>
+    	<module>zhq-generator</module>
+  </modules>
 
 	<dependencyManagement>
 		<dependencies>
@@ -146,7 +143,6 @@
 				<artifactId>poi-ooxml</artifactId>
 				<version>${poi.version}</version>
 			</dependency>
-
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-ooxml-schemas</artifactId>
@@ -166,17 +162,32 @@
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
-				<artifactId>zhq-validate</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-script</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-dbmeta</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-template</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-generator</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-converter</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-validate</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -187,11 +198,6 @@
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-codec</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>cn.zhuhongqing</groupId>
-				<artifactId>zhq-generator</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
@@ -220,7 +226,6 @@
 				<version>${jetty.version}</version>
 				<configuration>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
-					<useFileMappedBuffer>false</useFileMappedBuffer>
 					<httpConnector>
 						<port>80</port>
 					</httpConnector>

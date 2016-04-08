@@ -1,4 +1,4 @@
-package cn.zhq.dbmeta;
+package cn.zhuhongqing.dbmeta;
 
 /**
  * 数据库中会用到的一些静态变量

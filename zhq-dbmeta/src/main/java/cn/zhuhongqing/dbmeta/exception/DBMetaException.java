@@ -1,4 +1,4 @@
-package cn.zhq.dbmeta.excetion;
+package cn.zhuhongqing.dbmeta.exception;
 
 import cn.zhuhongqing.exception.ZHQRuntimeException;
 
