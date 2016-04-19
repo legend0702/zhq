@@ -8,8 +8,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cn.zhuhongqing.template.TemplateProcess;
-import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.factory.SingleImplementFacadeFactory;
+import cn.zhuhongqing.utils.loader.ClassPathResourceLoader;
 
 /**
  * Unit test for TemplateVelocity.
@@ -26,11 +26,12 @@ public class TemplateVelocityTest {
 
 	@Test
 	public void velocity() throws Exception {
-		HashMap<String, Object> model = new HashMap<String, Object>();
+		HashMap<String, Object> model = new HashMap<String, Object>(1);
 		model.put("w", "Velocity!");
-		StringWriter sw = new StringWriter();
-		tp.render(new InputStreamReader(ClassUtil.getDefaultClassLoader()
-				.getResourceAsStream("velocityTemp")), sw, model);
+		StringWriter sw = new StringWriter(1024);
+		tp.render(
+				new InputStreamReader(new ClassPathResourceLoader()
+						.loaderAsStream("velocityTemp")), sw, model);
 		System.out.println(sw.toString());
 	}
 
