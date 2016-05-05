@@ -2,8 +2,7 @@ package cn.zhuhongqing.dbmeta;
 
 import org.junit.Test;
 
-import cn.zhuhongqing.dbmeta.DBMeta;
-import cn.zhuhongqing.dbmeta.DBMetaInfo;
+import cn.zhuhongqing.DBMeta;
 import cn.zhuhongqing.dbmeta.struct.Table;
 
 /**
@@ -14,14 +13,13 @@ import cn.zhuhongqing.dbmeta.struct.Table;
  */
 public class DBMetaTest {
 
-	public static DBMetaInfo createDBDbMetaInfo() {
-		// return DBMeta.createDBMetaInfo("postgresql.properties");
-		return DBMeta.createDBMetaInfo("oracle.properties");
+	public static DBMetaInfo createDBDbMetaInfo(String prop) {
+		return DBMeta.createDBMetaInfo(prop);
 	}
 
 	@Test
 	public void showDefTables() {
-		DBMetaInfo metaInfo = createDBDbMetaInfo();
+		DBMetaInfo metaInfo = createDBDbMetaInfo("oracle.properties");
 		metaInfo.getTables().forEach(t -> {
 			System.out.println(t);
 			t.getColumns().forEach(c -> System.out.println(c));
@@ -30,7 +28,7 @@ public class DBMetaTest {
 
 	@Test
 	public void showAppointTable() {
-		DBMetaInfo metaInfo = createDBDbMetaInfo();
+		DBMetaInfo metaInfo = createDBDbMetaInfo("postgresql.properties");
 		Table t = metaInfo.getTable("stock_day_deal");
 		System.out.println(t);
 		t.getColumns().forEach(c -> System.out.println(c));
