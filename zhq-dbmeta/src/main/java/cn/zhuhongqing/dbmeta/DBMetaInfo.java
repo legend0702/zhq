@@ -10,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import cn.zhuhongqing.DBMetaConst;
 import cn.zhuhongqing.call.CallBack;
 import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 import cn.zhuhongqing.dbmeta.struct.Column;
@@ -22,7 +23,8 @@ import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.GeneralUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
 import cn.zhuhongqing.utils.StringUtil;
-import cn.zhuhongqing.utils.scan.ClassScan;
+import cn.zhuhongqing.utils.scan.ResourceFilter;
+import cn.zhuhongqing.utils.scan.ResourceScanManager;
 
 /**
  * 描述数据库元信息<br/>
@@ -37,6 +39,7 @@ import cn.zhuhongqing.utils.scan.ClassScan;
  *
  */
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	/** 存储所有DBMetaInfo子类的实例化 子类必须要由无参的构造函数 不然初始化会失败 */
@@ -45,21 +48,30 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	private static final String[] _TABLE_TYPE = new String[] {
 			TableType.TABLE.name(), TableType.VIEW.name() };
 	/** 默认子类的放置位置 */
-	private static final String _DEF_PACKAGE = "cn.zhq.dbmeta.**";
+	private static final String _DEF_PATH = "cn/zhuhongqing/dbmeta/*/*";
 	private static final String _DEF = "def";
 
 	/** 扫描{DEF_PACKAGE}包下所有DBMetaInfo的子类 并注册进数据库信息管理中 */
 	static {
-		Set<Class<?>> classes = new ClassScan(c -> {
-			if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(DBMetaInfo.class,
-					c)) {
-				return c;
-			}
-			return null;
-		}).getResources(_DEF_PACKAGE);
-		classes.forEach(c -> {
-			addDBMetaInfo((DBMetaInfo) ReflectUtil.autoNewInstance(c));
+		Set<Class> cSet = ResourceScanManager.autoGetResources(_DEF_PATH,
+				Class.class, new ResourceFilter<Class>() {
+					@Override
+					public boolean accept(Class c) {
+						if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(
+								DBMetaInfo.class, c)) {
+							return true;
+						}
+						return false;
+					}
+				});
+
+		cSet.forEach(c -> {
+			addDBMetaInfo((DBMetaInfo) ReflectUtil.newInstanceWithoutArgs(c));
 		});
+
+		if (_META_MAP.isEmpty()) {
+			throw new DBMetaException("没有找到任何DBMetaInfo的子类,初始化失败!");
+		}
 	}
 
 	private Connection conn;

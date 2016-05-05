@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 import cn.zhuhongqing.dbmeta.utils.DBUtil;
+import cn.zhuhongqing.utils.ClassUtil;
 
 /**
  * 链接数据库用的属性
@@ -25,7 +26,8 @@ public class ConnectionInfo extends Properties {
 
 	public ConnectionInfo(String propPath) {
 		try {
-			load(ClassLoader.getSystemResourceAsStream(propPath));
+			load(ClassUtil.getDefaultClassLoader()
+					.getResourceAsStream(propPath));
 		} catch (IOException e) {
 			throw new DBMetaException(e);
 		}
