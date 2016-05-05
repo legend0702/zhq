@@ -8,10 +8,12 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.NullLogChute;
 
+import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.template.TemplateProcess;
 import cn.zhuhongqing.template.exception.TemplateException;
 import cn.zhuhongqing.utils.bean.BeanUtil;
 
+@NotThreadSafe
 public class TemplateProcessImpl implements TemplateProcess {
 
 	private VelocityEngine ve;

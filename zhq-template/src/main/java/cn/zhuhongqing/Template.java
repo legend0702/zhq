@@ -10,6 +10,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.io.FileIOParams;
 import cn.zhuhongqing.module.Module;
 import cn.zhuhongqing.template.TemplateProcess;
@@ -18,13 +19,17 @@ import cn.zhuhongqing.utils.factory.SingleImplementFacadeFactory;
 
 /**
  * 模板工具包<br/>
- * 静态方法存在线程安全问题<br/>
  * 如需并行渲染 请用{@link Template#createRender()}创建多个渲染器 并调用非静态方法进行操作
  * 
  * @author HongQing.Zhu
- *
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         <li>Github:github.com/legend0702</li>
+ *         </nl>
  */
 
+@NotThreadSafe
 public class Template extends Module {
 
 	protected Template() {
