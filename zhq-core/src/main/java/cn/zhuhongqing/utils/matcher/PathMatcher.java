@@ -29,6 +29,11 @@ public interface PathMatcher {
 
 	public boolean match(String pattern, String path);
 
+	/**
+	 * 只匹配传入的path部分
+	 */
+	public boolean matchStart(String pattern, String path);
+
 	public boolean isPattern(String path);
 
 	public boolean hasPattern(String path);

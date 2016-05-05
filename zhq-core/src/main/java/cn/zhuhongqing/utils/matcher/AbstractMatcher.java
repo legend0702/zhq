@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.StringUtil;
 
@@ -20,10 +19,7 @@ import cn.zhuhongqing.utils.StringUtil;
  * 
  */
 
-@NotThreadSafe
 public abstract class AbstractMatcher implements PathMatcher {
-
-	static final String EMPTY_STRING = StringPool.EMPTY;
 
 	/**
 	 * Path separator.
@@ -32,7 +28,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 	abstract String getPathSeparator();
 
 	/**
-	 * 缓存每次匹配过的数据集
+	 * PatternMatcher cache.
 	 */
 
 	final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<String, AntPathStringMatcher>(
@@ -41,6 +37,11 @@ public abstract class AbstractMatcher implements PathMatcher {
 	@Override
 	public boolean match(String pattern, String path) {
 		return doMatch(pattern, path, true);
+	}
+
+	@Override
+	public boolean matchStart(String pattern, String path) {
+		return doMatch(pattern, path, false);
 	}
 
 	@Override
@@ -53,10 +54,6 @@ public abstract class AbstractMatcher implements PathMatcher {
 	@Override
 	public boolean hasPattern(String path) {
 		return isPattern(path);
-	}
-
-	boolean matchStart(String pattern, String path) {
-		return doMatch(pattern, path, false);
 	}
 
 	/**
@@ -283,7 +280,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 
 		private String quote(String s, int start, int end) {
 			if (start == end) {
-				return EMPTY_STRING;
+				return StringPool.EMPTY;
 			}
 			return Pattern.quote(s.substring(start, end));
 		}
@@ -295,12 +292,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 		 *         {@code false} otherwise.
 		 */
 		public boolean matchStrings(String str) {
-			Matcher matcher = this.pattern.matcher(str);
-			if (matcher.matches()) {
-				return true;
-			} else {
-				return false;
-			}
+			return this.pattern.matcher(str).matches();
 		}
 	}
 

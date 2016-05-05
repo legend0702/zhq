@@ -55,6 +55,10 @@ public class ClassUtil {
 		return cl;
 	}
 
+	public static boolean isClassFile(String path) {
+		return path.endsWith(CLASS_FILE_SUFFIX);
+	}
+
 	/**
 	 * Like {@link Class#forName(String)},but it will't throw an exception,it
 	 * will return null instead;
@@ -155,23 +159,22 @@ public class ClassUtil {
 	}
 
 	/**
-	 * Replace "." to "\"
+	 * Replace {@link StringPool#FILE_SEPARATOR} to "." and cut
+	 * {@value #CLASS_FILE_SUFFIX}
 	 */
 
-	public static String classPathToFilePath(String path) {
-		return path.replace(StringPool.DOT, StringPool.BACK_SLASH);
-	}
-
-	/**
-	 * Replace "\" to "." and cut {@value #CLASS_FILE_SUFFIX}
-	 */
-
-	public static String filePathToClassPath(String path) {
-		String className = path.replace(StringPool.BACK_SLASH, StringPool.DOT);
+	public static String cleanSuffixAndToClass(String path) {
+		String className = StringUtil.cleanPath(path).replace(
+				StringPool.FILE_SEPARATOR, StringPool.DOT);
 		int cutIndex = className.lastIndexOf(CLASS_FILE_SUFFIX);
 		if (cutIndex == -1)
 			return className;
 		return className.substring(0, cutIndex);
+	}
+
+	public static String classToSlash(String clazType) {
+		String str = StringUtil.replaceDotToSlash(clazType);
+		return StringUtil.endPadSlash(str);
 	}
 
 	/**

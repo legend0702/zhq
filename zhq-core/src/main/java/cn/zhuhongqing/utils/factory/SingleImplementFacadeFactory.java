@@ -10,7 +10,9 @@ import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
 import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.scan.ClassScan;
+import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.utils.scan.ResourceFilter;
+import cn.zhuhongqing.utils.scan.ResourceScanManager;
 
 /**
  * 一个简单的门面工具类 <br>
@@ -88,14 +90,21 @@ public final class SingleImplementFacadeFactory {
 	 * 按 {@link Class#forName(String)}的方式返回一个实现类
 	 */
 
-	static Class<?> tryToCheckMutliImplAndGetOne(Class<?> ifs) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	static Class<?> tryToCheckMutliImplAndGetOne(final Class<?> ifs) {
 		String packName = createImplPackagePattern(ifs);
-		Set<Class<?>> clazs = new ClassScan(c -> {
-			if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(ifs, c)) {
-				return c;
-			}
-			return null;
-		}).getResources(packName);
+		Set<Class> clazs = ResourceScanManager.autoGetResources(
+				StringUtil.replaceDotToSlash(packName), Class.class,
+				new ResourceFilter<Class>() {
+					@Override
+					public boolean accept(Class resource) {
+						if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(ifs,
+								resource)) {
+							return true;
+						}
+						return false;
+					}
+				});
 		if (clazs.isEmpty()) {
 			throw new UtilsException("Can not find implment class for : ["
 					+ ifs.getClass() + "]!");
@@ -107,4 +116,5 @@ public final class SingleImplementFacadeFactory {
 		}
 		return reClaz;
 	}
+
 }

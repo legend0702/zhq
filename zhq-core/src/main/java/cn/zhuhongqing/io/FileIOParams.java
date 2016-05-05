@@ -2,6 +2,8 @@ package cn.zhuhongqing.io;
 
 import java.nio.charset.Charset;
 
+import cn.zhuhongqing.ZHQ;
+
 /**
  * 文件IO帮助类
  * 
@@ -12,7 +14,7 @@ import java.nio.charset.Charset;
 public class FileIOParams {
 
 	private String path;
-	private Charset cs = Charset.defaultCharset();
+	private Charset cs = Charset.forName(ZHQ.DEFAULT_ENCODING);
 
 	public FileIOParams(String path) {
 		this.path = path;

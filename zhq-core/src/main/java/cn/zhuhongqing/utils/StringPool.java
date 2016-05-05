@@ -1,5 +1,6 @@
 package cn.zhuhongqing.utils;
 
+import java.nio.file.FileSystems;
 
 /**
  * Pool of <code>String</code> constants to prevent repeating of hard-coded
@@ -82,6 +83,8 @@ public interface StringPool {
 	final String DOLLAR_LEFT_BRACE = "${";
 	final String CRLF = "\r\n";
 	final String PROTOCOL_START = "://";
+	final String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
+	// final String FILE_SEPARATOR = SLASH;
 
 	final String HTML_NBSP = "&nbsp;";
 	final String HTML_AMP = "&amp";

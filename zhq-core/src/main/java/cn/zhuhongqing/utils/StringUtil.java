@@ -160,7 +160,7 @@ public class StringUtil {
 	 */
 	public static String replace(String inString, String oldPattern,
 			String newPattern) {
-		if (!isEmpty(inString) || !isEmpty(oldPattern) || newPattern == null) {
+		if (isEmpty(inString) || isEmpty(oldPattern) || isEmpty(newPattern)) {
 			return inString;
 		}
 		StringBuilder sb = new StringBuilder();
@@ -177,6 +177,14 @@ public class StringUtil {
 		sb.append(inString.substring(pos));
 		// remember to append any characters to the right of a match
 		return sb.toString();
+	}
+
+	public static String replaceSlashToDot(String inString) {
+		return replace(inString, StringPool.SLASH, StringPool.DOT);
+	}
+
+	public static String replaceDotToSlash(String inString) {
+		return replace(inString, StringPool.DOT, StringPool.SLASH);
 	}
 
 	/**
@@ -412,13 +420,6 @@ public class StringUtil {
 		return split(str, StringPool.COMMA);
 	}
 
-	public static void main(String[] args) {
-		String[] ss = delimitedListToStringArray("1,2,3,", ",");
-		for (String s : ss) {
-			System.out.println(s);
-		}
-	}
-
 	/**
 	 * Copy the given Collection into a String array. The Collection must
 	 * contain String elements only.
@@ -447,6 +448,14 @@ public class StringUtil {
 		if (!str.endsWith(end))
 			str = str + end;
 		return str;
+	}
+
+	public static String endPadAsterisk(String str) {
+		return endPad(str, StringPool.ASTERISK);
+	}
+
+	public static String endPadSlash(String str) {
+		return endPad(str, StringPool.SLASH);
 	}
 
 	/**

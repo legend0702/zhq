@@ -18,14 +18,22 @@ import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.jar.JarFile;
 
+import cn.zhuhongqing.ZHQ;
+import cn.zhuhongqing.utils.SchemeAndProtocol;
 import cn.zhuhongqing.utils.StreamUtil;
 import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.SystemUtil;
+import cn.zhuhongqing.utils.URIUtil;
 
 /**
  * File utilities.
@@ -90,12 +98,70 @@ public class FileUtil {
 		return file(fileName);
 	}
 
+	public static JarFile toJarFile(URI uri) {
+		URLConnection con;
+		try {
+			con = uri.toURL().openConnection();
+			if (con instanceof JarURLConnection) {
+				// Should usually be the case for traditional JAR files.
+				JarURLConnection jarCon = (JarURLConnection) con;
+				return jarCon.getJarFile();
+			} else {
+				// No JarURLConnection -> need to resort to URL file parsing.
+				// We'll assume URLs of the format "jar:path!/entry", with the
+				// protocol
+				// being arbitrary as long as following the entry format.
+				// We'll also handle paths with and without leading "file:"
+				// prefix.
+				String urlFile = uri.toURL().getFile();
+				int separatorIndex = urlFile
+						.indexOf(SchemeAndProtocol.JAR_PATH_SEPARATOR);
+				if (separatorIndex != -1) {
+					return toJarFile(urlFile.substring(0, separatorIndex));
+				} else {
+					return new JarFile(urlFile);
+				}
+			}
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	/**
+	 * Resolve the given jar file URL into a JarFile object.
+	 */
+	public static JarFile toJarFile(String jarFileUrl) {
+		try {
+			if (jarFileUrl.startsWith(SchemeAndProtocol.FILE_PATH_PREFIX)) {
+
+				return new JarFile(URIUtil.toURI(jarFileUrl)
+						.getSchemeSpecificPart());
+			} else {
+				return new JarFile(jarFileUrl);
+			}
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
 	/**
 	 * Converts file to URL in a correct way. Returns <code>null</code> in case
 	 * of error.
 	 */
 	public static URL toURL(File file) throws MalformedURLException {
 		return file.toURI().toURL();
+	}
+
+	/**
+	 * Convert files to URI in correct way.
+	 */
+
+	public static URI[] toURIs(File... files) {
+		URI[] uris = new URI[files.length];
+		for (int i = 0; i < uris.length; i++) {
+			uris[i] = files[i].toURI();
+		}
+		return uris;
 	}
 
 	/**
@@ -627,6 +693,64 @@ public class FileUtil {
 		}
 	}
 
+	/**
+	 * Finds files and directories within a given directory.
+	 * 
+	 * @see FileUtil#listFiles(Collection, File, FileFilter)
+	 */
+
+	public static void listFiles(Collection<File> files, File rootDirectory) {
+		listFiles(files, rootDirectory, TrueFileFilter.INSTANCE);
+	}
+
+	/**
+	 * Finds files within a given directory (and optionally its
+	 * sub-directories).<br/>
+	 * All files found are filtered by an FileFilter.<br/>
+	 *
+	 * @param files
+	 *            the collection of files found.(Include directories)
+	 * @param directory
+	 *            the directory to search in.(Root Directory)
+	 * @param filter
+	 *            the filter to apply to files and directories.
+	 */
+
+	public static void listFiles(Collection<File> files, File rootDirectory,
+			FileFilter filter) {
+		if (rootDirectory.exists() && rootDirectory.isDirectory() == false) {
+			throw new IllegalArgumentException(MSG_NOT_A_DIRECTORY
+					+ rootDirectory);
+		}
+		innerListFiles(files, rootDirectory, filter);
+	}
+
+	/**
+	 * Finds files within a given directory (and optionally its
+	 * sub-directories).<br/>
+	 * All files found are filtered by an FileFilter.<br/>
+	 *
+	 * @param files
+	 *            the collection of files found.(Include directories)
+	 * @param directory
+	 *            the directory to search in.(Root Directory)
+	 * @param filter
+	 *            the filter to apply to files and directories.
+	 */
+
+	private static void innerListFiles(Collection<File> files, File directory,
+			FileFilter filter) {
+		File[] found = directory.listFiles(filter);
+		if (found != null) {
+			for (int i = 0; i < found.length; i++) {
+				files.add(found[i]);
+				if (found[i].isDirectory()) {
+					innerListFiles(files, found[i], filter);
+				}
+			}
+		}
+	}
+
 	// ----------------------------------------------------------------
 	// read/write chars
 
@@ -972,6 +1096,70 @@ public class FileUtil {
 		return list.toArray(new String[list.size()]);
 	}
 
+	/**
+	 * Return an Iterator for the lines in a <code>File</code> using the default
+	 * encoding({@link ZHQ#DEFAULT_ENCODING}).
+	 *
+	 * @param file
+	 *            the file to open for input, must not be <code>null</code>
+	 * @return an Iterator of the lines in the file, never <code>null</code>
+	 * @throws IOException
+	 *             in case of an I/O error (file closed)
+	 * @see #lineIterator(File, String)
+	 */
+	public static ReadLineIterator lineIterator(File file) throws IOException {
+		return lineIterator(file, ZHQ.DEFAULT_ENCODING);
+	}
+
+	/**
+	 * Return an Iterator for the lines in a <code>File</code>.
+	 * <p>
+	 * This method opens an <code>InputStream</code> for the file. When you have
+	 * finished with the iterator you should close the stream to free internal
+	 * resources. This can be done by calling the
+	 * {@link ReadLineIterator#close()} or
+	 * {@link ReadLineIterator#closeQuietly(ReadLineIterator)} method.
+	 * <p>
+	 * The recommended usage pattern is:
+	 * 
+	 * <pre>
+	 * ReadLineIterator it = FileUtil.lineIterator(file, &quot;UTF-8&quot;);
+	 * try {
+	 * 	while (it.hasNext()) {
+	 * 		String line = it.nextLine();
+	 * 		// / do something with line
+	 * 	}
+	 * } finally {
+	 * 	ReadLineIterator.closeQuietly(iterator);
+	 * }
+	 * </pre>
+	 * <p>
+	 * If an exception occurs during the creation of the iterator, the
+	 * underlying stream is closed.
+	 *
+	 * @param file
+	 *            the file to open for input, must not be <code>null</code>
+	 * @param encoding
+	 *            the encoding to use, <code>null</code> means platform default
+	 * @return an Iterator of the lines in the file, never <code>null</code>
+	 * @throws IOException
+	 *             in case of an I/O error (file closed)
+	 */
+	public static ReadLineIterator lineIterator(File file, String encoding)
+			throws IOException {
+		InputStream in = null;
+		try {
+			in = new FileInputStream(file);
+			return new ReadLineIterator(new InputStreamReader(in, encoding));
+		} catch (IOException ex) {
+			throw ex;
+		} catch (RuntimeException ex) {
+			throw ex;
+		} finally {
+			StreamUtil.close(in);
+		}
+	}
+
 	// ----------------------------------------------------------------
 	// read/write bytearray
 
@@ -1272,6 +1460,10 @@ public class FileUtil {
 	}
 
 	// ---------------------------------------------------------------- misc
+
+	public static boolean isExisAndReadable(File file) {
+		return (file.exists() && file.canRead());
+	}
 
 	/**
 	 * Check if one file is an ancestor of second one.

@@ -6,7 +6,9 @@ import java.util.Set;
 
 import cn.zhuhongqing.ZHQ;
 import cn.zhuhongqing.exception.ModuleException;
+import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
+import cn.zhuhongqing.utils.StringUtil;
 import cn.zhuhongqing.utils.scan.ClassScan;
 
 /**
@@ -70,7 +72,9 @@ public class ModuleOperation {
 	public static void loadModule(String... packageNames) {
 		Set<Class<?>> moduleClasses = new LinkedHashSet<Class<?>>();
 		for (String packageName : packageNames) {
-			moduleClasses.addAll(new ClassScan().getResources(packageName));
+			packageName = ClassUtil.classToSlash(packageName);
+			moduleClasses.addAll(new ClassScan().getResources(StringUtil
+					.endPadAsterisk(packageName)));
 		}
 		Iterator<Class<?>> classItr = moduleClasses.iterator();
 		while (classItr.hasNext()) {
