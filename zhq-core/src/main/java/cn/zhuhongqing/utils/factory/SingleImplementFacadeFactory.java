@@ -90,7 +90,7 @@ public final class SingleImplementFacadeFactory {
 	 * 按 {@link Class#forName(String)}的方式返回一个实现类
 	 */
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	static Class<?> tryToCheckMutliImplAndGetOne(final Class<?> ifs) {
 		String packName = createImplPackagePattern(ifs);
 		Set<Class> clazs = ResourceScanManager.autoGetResources(
