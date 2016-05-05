@@ -13,8 +13,7 @@ package cn.zhuhongqing.utils.scan;
  */
 public class TrueResourceFilter<R> implements ResourceFilter<R> {
 
-	@SuppressWarnings("rawtypes")
-	public static final ResourceFilter INSTANCE = new TrueResourceFilter();
+	public static final ResourceFilter<?> INSTANCE = new TrueResourceFilter<>();
 
 	@Override
 	public boolean accept(R resource) {

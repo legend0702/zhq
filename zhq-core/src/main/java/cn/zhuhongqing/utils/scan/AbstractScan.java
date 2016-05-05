@@ -62,7 +62,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public R getResource(String path) {
-		return getResource(path, TrueResourceFilter.INSTANCE);
+		return getResource(path, (ResourceFilter<R>) TrueResourceFilter.INSTANCE);
 	}
 
 	/**
@@ -82,7 +82,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Set<R> getResources(String pathPattern) {
-		return getResources(pathPattern, TrueResourceFilter.INSTANCE);
+		return getResources(pathPattern, (ResourceFilter<R>) TrueResourceFilter.INSTANCE);
 	}
 
 	/**
