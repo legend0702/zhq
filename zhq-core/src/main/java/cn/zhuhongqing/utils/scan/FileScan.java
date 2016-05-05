@@ -1,22 +1,13 @@
 package cn.zhuhongqing.utils.scan;
 
 import java.io.File;
+import java.net.URI;
 
-import cn.zhuhongqing.anno.NotThreadSafe;
-
-/**
- * File scan.<br/>
- * 
- * @author HongQing.Zhu
- * 
- */
-
-@NotThreadSafe
-public class FileScan extends FileAbstractScan<File> {
+public class FileScan extends AbstractScan<File> {
 
 	@Override
-	File convert(File file) {
-		return file;
+	File convert(URI uri, PathCouple couple) {
+		return new File(uri);
 	}
 
 }
