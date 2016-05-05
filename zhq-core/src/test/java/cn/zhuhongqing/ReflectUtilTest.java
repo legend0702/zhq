@@ -5,7 +5,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -17,9 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
-
-import cn.zhuhongqing.utils.scan.AbstractScan;
-import cn.zhuhongqing.utils.scan.ClassScan;
 
 /**
  * 
@@ -267,14 +263,14 @@ public class ReflectUtilTest {
 	@Test
 	public void gen() {
 		// ParameterizedTypeImpl
-		System.out.println(ClassScan.class.getGenericSuperclass());
-		System.out.println(AbstractScan.class.getGenericInterfaces()[0]);
-		ParameterizedType pt = (ParameterizedType) ClassScan.class
-				.getGenericSuperclass();
-		ParameterizedType pi = (ParameterizedType) AbstractScan.class
-				.getGenericInterfaces()[0];
-		System.out.println(pt.getActualTypeArguments()[0]);
-		System.out.println(pi.getActualTypeArguments()[0]);
+//		System.out.println(ClassScan.class.getGenericSuperclass());
+//		System.out.println(AbstractScan.class.getGenericInterfaces()[0]);
+//		ParameterizedType pt = (ParameterizedType) ClassScan.class
+//				.getGenericSuperclass();
+//		ParameterizedType pi = (ParameterizedType) AbstractScan.class
+//				.getGenericInterfaces()[0];
+//		System.out.println(pt.getActualTypeArguments()[0]);
+//		System.out.println(pi.getActualTypeArguments()[0]);
 	}
 
 	@Test
