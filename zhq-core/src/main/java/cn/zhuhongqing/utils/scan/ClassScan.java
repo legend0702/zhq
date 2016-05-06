@@ -3,8 +3,6 @@ package cn.zhuhongqing.utils.scan;
 import java.net.URI;
 
 import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.GeneralUtil;
-import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.StringUtil;
 
 public class ClassScan extends AbstractScan<Class<?>> {
@@ -15,13 +13,9 @@ public class ClassScan extends AbstractScan<Class<?>> {
 		String maybeClass = uri.getSchemeSpecificPart().substring(
 				couple.currentURI.getSchemeSpecificPart().length());
 		if (ClassUtil.isClassFile(maybeClass)) {
-			String pkg = StringUtil.replaceSlashToDot(couple.rootURI
-					.getSchemeSpecificPart());
-			if (GeneralUtil.isPackageName(StringUtil.cutSuffix(pkg,
-					StringPool.DOT))) {
-				return ClassUtil.forName(ClassUtil.cleanSuffixAndToClass(pkg
-						.concat(maybeClass)));
-			}
+			String pkg = couple.rootURI.getSchemeSpecificPart();
+			return ClassUtil.forName(ClassUtil.cleanSuffixAndToClass(StringUtil
+					.replaceSlashToDot(pkg.concat(maybeClass))));
 		}
 		return null;
 	}

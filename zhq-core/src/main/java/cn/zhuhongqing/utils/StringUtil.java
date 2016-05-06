@@ -458,6 +458,15 @@ public class StringUtil {
 		return endPad(str, StringPool.SLASH);
 	}
 
+	public static String endPadSlashAndAsterisk(String str) {
+		if (str.endsWith(StringPool.ASTERISK)) {
+			return str;
+		}
+		String reStr = endPadSlash(str);
+		reStr = endPadAsterisk(reStr);
+		return reStr;
+	}
+
 	/**
 	 * forwardFilling value 00 - 99.
 	 */
