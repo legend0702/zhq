@@ -29,6 +29,7 @@
 		<javax.websocket>1.1</javax.websocket>
 		<poi.version>3.13</poi.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
 
 	<modules>
@@ -51,8 +52,8 @@
 		<module>zhq-excel</module>
 		<module>zhq-dbmeta</module>
     	<module>zhq-template</module>
+    	<module>zhq-template-velocity</module>
     	<module>zhq-generator</module>
-    <module>zhq-template-velocity</module>
   </modules>
 
 	<dependencyManagement>
