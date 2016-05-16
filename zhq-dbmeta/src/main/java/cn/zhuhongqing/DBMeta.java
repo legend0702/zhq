@@ -1,9 +1,13 @@
 package cn.zhuhongqing;
 
 import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
 
 import cn.zhuhongqing.dbmeta.DBMetaInfo;
 import cn.zhuhongqing.dbmeta.cfg.ConnectionInfo;
+import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 
 /**
  * 一个读取数据库元属性工具包
@@ -33,8 +37,7 @@ public class DBMeta {
 	 * @see DBMeta#createDBMetaInfo(Connection)
 	 */
 
-	public static DBMetaInfo createDBMetaInfo(String driver, String url,
-			String user, String password) {
+	public static DBMetaInfo createDBMetaInfo(String driver, String url, String user, String password) {
 		return createDBMetaInfo(new ConnectionInfo(driver, url, user, password));
 	}
 
@@ -44,6 +47,18 @@ public class DBMeta {
 
 	public static DBMetaInfo createDBMetaInfo(ConnectionInfo info) {
 		return createDBMetaInfo(info.createConn());
+	}
+
+	/**
+	 * @see DBMeta#createDBMetaInfo(Connection)
+	 */
+
+	public static DBMetaInfo createDBMetaInfo(DataSource dataSource) {
+		try {
+			return DBMetaInfo.getDBMetaInfo(dataSource.getConnection());
+		} catch (SQLException e) {
+			throw new DBMetaException(e);
+		}
 	}
 
 	/**
