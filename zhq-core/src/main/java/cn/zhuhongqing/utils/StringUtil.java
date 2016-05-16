@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import cn.zhuhongqing.utils.matcher.PathMatcher;
+
 /**
  * Utilities for String.
  * 
@@ -458,12 +460,13 @@ public class StringUtil {
 		return endPad(str, StringPool.SLASH);
 	}
 
-	public static String endPadSlashAndAsterisk(String str) {
-		if (str.endsWith(StringPool.ASTERISK)) {
+	public static String endPadSlashAndAllPattern(String str) {
+		if (str.endsWith(PathMatcher.ALL_PATTERN)
+				|| str.endsWith(PathMatcher.ALL_WORD_PATTERN)) {
 			return str;
 		}
 		String reStr = endPadSlash(str);
-		reStr = endPadAsterisk(reStr);
+		reStr = endPad(reStr, PathMatcher.ALL_PATTERN);
 		return reStr;
 	}
 
@@ -649,7 +652,7 @@ public class StringUtil {
 		if (i != -1) {
 			return string.substring(i, string.length());
 		}
-		return null;
+		return string;
 	}
 
 	/**

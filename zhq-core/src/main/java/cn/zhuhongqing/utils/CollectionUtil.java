@@ -45,4 +45,8 @@ public class CollectionUtil {
 		}
 		return returnCol;
 	}
+
+	public static boolean isEmpty(Collection<?> models) {
+		return (models == null || models.isEmpty());
+	}
 }

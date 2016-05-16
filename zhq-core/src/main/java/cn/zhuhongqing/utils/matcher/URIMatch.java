@@ -11,6 +11,8 @@ import cn.zhuhongqing.utils.StringPool;
 
 public class URIMatch extends AbstractMatcher {
 
+	public static URIMatch INSTANCE = new URIMatch();
+
 	@Override
 	String getPathSeparator() {
 		return StringPool.SLASH;

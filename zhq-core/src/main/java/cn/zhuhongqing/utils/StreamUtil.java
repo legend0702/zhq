@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
+import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.io.FastByteArrayOutputStream;
 
 /**
@@ -99,18 +100,24 @@ public class StreamUtil {
 	 * Copies input stream to output stream using buffer. Streams don't have to
 	 * be wrapped to buffered, since copying is already optimized.
 	 */
-	public static int copy(InputStream input, OutputStream output)
-			throws IOException {
+	public static int copy(InputStream input, OutputStream output) {
 		byte[] buffer = new byte[BYTE_SIZE];
 		int count = 0;
 		int read;
-		while (true) {
-			read = input.read(buffer, 0, BYTE_SIZE);
-			if (read == -1) {
-				break;
+		try {
+			while (true) {
+				read = input.read(buffer, 0, BYTE_SIZE);
+				if (read == -1) {
+					break;
+				}
+				output.write(buffer, 0, read);
+				count += read;
 			}
-			output.write(buffer, 0, read);
-			count += read;
+		} catch (IOException e) {
+			throw new UtilsException(e);
+		} finally {
+			StreamUtil.close(input);
+			StreamUtil.close(output);
 		}
 		return count;
 	}
@@ -119,8 +126,7 @@ public class StreamUtil {
 	 * Copies specified number of bytes from input stream to output stream using
 	 * buffer.
 	 */
-	public static int copy(InputStream input, OutputStream output, int byteCount)
-			throws IOException {
+	public static int copy(InputStream input, OutputStream output, int byteCount) throws IOException {
 		byte buffer[] = new byte[BYTE_SIZE];
 		int count = 0;
 		int read;
@@ -143,8 +149,7 @@ public class StreamUtil {
 	/**
 	 * Copies input stream to writer using buffer.
 	 */
-	public static void copy(InputStream input, Writer output)
-			throws IOException {
+	public static void copy(InputStream input, Writer output) throws IOException {
 		copy(input, output, DEFAULT_ENCODING);
 	}
 
@@ -152,16 +157,14 @@ public class StreamUtil {
 	 * Copies specified number of bytes from input stream to writer using
 	 * buffer.
 	 */
-	public static void copy(InputStream input, Writer output, int byteCount)
-			throws IOException {
+	public static void copy(InputStream input, Writer output, int byteCount) throws IOException {
 		copy(input, output, DEFAULT_ENCODING, byteCount);
 	}
 
 	/**
 	 * Copies input stream to writer using buffer and specified encoding.
 	 */
-	public static void copy(InputStream input, Writer output, String encoding)
-			throws IOException {
+	public static void copy(InputStream input, Writer output, String encoding) throws IOException {
 		copy(new InputStreamReader(input, encoding), output);
 	}
 
@@ -169,8 +172,7 @@ public class StreamUtil {
 	 * Copies specified number of bytes from input stream to writer using buffer
 	 * and specified encoding.
 	 */
-	public static void copy(InputStream input, Writer output, String encoding,
-			int byteCount) throws IOException {
+	public static void copy(InputStream input, Writer output, String encoding, int byteCount) throws IOException {
 		copy(new InputStreamReader(input, encoding), output, byteCount);
 	}
 
@@ -193,8 +195,7 @@ public class StreamUtil {
 	/**
 	 * Copies specified number of characters from reader to writer using buffer.
 	 */
-	public static int copy(Reader input, Writer output, int charCount)
-			throws IOException {
+	public static int copy(Reader input, Writer output, int charCount) throws IOException {
 		char buffer[] = new char[BYTE_SIZE];
 		int count = 0;
 		int read;
@@ -217,8 +218,7 @@ public class StreamUtil {
 	/**
 	 * Copies reader to output stream using buffer.
 	 */
-	public static void copy(Reader input, OutputStream output)
-			throws IOException {
+	public static void copy(Reader input, OutputStream output) throws IOException {
 		copy(input, output, DEFAULT_ENCODING);
 	}
 
@@ -226,16 +226,14 @@ public class StreamUtil {
 	 * Copies specified number of characters from reader to output stream using
 	 * buffer.
 	 */
-	public static void copy(Reader input, OutputStream output, int charCount)
-			throws IOException {
+	public static void copy(Reader input, OutputStream output, int charCount) throws IOException {
 		copy(input, output, DEFAULT_ENCODING, charCount);
 	}
 
 	/**
 	 * Copies reader to output stream using buffer and specified encoding.
 	 */
-	public static void copy(Reader input, OutputStream output, String encoding)
-			throws IOException {
+	public static void copy(Reader input, OutputStream output, String encoding) throws IOException {
 		Writer out = new OutputStreamWriter(output, encoding);
 		copy(input, out);
 		out.flush();
@@ -245,8 +243,7 @@ public class StreamUtil {
 	 * Copies specified number of characters from reader to output stream using
 	 * buffer and specified encoding.
 	 */
-	public static void copy(Reader input, OutputStream output, String encoding,
-			int charCount) throws IOException {
+	public static void copy(Reader input, OutputStream output, String encoding, int charCount) throws IOException {
 		Writer out = new OutputStreamWriter(output, encoding);
 		copy(input, out, charCount);
 		out.flush();
@@ -281,8 +278,7 @@ public class StreamUtil {
 		return output.toByteArray();
 	}
 
-	public static byte[] readBytes(InputStream input, int byteCount)
-			throws IOException {
+	public static byte[] readBytes(InputStream input, int byteCount) throws IOException {
 		FastByteArrayOutputStream output = new FastByteArrayOutputStream();
 		copy(input, output, byteCount);
 		return output.toByteArray();
@@ -294,29 +290,25 @@ public class StreamUtil {
 		return output.toByteArray();
 	}
 
-	public static byte[] readBytes(Reader input, int byteCount)
-			throws IOException {
+	public static byte[] readBytes(Reader input, int byteCount) throws IOException {
 		FastByteArrayOutputStream output = new FastByteArrayOutputStream();
 		copy(input, output, byteCount);
 		return output.toByteArray();
 	}
 
-	public static byte[] readBytes(Reader input, String encoding)
-			throws IOException {
+	public static byte[] readBytes(Reader input, String encoding) throws IOException {
 		FastByteArrayOutputStream output = new FastByteArrayOutputStream();
 		copy(input, output, encoding);
 		return output.toByteArray();
 	}
 
-	public static byte[] readBytes(Reader input, String encoding, int byteCount)
-			throws IOException {
+	public static byte[] readBytes(Reader input, String encoding, int byteCount) throws IOException {
 		FastByteArrayOutputStream output = new FastByteArrayOutputStream();
 		copy(input, output, encoding, byteCount);
 		return output.toByteArray();
 	}
 
-	public static String toString(InputStream input, String encoding)
-			throws IOException {
+	public static String toString(InputStream input, String encoding) throws IOException {
 		return (null == encoding) ? toString(new InputStreamReader(input))
 				: toString(new InputStreamReader(input, encoding));
 	}
@@ -336,8 +328,7 @@ public class StreamUtil {
 	 * @return <code>true</code> if the content of the first stream is equal to
 	 *         the content of the second stream.
 	 */
-	public static boolean compare(InputStream input1, InputStream input2)
-			throws IOException {
+	public static boolean compare(InputStream input1, InputStream input2) throws IOException {
 		if (!(input1 instanceof BufferedInputStream)) {
 			input1 = new BufferedInputStream(input1);
 		}
@@ -362,8 +353,7 @@ public class StreamUtil {
 	 * @return <code>true</code> if the content of the first stream is equal to
 	 *         the content of the second stream.
 	 */
-	public static boolean compare(Reader input1, Reader input2)
-			throws IOException {
+	public static boolean compare(Reader input1, Reader input2) throws IOException {
 		if (!(input1 instanceof BufferedReader)) {
 			input1 = new BufferedReader(input1);
 		}

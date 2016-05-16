@@ -76,7 +76,11 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 			throw new IllegalArgumentException("The path must without pattern.");
 		}
 		pathCouple.filter = filter;
-		return chooseAndConvert(pathCouple.rootURI, pathCouple);
+		Set<R> resource = choosePlatformAndFind(pathCouple, pathCouple.rootURI);
+		if (resource.isEmpty()) {
+			return null;
+		}
+		return resource.iterator().next();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,8 +96,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	@Override
 	public Set<R> getResources(String pathPattern, ResourceFilter<R> filter) {
 		if (!getPathMatcher().hasPattern(pathPattern)) {
-			throw new IllegalArgumentException(
-					"The pathPattern must has pattern words.");
+			throw new IllegalArgumentException("The pathPattern must has pattern words.");
 		}
 		PathCouple pathCouple = initParams(pathPattern);
 		pathCouple.filter = filter;
@@ -118,8 +121,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	 * currentURI and currentPathPattern.
 	 */
 
-	protected Set<R> findInOther(PathCouple pathCouple, URI uri)
-			throws Exception {
+	protected Set<R> findInOther(PathCouple pathCouple, URI uri) throws Exception {
 		return chooseSchemeAndFind(pathCouple, uri);
 	}
 
@@ -127,11 +129,9 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	 * Find resource in class-Path.
 	 */
 
-	private Set<R> findInClassPath(PathCouple pathCouple, URI uri)
-			throws Exception {
+	private Set<R> findInClassPath(PathCouple pathCouple, URI uri) throws Exception {
 		LinkedHashSet<R> resourceSet = new LinkedHashSet<R>();
-		Enumeration<URL> urls = ClassUtil.getDefaultClassLoader().getResources(
-				uri.getSchemeSpecificPart());
+		Enumeration<URL> urls = ClassUtil.getDefaultClassLoader().getResources(uri.getSchemeSpecificPart());
 		while (urls.hasMoreElements()) {
 			URI uuri = urls.nextElement().toURI();
 			resourceSet.addAll(chooseSchemeAndFind(pathCouple, uuri));
@@ -139,12 +139,17 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 		return resourceSet;
 	}
 
-	protected Set<R> chooseSchemeAndFind(PathCouple pathCouple, URI uri)
-			throws Exception {
+	protected Set<R> chooseSchemeAndFind(PathCouple pathCouple, URI uri) throws Exception {
 		if (URIUtil.isFile(uri)) {
 			LinkedHashSet<R> files = new LinkedHashSet<R>();
-			pathCouple.setFullPattern(uri);
-			deepMatchAndFindInFile(files, pathCouple, uri);
+			if (StringUtil.isEmpty(pathCouple.pattern)) {
+				// getResource
+				files.add(chooseAndConvert(uri, pathCouple));
+			} else {
+				// getResources
+				pathCouple.setFullPattern(uri);
+				deepMatchAndFindInFile(files, pathCouple, uri);
+			}
 			return files;
 		} else if (URIUtil.isJar(uri)) {
 			return deepMatchAndFindInJar(pathCouple, uri);
@@ -153,21 +158,17 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 		return Collections.emptySet();
 	}
 
-	protected void deepMatchAndFindInFile(Set<R> rSet, PathCouple pathCouple,
-			URI... uris) {
+	protected void deepMatchAndFindInFile(Set<R> rSet, PathCouple pathCouple, URI... uris) {
 		for (URI uri : uris) {
 			File file = new File(uri);
 			if (!FileUtil.isExisAndReadable(file)) {
 				continue;
 			}
-			String subPath = StringUtil.cutPrefix(uri.getPath(),
-					pathCouple.currentURI.getPath());
+			String subPath = StringUtil.cutPrefix(uri.getPath(), pathCouple.currentURI.getPath());
 			if (file.isDirectory()) {
 				// Current directory
-				if (StringUtil.isEmpty(subPath)
-						|| matchStartPath(pathCouple.pattern, subPath)) {
-					deepMatchAndFindInFile(rSet, pathCouple,
-							FileUtil.toURIs(file.listFiles()));
+				if (StringUtil.isEmpty(subPath) || matchStartPath(pathCouple.pattern, subPath)) {
+					deepMatchAndFindInFile(rSet, pathCouple, FileUtil.toURIs(file.listFiles()));
 				}
 			} else if (file.isFile() && matchPath(pathCouple.pattern, subPath)) {
 				R r = chooseAndConvert(uri, pathCouple);
@@ -178,24 +179,19 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 		}
 	}
 
-	protected Set<R> deepMatchAndFindInJar(PathCouple pathCouple, URI uri)
-			throws Exception {
+	protected Set<R> deepMatchAndFindInJar(PathCouple pathCouple, URI uri) throws Exception {
 		JarFile jarFile = FileUtil.toJarFile(uri);
 		String rootEntryPath = URIUtil.getJarRootEntryPath(uri);
 		pathCouple.setFullPattern(uri);
 		Set<R> result = new LinkedHashSet<R>();
-		for (Enumeration<JarEntry> entries = jarFile.entries(); entries
-				.hasMoreElements();) {
+		for (Enumeration<JarEntry> entries = jarFile.entries(); entries.hasMoreElements();) {
 			JarEntry entry = entries.nextElement();
 			String entryPath = entry.getName();
 			if (entryPath.startsWith(rootEntryPath)) {
-				String relativePath = entryPath.substring(rootEntryPath
-						.length());
+				String relativePath = entryPath.substring(rootEntryPath.length());
 				if (getPathMatcher().match(pathCouple.pattern, relativePath)) {
 					result.add(chooseAndConvert(
-							URIUtil.toURI(uri.getScheme(),
-									uri.getSchemeSpecificPart() + relativePath),
-							pathCouple));
+							URIUtil.toURI(uri.getScheme(), uri.getSchemeSpecificPart() + relativePath), pathCouple));
 				}
 			}
 		}
@@ -254,9 +250,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	protected String determineRootDir(String location) {
 		int prefixEnd = 0;
 		int rootDirEnd = location.length();
-		while (rootDirEnd > prefixEnd
-				&& getPathMatcher().isPattern(
-						location.substring(prefixEnd, rootDirEnd))) {
+		while (rootDirEnd > prefixEnd && getPathMatcher().isPattern(location.substring(prefixEnd, rootDirEnd))) {
 			rootDirEnd = location.lastIndexOf(getSeparator(), rootDirEnd - 2) + 1;
 		}
 		if (rootDirEnd == 0) {
@@ -275,8 +269,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	protected PathCouple initParams(String pathPattern) {
 		String cleanPatn = StringUtil.cleanPath(pathPattern);
 		String rootPath = determineRootDir(cleanPatn);
-		return new PathCouple(URIUtil.toURI(rootPath),
-				cleanPatn.substring(rootPath.length()));
+		return new PathCouple(URIUtil.toURI(rootPath), cleanPatn.substring(rootPath.length()));
 	}
 
 	/**

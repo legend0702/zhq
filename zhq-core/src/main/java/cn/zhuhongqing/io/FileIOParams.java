@@ -1,8 +1,16 @@
 package cn.zhuhongqing.io;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 
 import cn.zhuhongqing.ZHQ;
+import cn.zhuhongqing.exception.UtilsException;
+import cn.zhuhongqing.utils.scan.ResourceScanManager;
 
 /**
  * 文件IO帮助类
@@ -14,20 +22,21 @@ import cn.zhuhongqing.ZHQ;
 public class FileIOParams {
 
 	private String path;
+	private File file;
 	private Charset cs = Charset.forName(ZHQ.DEFAULT_ENCODING);
 
 	public FileIOParams(String path) {
-		this.path = path;
+		this(path, ZHQ.DEFAULT_ENCODING);
+	}
+
+	public FileIOParams(String path, String csName) {
+		this(path, Charset.forName(csName));
 	}
 
 	public FileIOParams(String path, Charset cs) {
 		this.path = path;
 		this.cs = cs;
-	}
-
-	public FileIOParams(String path, String csName) {
-		this.path = path;
-		this.cs = Charset.forName(csName);
+		this.setFile(ResourceScanManager.autoGetResource(path, File.class));
 	}
 
 	public String getPath() {
@@ -44,6 +53,38 @@ public class FileIOParams {
 
 	public void setCharset(Charset cs) {
 		this.cs = cs;
+	}
+
+	public File getFile() {
+		return file;
+	}
+
+	public void setFile(File file) {
+		this.file = file;
+	}
+
+	public FileInputStream toInStream() {
+		try {
+			return new FileInputStream(getFile());
+		} catch (FileNotFoundException e) {
+			throw new UtilsException(e);
+		}
+	}
+
+	public InputStreamReader toInStreamReader() {
+		return new InputStreamReader(toInStream(), getCharset());
+	}
+
+	public FileOutputStream toOutStream() {
+		try {
+			return new FileOutputStream(getFile());
+		} catch (FileNotFoundException e) {
+			throw new UtilsException(e);
+		}
+	}
+
+	public OutputStreamWriter toOutStreamWriter() {
+		return new OutputStreamWriter(toOutStream(), getCharset());
 	}
 
 	@Override
@@ -69,6 +110,11 @@ public class FileIOParams {
 		} else if (!path.equals(other.path))
 			return false;
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "FileIOParams [path=" + path + ", file=" + file + ", cs=" + cs + "]";
 	}
 
 }
