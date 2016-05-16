@@ -32,14 +32,13 @@ import cn.zhuhongqing.utils.factory.SingleImplementFacadeFactory;
 @NotThreadSafe
 public class Template extends Module {
 
+	private static TemplateProcess STATIC_TP = SingleImplementFacadeFactory.getSingleImplement(TemplateProcess.class);
+
+	private TemplateProcess tp;
+
 	protected Template() {
+		tp = SingleImplementFacadeFactory.getSingleImplement(TemplateProcess.class);
 	}
-
-	private static TemplateProcess STATIC_TP = SingleImplementFacadeFactory
-			.getSingleImplement(TemplateProcess.class);
-
-	private TemplateProcess tp = SingleImplementFacadeFactory
-			.getSingleImplement(TemplateProcess.class);
 
 	/**
 	 * 解析模板源并结合数据模型进行渲染<br/>
@@ -70,14 +69,13 @@ public class Template extends Module {
 	 *            渲染文件存放地址
 	 * @param model
 	 *            数据模型
+	 * @return
 	 * @throws FileNotFoundException
 	 * @see #render(Reader, Writer, Object)
 	 */
 
-	public static void globalRender(String tempPath, String outPath,
-			Object model) {
-		globalRender(new FileIOParams(tempPath), new FileIOParams(outPath),
-				model);
+	public static Writer globalRender(String tempPath, String outPath, Object model) {
+		return globalRender(new FileIOParams(tempPath), new FileIOParams(outPath), model);
 	}
 
 	/**
@@ -88,19 +86,16 @@ public class Template extends Module {
 	 *            渲染文件存放地址以及编码参数
 	 * @param model
 	 *            数据模型
+	 * @return
 	 * 
 	 * @throws FileNotFoundException
 	 * @see #render(Reader, Writer, Object)
 	 */
 
-	public static void globalRender(FileIOParams temp, FileIOParams out,
-			Object model) {
+	public static Writer globalRender(FileIOParams temp, FileIOParams out, Object model) {
 		try {
-			globalRender(
-					new InputStreamReader(new FileInputStream(temp.getPath()),
-							temp.getCharset()),
-					new OutputStreamWriter(new FileOutputStream(out.getPath()),
-							out.getCharset()), model);
+			return globalRender(new InputStreamReader(new FileInputStream(temp.getPath()), temp.getCharset()),
+					new OutputStreamWriter(new FileOutputStream(out.getPath()), out.getCharset()), model);
 		} catch (FileNotFoundException e) {
 			throw new TemplateException(e);
 		}
@@ -145,12 +140,13 @@ public class Template extends Module {
 	 *            渲染文件存放地址
 	 * @param model
 	 *            数据模型
+	 * @return
 	 * @throws FileNotFoundException
 	 * @see #render(Reader, Writer, Object)
 	 */
 
-	public void render(String tempPath, String outPath, Object model) {
-		render(new FileIOParams(tempPath), new FileIOParams(outPath), model);
+	public Writer render(String tempPath, String outPath, Object model) {
+		return render(new FileIOParams(tempPath), new FileIOParams(outPath), model);
 	}
 
 	/**
@@ -161,20 +157,14 @@ public class Template extends Module {
 	 *            渲染文件存放地址以及编码参数
 	 * @param model
 	 *            数据模型
+	 * @return
 	 * 
 	 * @throws FileNotFoundException
 	 * @see #render(Reader, Writer, Object)
 	 */
 
-	public void render(FileIOParams temp, FileIOParams out, Object model) {
-		try {
-			render(new InputStreamReader(new FileInputStream(temp.getPath()),
-					temp.getCharset()), new OutputStreamWriter(
-					new FileOutputStream(out.getPath()), out.getCharset()),
-					model);
-		} catch (FileNotFoundException e) {
-			throw new TemplateException(e);
-		}
+	public Writer render(FileIOParams temp, FileIOParams out, Object model) {
+		return render(temp.toInStreamReader(), out.toOutStreamWriter(), model);
 	}
 
 	/**
