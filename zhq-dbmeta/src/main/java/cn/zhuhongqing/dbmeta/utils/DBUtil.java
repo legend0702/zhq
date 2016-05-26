@@ -1,6 +1,7 @@
 package cn.zhuhongqing.dbmeta.utils;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.Driver;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,10 +10,11 @@ import java.sql.Statement;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import cn.zhuhongqing.dbmeta.cfg.ConnectionInfo;
+import cn.zhuhongqing.dbmeta.DBMetaConfig;
 import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 import cn.zhuhongqing.utils.ArraysUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
+import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.StringUtil;
 
 /**
@@ -24,22 +26,33 @@ import cn.zhuhongqing.utils.StringUtil;
 
 public class DBUtil {
 
-	public static Connection createConnection(ConnectionInfo info) {
-		String driverStr = info.getDriver();
+	public static Connection createConnection(DBMetaConfig config) {
+		String driverStr = config.getDriver();
 		if (StringUtil.isEmpty(driverStr)) {
 			throw new DBMetaException("驱动类不能为空!");
 		}
-		if (StringUtil.isEmpty(info.getUrl())) {
+		if (StringUtil.isEmpty(config.getUrl())) {
 			throw new DBMetaException("链接不能为空!");
 		}
-		if (StringUtil.isEmpty(info.getUser())) {
+		if (StringUtil.isEmpty(config.getUser())) {
 			throw new DBMetaException("用户名不能为空!");
 		}
 		Driver driver = (Driver) ReflectUtil.newInstance(driverStr);
 		try {
-			return driver.connect(info.getUrl(), info);
+			return driver.connect(config.getUrl(), config.getConnectProp());
 		} catch (SQLException e) {
 			throw new DBMetaException(e);
+		}
+	}
+
+	public static Double concatMajorAndMinor(DatabaseMetaData meta) {
+		try {
+			String majorVer = String.valueOf(meta.getDatabaseMajorVersion());
+			String minorVer = String.valueOf(meta.getDatabaseMinorVersion());
+			return Double.valueOf(majorVer + StringPool.DOT + minorVer);
+		} catch (SQLException e) {
+			// ignore
+			return 0.0;
 		}
 	}
 
@@ -54,44 +67,33 @@ public class DBUtil {
 	 * @return
 	 */
 
-	public static String queryForString(Connection conn, String sql,
-			Object... params) {
-		PreparedStatement s = null;
-		ResultSet rs = null;
-		try {
-			s = conn.prepareStatement(sql);
+	public static String queryForString(Connection conn, String sql, Object... params) {
+		try (PreparedStatement s = conn.prepareStatement(sql)) {
 			if (!ArraysUtil.isEmpty(params)) {
 				for (int i = 0; i < params.length; i++) {
 					s.setObject(i + 1, params[i]);
 				}
 			}
-			rs = s.executeQuery();
-			if (rs.next()) {
-				return rs.getString(1);
+			try (ResultSet rs = s.executeQuery()) {
+				if (rs.next()) {
+					return rs.getString(1);
+				}
+				return null;
 			}
-			return null;
 		} catch (SQLException e) {
 			return null;
-		} finally {
-			CloseHelper.close(s, rs);
 		}
 	}
 
 	public static Set<String> queryForStringSet(Connection conn, String sql) {
-		Statement s = null;
-		ResultSet rs = null;
 		Set<String> set = new LinkedHashSet<String>();
-		try {
-			s = conn.createStatement();
-			rs = s.executeQuery(sql);
+		try (Statement s = conn.createStatement(); ResultSet rs = s.executeQuery(sql);) {
 			while (rs.next()) {
 				set.add(rs.getString(1));
 			}
 			return set;
 		} catch (SQLException e) {
 			return set;
-		} finally {
-			CloseHelper.close(s, rs);
 		}
 	}
 
@@ -157,8 +159,7 @@ public class DBUtil {
 			close(rs);
 		}
 
-		public static void close(Connection conn, PreparedStatement ps,
-				ResultSet rs) {
+		public static void close(Connection conn, PreparedStatement ps, ResultSet rs) {
 			close(conn);
 			close(ps);
 			close(rs);

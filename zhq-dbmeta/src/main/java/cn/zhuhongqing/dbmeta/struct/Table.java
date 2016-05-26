@@ -1,8 +1,10 @@
 package cn.zhuhongqing.dbmeta.struct;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
+
+import cn.zhuhongqing.utils.GeneralUtil;
 
 public class Table {
 
@@ -12,11 +14,15 @@ public class Table {
 	private TableType type;
 	private String remarks;
 
-	private Set<Column> columns = Collections.emptySet();
-	private HashMap<String, Column> columnMap = new HashMap<String, Column>();
+	private Set<Column> primaryColumns = new LinkedHashSet<Column>(4);
+	private LinkedHashMap<String, Column> columnMap = new LinkedHashMap<String, Column>();
 
 	public Table() {
 
+	}
+
+	public Table(String tableName) {
+		this.name = tableName;
 	}
 
 	public Table(String catalog, String schema) {
@@ -48,17 +54,10 @@ public class Table {
 		this.name = name;
 	}
 
-	/**
-	 * @return the type
-	 */
 	public TableType getType() {
 		return type;
 	}
 
-	/**
-	 * @param type
-	 *            the type to set
-	 */
 	public void setType(TableType type) {
 		this.type = type;
 	}
@@ -72,19 +71,32 @@ public class Table {
 	}
 
 	public void setColumn(Set<Column> columns) {
-		this.columns = columns;
+		primaryColumns.clear();
 		columnMap.clear();
 		for (Column c : columns) {
 			columnMap.put(c.getName(), c);
 		}
 	}
 
-	public Set<Column> getColumns() {
-		return columns;
+	public Set<Column> getPrimaryColumns() {
+		return new LinkedHashSet<Column>(primaryColumns);
+	}
+
+	public Column addPrimaryColumn(String primaryColumnName) {
+		Column c = getColumn(primaryColumnName);
+		if (GeneralUtil.isNotNull(c)) {
+			c.setPrimary(true);
+			this.primaryColumns.add(c);
+		}
+		return c;
 	}
 
 	public Column getColumn(String name) {
 		return columnMap.get(name);
+	}
+
+	public Set<Column> getColumns() {
+		return new LinkedHashSet<Column>(columnMap.values());
 	}
 
 	@Override
@@ -126,8 +138,8 @@ public class Table {
 
 	@Override
 	public String toString() {
-		return "Table [catalog=" + catalog + ", schema=" + schema + ", name="
-				+ name + ", type=" + type + ", remarks=" + remarks + "]";
+		return "Table [catalog=" + catalog + ", schema=" + schema + ", name=" + name + ", type=" + type + ", remarks="
+				+ remarks + "]";
 	}
 
 }

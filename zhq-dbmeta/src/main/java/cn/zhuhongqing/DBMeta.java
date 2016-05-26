@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import cn.zhuhongqing.dbmeta.DBMetaConfig;
 import cn.zhuhongqing.dbmeta.DBMetaInfo;
-import cn.zhuhongqing.dbmeta.cfg.ConnectionInfo;
 import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 
 /**
@@ -19,34 +19,32 @@ import cn.zhuhongqing.dbmeta.exception.DBMetaException;
  *         <li>Github:github.com/legend0702</li>
  *         </nl>
  * 
- * @since 1.8
- *
  */
 
 public class DBMeta {
 
 	/**
-	 * @see DBMeta#createDBMetaInfo(Connection)
+	 * @see DBMeta#createDBMetaInfo(DBMetaConfig)
 	 */
 
 	public static DBMetaInfo createDBMetaInfo(String propPath) {
-		return createDBMetaInfo(new ConnectionInfo(propPath));
+		return createDBMetaInfo(new DBMetaConfig(propPath));
 	}
 
 	/**
-	 * @see DBMeta#createDBMetaInfo(Connection)
+	 * @see DBMeta#createDBMetaInfo(DBMetaConfig)
 	 */
 
 	public static DBMetaInfo createDBMetaInfo(String driver, String url, String user, String password) {
-		return createDBMetaInfo(new ConnectionInfo(driver, url, user, password));
+		return createDBMetaInfo(new DBMetaConfig(driver, url, user, password));
 	}
 
 	/**
-	 * @see DBMeta#createDBMetaInfo(Connection)
+	 * @see DBMetaInfo#getDBMetaInfo(DBMetaConfig)
 	 */
 
-	public static DBMetaInfo createDBMetaInfo(ConnectionInfo info) {
-		return createDBMetaInfo(info.createConn());
+	public static DBMetaInfo createDBMetaInfo(DBMetaConfig config) {
+		return DBMetaInfo.getDBMetaInfo(config);
 	}
 
 	/**
@@ -55,14 +53,14 @@ public class DBMeta {
 
 	public static DBMetaInfo createDBMetaInfo(DataSource dataSource) {
 		try {
-			return DBMetaInfo.getDBMetaInfo(dataSource.getConnection());
+			return createDBMetaInfo(dataSource.getConnection());
 		} catch (SQLException e) {
 			throw new DBMetaException(e);
 		}
 	}
 
 	/**
-	 * 根据链接类型获取一个{@link DBMetaInfo}实例
+	 * @see DBMetaInfo#getDBMetaInfo(Connection)
 	 */
 
 	public static DBMetaInfo createDBMetaInfo(Connection conn) {

@@ -2,12 +2,10 @@ package cn.zhuhongqing.dbmeta;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.JDBCType;
 import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.sql.SQLException;
+import java.sql.SQLType;
 import java.util.LinkedHashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import cn.zhuhongqing.DBMetaConst;
@@ -16,15 +14,14 @@ import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 import cn.zhuhongqing.dbmeta.struct.Column;
 import cn.zhuhongqing.dbmeta.struct.Table;
 import cn.zhuhongqing.dbmeta.struct.TableType;
+import cn.zhuhongqing.dbmeta.type.SQLTypeMapping;
+import cn.zhuhongqing.dbmeta.utils.DBUtil;
 import cn.zhuhongqing.dbmeta.utils.DBUtil.CloseHelper;
 import cn.zhuhongqing.dbmeta.utils.UnCatchSQLExceptionUtil;
 import cn.zhuhongqing.exception.ValidationException;
-import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.GeneralUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
 import cn.zhuhongqing.utils.StringUtil;
-import cn.zhuhongqing.utils.scan.ResourceFilter;
-import cn.zhuhongqing.utils.scan.ResourceScanManager;
 
 /**
  * 描述数据库元信息<br/>
@@ -33,49 +30,23 @@ import cn.zhuhongqing.utils.scan.ResourceScanManager;
  * 
  * 尽量遵循jdbc规范 以便用最少的代价实现信息获取功能<br/>
  * 
- * 请将子类包名设置为符合{@value #_DEF_PACKAGE}匹配符匹配的包名(例如cn.zhq.dbmeta.mysql) 以便被自动扫描加入管理<br/>
  * 
  * @author HongQing.Zhu
- *
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         <li>Github:github.com/legend0702</li>
+ *         </nl>
  */
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
-	/** 存储所有DBMetaInfo子类的实例化 子类必须要由无参的构造函数 不然初始化会失败 */
-	private static final HashMap<String, DBMetaInfo> _META_MAP = new HashMap<String, DBMetaInfo>();
 	/** 数据库对象的类型 */
-	private static final String[] _TABLE_TYPE = new String[] {
-			TableType.TABLE.name(), TableType.VIEW.name() };
-	/** 默认子类的放置位置 */
-	private static final String _DEF_PATH = "cn/zhuhongqing/dbmeta/*/*";
-	private static final String _DEF = "def";
-
-	/** 扫描{DEF_PACKAGE}包下所有DBMetaInfo的子类 并注册进数据库信息管理中 */
-	static {
-		Set<Class> cSet = ResourceScanManager.autoGetResources(_DEF_PATH,
-				Class.class, new ResourceFilter<Class>() {
-					@Override
-					public boolean accept(Class c) {
-						if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(
-								DBMetaInfo.class, c)) {
-							return true;
-						}
-						return false;
-					}
-				});
-
-		cSet.forEach(c -> {
-			addDBMetaInfo((DBMetaInfo) ReflectUtil.newInstanceWithoutArgs(c));
-		});
-
-		if (_META_MAP.isEmpty()) {
-			throw new DBMetaException("没有找到任何DBMetaInfo的子类,初始化失败!");
-		}
-	}
+	private static final String[] _TABLE_TYPE = new String[] { TableType.TABLE.name(), TableType.VIEW.name() };
 
 	private Connection conn;
 	private DatabaseMetaData dbMetaData;
+	private DBMetaConfig config = DBMetaConfig.EMPTY_INSTANCE;
 	/** @see #_TABLE_TYPE */
 	private String[] tableType = _TABLE_TYPE;
 	/** 默認目錄名 */
@@ -90,44 +61,28 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	/**
 	 * 根据链接类型返回对应的DBMetaInfo实例<br/>
 	 * 链接生命周期由用户自行管理<br/>
-	 * 如果在调用方法前关闭链接 会造成方法调用失败 请注意<br/>
-	 * 
-	 * @param conn
-	 * @return
+	 * 如果在调用方法前关闭链接 会造成该方法调用失败 请注意<br/>
 	 */
 
 	public static final DBMetaInfo getDBMetaInfo(Connection conn) {
-		String url;
-		DBMetaInfo info = null;
 		try {
-			url = conn.getMetaData().getURL();
-			String urlLow = url.toLowerCase();
-			Iterator<Entry<String, DBMetaInfo>> it = _META_MAP.entrySet()
-					.iterator();
-			while (it.hasNext()) {
-				Entry<String, DBMetaInfo> e = it.next();
-				if (urlLow.indexOf(e.getKey()) != -1) {
-					info = e.getValue();
-					break;
-				}
-			}
-			if (GeneralUtil.isNull(info)) {
-				info = _META_MAP.get(_DEF);
-			}
-			return info.clone().init(conn);
+			String name = conn.getMetaData().getDatabaseProductName();
+			return DBMetaPool.get(name, DBUtil.concatMajorAndMinor(conn.getMetaData())).init(conn);
 		} catch (Exception e) {
 			throw new DBMetaException(e);
 		}
-		// throw new DBMetaException("没有找到链接为[" + url +
-		// "]的DBMeta实现类,要不你来试着做一个?");
 	}
 
 	/**
-	 * 增加一个新的DBMetaInfo实例
+	 * 追加设置配置信息
+	 * 
+	 * @see #getDBMetaInfo(Connection)
 	 */
 
-	public static final void addDBMetaInfo(DBMetaInfo metaInfo) {
-		_META_MAP.put(metaInfo.getDBDesign().toLowerCase(), metaInfo);
+	public static final DBMetaInfo getDBMetaInfo(DBMetaConfig config) {
+		DBMetaInfo info = getDBMetaInfo(config.createConn());
+		info.setDBMetaConfig(config);
+		return info;
 	}
 
 	// ---------------------------------------- Static Method End
@@ -159,7 +114,6 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	/**
 	 * 获取所有能获取的表空间
-	 * 
 	 */
 
 	public final Set<String> getSchemas() {
@@ -168,8 +122,6 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	/**
 	 * 获取链接
-	 * 
-	 * 由外部自行关闭 内部操作时请不要关闭
 	 */
 	public final Connection getConnection() {
 		return conn;
@@ -179,8 +131,16 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 * 获取数据库元信息
 	 */
 
-	public final DatabaseMetaData getDatabaseMetaData() {
+	protected final DatabaseMetaData getDatabaseMetaData() {
 		return dbMetaData;
+	}
+
+	public DBMetaConfig getDBMetaConfig() {
+		return config;
+	}
+
+	public void setDBMetaConfig(DBMetaConfig config) {
+		this.config = config;
 	}
 
 	/**
@@ -269,8 +229,18 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	// ---------------------------------------- General Method End
 
 	// ---------------------------------------- Abstract/Override Method
-	/** 描述该类是用于哪种数据库的 用于匹配数据库类型 */
-	protected abstract String getDBDesign();
+	/** 描述用于哪种数据库的 用于匹配数据库类型 */
+	protected abstract String getDataBaseName();
+
+	/**
+	 * 用于多少版本的
+	 * 
+	 * 用int表示主要是想到适配的问题
+	 * 
+	 * 优先用最合适的版本 如果没有找到则选用当前最高的版本
+	 * 
+	 */
+	protected abstract double getVersion();
 
 	/**
 	 * 返回默认目录<br/>
@@ -287,8 +257,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	protected Set<String> initCatalogs() throws Exception {
-		return UnCatchSQLExceptionUtil.getReslutSetNextOneColumn(
-				dbMetaData.getCatalogs(), TABLE_CATALOG);
+		return UnCatchSQLExceptionUtil.getReslutSetOneColumn(dbMetaData.getCatalogs(), TABLE_CATALOG);
 	}
 
 	/**
@@ -306,8 +275,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	protected Set<String> initSchemas() throws Exception {
-		return UnCatchSQLExceptionUtil.getReslutSetNextOneColumn(
-				dbMetaData.getSchemas(), TABLE_SCHEME);
+		return UnCatchSQLExceptionUtil.getReslutSetOneColumn(dbMetaData.getSchemas(), TABLE_SCHEME);
 	}
 
 	/**
@@ -342,15 +310,15 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 		try {
 			rs = getTableResultSet(catalog, schema, table);
 			Set<Table> tables = new LinkedHashSet<Table>();
-			UnCatchSQLExceptionUtil.reslutSetNext(rs,
-					new CallBack<ResultSet>() {
-						@Override
-						public void invokeThr(ResultSet r) throws Exception {
-							Table t = createTable(r, catalog, schema);
-							t.setColumn(getColumns0(t));
-							tables.add(t);
-						}
-					});
+			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBack<ResultSet>() {
+				@Override
+				public void invokeThr(ResultSet r) throws Exception {
+					Table t = createTable(r, catalog, schema);
+					t.setColumn(getColumns0(t));
+					initPrimaryKeys(t);
+					tables.add(t);
+				}
+			});
 			return tables;
 		} catch (Exception e) {
 			throw new DBMetaException(e);
@@ -362,7 +330,8 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	/**
 	 * 从数据库获取指定Catalog、Schema、Table的表信息<br/>
 	 * 返回结果为ResultSet 与{@link DBMetaInfo#createTable(ResultSet)}相对应<br/>
-	 * 如果子类重写了该方法 并且修改了返回的Key值 请将{@link DBMetaInfo#createTable(ResultSet)}也进行重写<br/>
+	 * 如果子类重写了该方法 并且修改了返回的Key值
+	 * 请将{@link DBMetaInfo#createTable(ResultSet)}也进行重写<br/>
 	 * 
 	 * 默认Key值与
 	 * {@link DatabaseMetaData#getTables(String, String, String, String[])}一致<br/>
@@ -375,10 +344,8 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 * @throws Exception
 	 */
 
-	protected ResultSet getTableResultSet(String catalog, String schema,
-			String table) throws Exception {
-		return UnCatchSQLExceptionUtil.getTables(dbMetaData, catalog, schema,
-				table, tableType);
+	protected ResultSet getTableResultSet(String catalog, String schema, String table) throws Exception {
+		return UnCatchSQLExceptionUtil.getTables(dbMetaData, catalog, schema, table, tableType);
 	}
 
 	/**
@@ -391,8 +358,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 * @see DBMetaInfo#getTableResultSet(String, String, String)
 	 */
 
-	protected Table createTable(ResultSet rs, String catalog, String schema)
-			throws Exception {
+	protected Table createTable(ResultSet rs, String catalog, String schema) throws Exception {
 		String tableName = rs.getString(TABLE_NAME);
 		String tableType = rs.getString(TABLE_TYPE);
 		String remarks = rs.getString(TABLE_REMARKS);
@@ -417,17 +383,15 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	private Set<Column> getColumns0(Table table) {
 		ResultSet rs = null;
 		try {
-			rs = getColumnResultSet(table.getCatalog(), table.getSchema(),
-					table.getName(), null);
+			rs = getColumnResultSet(table.getCatalog(), table.getSchema(), table.getName(), null);
 			Set<Column> columns = new LinkedHashSet<Column>();
-			UnCatchSQLExceptionUtil.reslutSetNext(rs,
-					new CallBack<ResultSet>() {
-						@Override
-						public void invokeThr(ResultSet r) throws Exception {
-							Column c = createColumn(r, table);
-							columns.add(c);
-						}
-					});
+			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBack<ResultSet>() {
+				@Override
+				public void invokeThr(ResultSet r) throws Exception {
+					Column c = createColumn(r, table);
+					columns.add(c);
+				}
+			});
 			return columns;
 		} catch (Exception e) {
 			throw new DBMetaException(e);
@@ -439,7 +403,8 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	/**
 	 * 从数据库获取指定Catalog、Schema、Table的列信息<br/>
 	 * 返回结果为ResultSet 与{@link DBMetaInfo#createColumn(ResultSet)}相对应<br/>
-	 * 如果子类重写了该方法 并且修改了返回的Key值 请将{@link DBMetaInfo#createColumn(ResultSet)}也进行重写<br/>
+	 * 如果子类重写了该方法 并且修改了返回的Key值
+	 * 请将{@link DBMetaInfo#createColumn(ResultSet)}也进行重写<br/>
 	 * 
 	 * 默认Key值与
 	 * {@link DatabaseMetaData#getColumns(String, String, String, String)}一致<br/>
@@ -451,10 +416,9 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 * @return
 	 * @throws Exception
 	 */
-	protected ResultSet getColumnResultSet(String catalog, String schema,
-			String table, String column) throws Exception {
-		return UnCatchSQLExceptionUtil.getColumns(dbMetaData, catalog, schema,
-				table, column);
+	protected ResultSet getColumnResultSet(String catalog, String schema, String table, String column)
+			throws Exception {
+		return UnCatchSQLExceptionUtil.getColumns(dbMetaData, catalog, schema, table, column);
 	}
 
 	/**
@@ -467,16 +431,110 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	protected Column createColumn(ResultSet rs, Table table) throws Exception {
 		String name = rs.getString(COLUMN_NAME);
+		int sqlTypeInt = rs.getInt(COLUMN_DATA_TYPE);
 		String typeName = rs.getString(COLUMN_TYPE_NAME);
-		int dataType = rs.getInt(COLUMN_DATA_TYPE);
+		SQLType sqlType = _getSQLType(sqlTypeInt);
+		Class<?> javaType = convertSQLTypeToJavaType(sqlTypeInt, typeName, sqlType);
 		String defVal = rs.getString(COLUMN_DEF);
 		String remarks = rs.getString(COLUMN_REMARKS);
-		boolean isNullable = (DatabaseMetaData.columnNullable == rs
-				.getInt(COLUMN_NULLABLE));
+		boolean isNullable = (DatabaseMetaData.columnNullable == rs.getInt(COLUMN_NULLABLE));
 		int size = rs.getInt(COLUMN_SIZE);
 		int decDigits = rs.getInt(COLUMN_DECIMAL_DIGITS);
-		return new Column(table, isNullable, name, JDBCType.valueOf(dataType),
-				typeName, defVal, remarks, size, decDigits);
+		return new Column(table, name, sqlTypeInt, typeName, sqlType, javaType, isNullable, defVal, remarks, size,
+				decDigits);
+	}
+
+	private SQLType _getSQLType(int sqlTypeInt) {
+		SQLType type = getSQLType(sqlTypeInt);
+		if (GeneralUtil.isNotNull(type)) {
+			return type;
+		}
+		return SQLTypeMapping.getSQLType(sqlTypeInt);
+	}
+
+	/**
+	 * 根据数据库int标识 返回一个{@link SQLType}
+	 */
+
+	protected SQLType getSQLType(int sqlTypeInt) {
+		return null;
+	}
+
+	/**
+	 * 根据{@link SQLType}以及TypeName找出对应的Java Type<br/>
+	 * 1.根据用户的配置进行匹配<br/>
+	 * 2.根据用户的全局配置进行匹配<br/>
+	 * 2.根据子类的配置匹配<br/>
+	 * 3.根据默认配置匹配<br/>
+	 * 4.没匹配到的返回 Object.class<br/>
+	 * 
+	 */
+
+	private Class<?> convertSQLTypeToJavaType(int sqlTypeInt, String typeName, SQLType type) {
+		Class<?> jType = config.findJavaType(type);
+		if (GeneralUtil.isNotNull(jType)) {
+			return jType;
+		}
+		jType = config.findJavaType(typeName);
+		if (GeneralUtil.isNotNull(jType)) {
+			return jType;
+		}
+		jType = SQLTypeMapping.get(typeName);
+		if (GeneralUtil.isNotNull(jType)) {
+			return jType;
+		}
+		jType = findJavaType(sqlTypeInt, type);
+		if (GeneralUtil.isNotNull(jType)) {
+			return jType;
+		}
+		jType = findJavaType(typeName);
+		if (GeneralUtil.isNotNull(jType)) {
+			return jType;
+		}
+		jType = SQLTypeMapping.get(type);
+		if (GeneralUtil.isNotNull(jType)) {
+			return jType;
+		}
+		return Object.class;
+	}
+
+	/**
+	 * 定义一些特殊的(比如该数据库特有的)类型映射
+	 */
+	protected Class<?> findJavaType(int sqlTypeInt, SQLType type) {
+		return null;
+	}
+
+	/**
+	 * 定义一些特殊的(比如该数据库特有的)类型映射
+	 */
+	protected Class<?> findJavaType(String typeName) {
+		return null;
+	}
+
+	protected void initPrimaryKeys(Table table) {
+		ResultSet rs = null;
+		try {
+			rs = getPrimaryKeysResultSet(table.getCatalog(), table.getSchema(), table.getName());
+			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBack<ResultSet>() {
+				@Override
+				public void invokeThr(ResultSet r) throws Exception {
+					setPrimaryKeys(table, r);
+				}
+			});
+		} catch (Exception e) {
+			throw new DBMetaException(e);
+		} finally {
+			CloseHelper.close(rs);
+		}
+	}
+
+	protected ResultSet getPrimaryKeysResultSet(String catalog, String schema, String table) throws Exception {
+		return UnCatchSQLExceptionUtil.getPrimaryKeys(dbMetaData, catalog, schema, table);
+	}
+
+	protected void setPrimaryKeys(Table table, ResultSet r) throws SQLException {
+		table.addPrimaryColumn(r.getString(COLUMN_NAME));
 	}
 
 	@Override

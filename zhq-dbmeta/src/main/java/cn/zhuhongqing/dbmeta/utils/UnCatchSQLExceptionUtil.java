@@ -11,8 +11,7 @@ import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 
 public class UnCatchSQLExceptionUtil {
 
-	public static ResultSet getTables(DatabaseMetaData metaData, String c,
-			String s, String t, String[] types) {
+	public static ResultSet getTables(DatabaseMetaData metaData, String c, String s, String t, String[] types) {
 		try {
 			return metaData.getTables(c, s, t, types);
 		} catch (SQLException e) {
@@ -20,10 +19,17 @@ public class UnCatchSQLExceptionUtil {
 		}
 	}
 
-	public static ResultSet getColumns(DatabaseMetaData metaData, String c,
-			String s, String t, String col) {
+	public static ResultSet getColumns(DatabaseMetaData metaData, String c, String s, String t, String col) {
 		try {
 			return metaData.getColumns(c, s, t, col);
+		} catch (SQLException e) {
+			throw new DBMetaException(e);
+		}
+	}
+
+	public static ResultSet getPrimaryKeys(DatabaseMetaData metaData, String c, String s, String t) {
+		try {
+			return metaData.getPrimaryKeys(c, s, t);
 		} catch (SQLException e) {
 			throw new DBMetaException(e);
 		}
@@ -39,8 +45,7 @@ public class UnCatchSQLExceptionUtil {
 		}
 	}
 
-	public static Set<String> getReslutSetNextOneColumn(ResultSet rs,
-			String columnName) {
+	public static Set<String> getReslutSetOneColumn(ResultSet rs, String columnName) {
 		Set<String> set = new LinkedHashSet<String>();
 		reslutSetNext(rs, new CallBack<ResultSet>() {
 			@Override

@@ -1,14 +1,17 @@
 package cn.zhuhongqing.dbmeta.struct;
 
-import java.sql.JDBCType;
+import java.sql.SQLType;
 
 public class Column {
 
 	private Table table;
 	private String name;
-	private JDBCType dataType;
+	private Integer sqlTypeInt;
 	private String typeName;
+	private SQLType sqlType;
+	private Class<?> javaType;
 	private String remarks;
+	private boolean primary;
 	private boolean nullable;
 	private Object defValue;
 	private int size;
@@ -17,14 +20,15 @@ public class Column {
 	public Column() {
 	}
 
-	public Column(Table table, boolean nullable, String name,
-			JDBCType dataType, String typeName, Object defValue,
-			String remarks, int size, int decimalDigits) {
+	public Column(Table table, String name, Integer sqlTypeInt, String typeName, SQLType sqlType, Class<?> javaType,
+			boolean nullable, Object defValue, String remarks, int size, int decimalDigits) {
 		this.table = table;
-		this.nullable = nullable;
 		this.name = name;
-		this.dataType = dataType;
+		this.sqlTypeInt = sqlTypeInt;
 		this.typeName = typeName;
+		this.sqlType = sqlType;
+		this.javaType = javaType;
+		this.nullable = nullable;
 		this.defValue = defValue;
 		this.remarks = remarks;
 		this.size = size;
@@ -39,14 +43,6 @@ public class Column {
 		this.table = table;
 	}
 
-	public boolean isNullable() {
-		return nullable;
-	}
-
-	public void setNullable(boolean nullable) {
-		this.nullable = nullable;
-	}
-
 	public String getName() {
 		return name;
 	}
@@ -55,12 +51,28 @@ public class Column {
 		this.name = name;
 	}
 
-	public JDBCType getDataType() {
-		return dataType;
+	public SQLType getSqlType() {
+		return sqlType;
 	}
 
-	public void setDataType(JDBCType dataType) {
-		this.dataType = dataType;
+	public void setSqlType(SQLType sqlType) {
+		this.sqlType = sqlType;
+	}
+
+	public Integer getSqlTypeInt() {
+		return sqlTypeInt;
+	}
+
+	public void setSqlTypeInt(Integer sqlTypeInt) {
+		this.sqlTypeInt = sqlTypeInt;
+	}
+
+	public Class<?> getJavaType() {
+		return javaType;
+	}
+
+	public void setJavaType(Class<?> javaType) {
+		this.javaType = javaType;
 	}
 
 	public String getTypeName() {
@@ -71,20 +83,36 @@ public class Column {
 		this.typeName = typeName;
 	}
 
-	public Object getDefValue() {
-		return defValue;
-	}
-
-	public void setDefValue(Object defValue) {
-		this.defValue = defValue;
-	}
-
 	public String getRemarks() {
 		return remarks;
 	}
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+
+	public boolean isPrimary() {
+		return primary;
+	}
+
+	public void setPrimary(boolean primary) {
+		this.primary = primary;
+	}
+
+	public boolean isNullable() {
+		return nullable;
+	}
+
+	public void setNullable(boolean nullable) {
+		this.nullable = nullable;
+	}
+
+	public Object getDefValue() {
+		return defValue;
+	}
+
+	public void setDefValue(Object defValue) {
+		this.defValue = defValue;
 	}
 
 	public int getSize() {
@@ -107,8 +135,6 @@ public class Column {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((dataType == null) ? 0 : dataType.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((table == null) ? 0 : table.hashCode());
 		return result;
@@ -138,10 +164,9 @@ public class Column {
 
 	@Override
 	public String toString() {
-		return "Column [table=" + table + ", name=" + name + ", dataType="
-				+ dataType + ", typeName=" + typeName + ", remarks=" + remarks
-				+ ", nullable=" + nullable + ", defValue=" + defValue
-				+ ", size=" + size + ", decimalDigits=" + decimalDigits + "]";
+		return "Column [table=" + table + ", name=" + name + ", sqlType=" + sqlType + ", typeName=" + typeName
+				+ ", javaType=" + javaType + ", remarks=" + remarks + ", primary=" + primary + ", nullable=" + nullable
+				+ ", defValue=" + defValue + ", size=" + size + ", decimalDigits=" + decimalDigits + "]";
 	}
 
 }
