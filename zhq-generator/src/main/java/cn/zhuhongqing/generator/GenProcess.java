@@ -1,6 +1,8 @@
 package cn.zhuhongqing.generator;
 
 import java.io.File;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Collection;
 import java.util.Set;
 
@@ -17,7 +19,8 @@ import cn.zhuhongqing.utils.StreamUtil;
 import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.StringUtil;
 import cn.zhuhongqing.utils.scan.FileInAndExcludeResourceFilter;
-import cn.zhuhongqing.utils.scan.FileScan;
+import cn.zhuhongqing.utils.scan.ResourceScan;
+import cn.zhuhongqing.utils.scan.ResourceScanManager;
 
 /**
  * Gen Process.
@@ -38,11 +41,10 @@ public class GenProcess {
 	private GenConfig config;
 	private Collection<?> models;
 	private Template template;
-	private FileScan fs;
+	private ResourceScan<File> fs = ResourceScanManager.getResourceScan(File.class);
 
 	public GenProcess() {
 		template = Template.createRender();
-		fs = new FileScan();
 	}
 
 	public GenProcess(GenConfig config, Collection<?> models) {
@@ -59,7 +61,7 @@ public class GenProcess {
 		return config;
 	}
 
-	public void setconfig(GenConfig config) {
+	public void setConfig(GenConfig config) {
 		this.config = config;
 	}
 
@@ -92,6 +94,17 @@ public class GenProcess {
 		LOG.info("Found " + tempFiles.size() + "Template-Files,now is start generate Render-File.");
 
 		for (Object model : getModels()) {
+			boolean discard = false;
+			for (GeneratorFilter filter : config.getGeneratorFilters()) {
+				model = filter.beforeAll(model);
+				if (GeneralUtil.isNull(model)) {
+					discard = true;
+					break;
+				}
+			}
+			if (discard) {
+				continue;
+			}
 			gen0(tempFiles, config, model);
 		}
 
@@ -100,9 +113,28 @@ public class GenProcess {
 
 	private void gen0(Set<File> temps, GenConfig config, Object model) {
 		for (File temp : temps) {
-			StreamUtil.close(
-					template.render(new FileIOParams(temp.getAbsolutePath(), config.getTempFileParams().getCharset()),
-							createOutFileIoParams(temp, model), model));
+			Object currentModel = model;
+			FileIOParams inParams = new FileIOParams(temp.getAbsolutePath(), config.getTempFileParams().getCharset());
+			boolean discard = false;
+			for (GeneratorFilter filter : config.getGeneratorFilters()) {
+				currentModel = filter.beforeGen(currentModel, inParams);
+				if (GeneralUtil.isNull(currentModel)) {
+					discard = true;
+					break;
+				}
+			}
+			if (discard) {
+				continue;
+			}
+			InputStreamReader isr = inParams.toInStreamReader();
+			OutputStreamWriter osw = createOutFileIoParams(temp, currentModel).toOutStreamWriter();
+			try {
+				template.render(isr, osw, currentModel);
+			} finally {
+				StreamUtil.close(isr);
+				StreamUtil.close(osw);
+			}
+
 		}
 	}
 
