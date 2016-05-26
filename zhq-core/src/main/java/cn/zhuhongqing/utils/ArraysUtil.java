@@ -17,7 +17,7 @@ public final class ArraysUtil {
 	 * @see #createArray(Class, int)
 	 */
 
-	public static <T> T[] createEmptyArray(Class<T> claz) {
+	public static <T> T[] emptyArray(Class<T> claz) {
 		return createArray(claz, 0);
 	}
 

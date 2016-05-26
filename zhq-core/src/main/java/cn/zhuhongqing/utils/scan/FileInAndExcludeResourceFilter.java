@@ -21,20 +21,16 @@ import cn.zhuhongqing.utils.ArraysUtil;
 
 public class FileInAndExcludeResourceFilter implements ResourceFilter<File> {
 
-	private String[] includePattern;
-	private String[] excludePattern;
+	private String[] includePattern = ArraysUtil.emptyArray(String.class);
+	private String[] excludePattern = ArraysUtil.emptyArray(String.class);
 
-	public FileInAndExcludeResourceFilter(String includePattern,
-			String excludePattern) {
+	public FileInAndExcludeResourceFilter(String includePattern, String excludePattern) {
 		this(new String[] { includePattern }, new String[] { excludePattern });
 	}
 
-	public FileInAndExcludeResourceFilter(String[] includePattern,
-			String[] excludePattern) {
-		this.includePattern = ArraysUtil.isEmpty(includePattern) ? ArraysUtil
-				.createEmptyArray(String.class) : includePattern;
-		this.excludePattern = ArraysUtil.isEmpty(excludePattern) ? ArraysUtil
-				.createEmptyArray(String.class) : excludePattern;
+	public FileInAndExcludeResourceFilter(String[] includePattern, String[] excludePattern) {
+		this.includePattern = ArraysUtil.isEmpty(includePattern) ? this.includePattern : includePattern;
+		this.excludePattern = ArraysUtil.isEmpty(excludePattern) ? this.excludePattern : excludePattern;
 	}
 
 	@Override

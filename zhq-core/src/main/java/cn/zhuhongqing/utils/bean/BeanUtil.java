@@ -13,6 +13,7 @@ import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.GeneralUtil;
 import cn.zhuhongqing.utils.MethodUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
+import cn.zhuhongqing.utils.StringPool;
 
 /**
  * Some utilities for JavaBean.
@@ -39,8 +40,7 @@ public class BeanUtil {
 			mapToBean((Map<String, Object>) origin, target);
 			return;
 		}
-		PropertyDescriptor[] props = BeanInfoUtil.getPropertyDescriptors(origin
-				.getClass());
+		PropertyDescriptor[] props = BeanInfoUtil.getPropertyDescriptors(origin.getClass());
 		for (int i = 0; i < props.length; i++) {
 			setProperty(origin, target, props[i]);
 		}
@@ -55,10 +55,8 @@ public class BeanUtil {
 	public static Map<String, Object> beanToMap(Object bean) {
 		if (ClassUtil.isMap(bean.getClass()))
 			return (Map<String, Object>) bean;
-		PropertyDescriptor[] propds = BeanInfoUtil.getPropertyDescriptors(bean
-				.getClass());
-		LinkedHashMap<String, Object> beanMap = new LinkedHashMap<String, Object>(
-				propds.length);
+		PropertyDescriptor[] propds = BeanInfoUtil.getPropertyDescriptors(bean.getClass());
+		LinkedHashMap<String, Object> beanMap = new LinkedHashMap<String, Object>(propds.length);
 		for (PropertyDescriptor pd : propds) {
 			Object val = getProperty(bean, pd);
 			if (GeneralUtil.isNull(val))
@@ -68,19 +66,34 @@ public class BeanUtil {
 		return beanMap;
 	}
 
+	/**
+	 * class Foo { String name; Integer age; get/set... }
+	 * 
+	 * ==>
+	 * 
+	 * Map { foo.name : name, foo.age : age }
+	 */
+
+	public static Map<String, Object> beanToMapAddClass(Object bean) {
+		Map<String, Object> map = beanToMap(bean);
+		Map<String, Object> reMap = new LinkedHashMap<String, Object>(map.size());
+		String clzName = bean.getClass().getName();
+		for (Entry<String, Object> entry : map.entrySet()) {
+			reMap.put(clzName + StringPool.DOT + entry.getKey(), entry.getValue());
+		}
+		return reMap;
+	}
+
 	public static void mapToBean(Map<String, Object> beanMap, Object target) {
-		Iterator<Entry<String, Object>> originItr = beanMap.entrySet()
-				.iterator();
+		Iterator<Entry<String, Object>> originItr = beanMap.entrySet().iterator();
 		while (originItr.hasNext()) {
 			Entry<String, Object> entry = originItr.next();
 			setProperty(target, entry.getKey(), entry.getValue());
 		}
 	}
 
-	public static <T extends Collection<String>> Map<String, Object> populateRequestMap(
-			Map<String, T> requestMap) {
-		Map<String, Object> parmsMap = new HashMap<String, Object>(
-				requestMap.size());
+	public static <T extends Collection<String>> Map<String, Object> populateRequestMap(Map<String, T> requestMap) {
+		Map<String, Object> parmsMap = new HashMap<String, Object>(requestMap.size());
 		Iterator<Entry<String, T>> mapItr = requestMap.entrySet().iterator();
 		while (mapItr.hasNext()) {
 			Entry<String, T> entry = mapItr.next();
@@ -98,14 +111,12 @@ public class BeanUtil {
 		return parmsMap;
 	}
 
-	static void setProperty(Object origin, Object target,
-			PropertyDescriptor descriptor) {
+	static void setProperty(Object origin, Object target, PropertyDescriptor descriptor) {
 		Object value = getProperty(origin, descriptor);
 		setProperty(target, descriptor, value);
 	}
 
-	static void setProperty(Object target, PropertyDescriptor descriptor,
-			Object value) {
+	static void setProperty(Object target, PropertyDescriptor descriptor, Object value) {
 		if (BeanInfoUtil.OBJECT_PROPERTY.contains(descriptor))
 			return;
 		Method setMethod = descriptor.getWriteMethod();
@@ -126,8 +137,7 @@ public class BeanUtil {
 	public static Object getProperty(Object target, String name) {
 		if (ClassUtil.isMap(target.getClass()))
 			return ((Map<?, ?>) target).get(name);
-		return getProperty(target,
-				BeanInfoUtil.findPropertyDescriptor(target.getClass(), name));
+		return getProperty(target, BeanInfoUtil.findPropertyDescriptor(target.getClass(), name));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -136,9 +146,7 @@ public class BeanUtil {
 			((Map<String, Object>) target).put(name, value);
 			return;
 		}
-		setProperty(target,
-				BeanInfoUtil.findPropertyDescriptor(target.getClass(), name),
-				value);
+		setProperty(target, BeanInfoUtil.findPropertyDescriptor(target.getClass(), name), value);
 	}
 
 }

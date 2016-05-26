@@ -1,5 +1,13 @@
 package cn.zhuhongqing.utils;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Properties;
+
+import cn.zhuhongqing.exception.UtilsException;
+import cn.zhuhongqing.io.FileIOParams;
+import cn.zhuhongqing.io.OrderedProperties;
+
 /**
  * 
  * Some general utilities.
@@ -76,6 +84,23 @@ public class GeneralUtil {
 
 	public static <T> T defValue(T val, T def) {
 		return isNull(val) ? def : val;
+	}
+
+	/**
+	 * Load a properties.
+	 * 
+	 * @return {@link OrderedProperties}
+	 */
+
+	public static Properties loadProp(String propPath) {
+		FileIOParams io = new FileIOParams(propPath);
+		OrderedProperties prop = new OrderedProperties();
+		try (Reader r = io.toInStreamReader()) {
+			prop.load(r);
+		} catch (IOException e) {
+			throw new UtilsException(e);
+		}
+		return prop;
 	}
 
 	// ----------------------------------------------------------------

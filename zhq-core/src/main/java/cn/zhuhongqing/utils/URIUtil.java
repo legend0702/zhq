@@ -30,11 +30,10 @@ public class URIUtil implements SchemeAndProtocol {
 		try {
 			p = PathUtil.toPath(pathOrURI);
 		} catch (Exception e) {
-			// Solve win' file path like 'file:c:/user'
+			// Solve file path like 'file:c:/user'
 			int index = pathOrURI.indexOf(FILE_PATH_PREFIX);
 			if (index != -1) {
-				p = PathUtil.toPath(pathOrURI.substring(
-						FILE_PATH_PREFIX.length(), pathOrURI.length()));
+				p = PathUtil.toPath(pathOrURI.substring(FILE_PATH_PREFIX.length(), pathOrURI.length()));
 			}
 		}
 		// Is fileSystem?
@@ -103,16 +102,14 @@ public class URIUtil implements SchemeAndProtocol {
 	 * @return whether the URI has been identified as a JAR file URI
 	 */
 	public static boolean isJarFile(URI uri) {
-		return (isFile(uri) && uri.getSchemeSpecificPart().endsWith(
-				JAR_FILE_EXTENSION));
+		return (isFile(uri) && uri.getSchemeSpecificPart().endsWith(JAR_FILE_EXTENSION));
 	}
 
 	public static String getJarRootEntryPath(URI uri) {
 		String rootEntryPath = uri.getSchemeSpecificPart();
 		int separatorIndex = rootEntryPath.indexOf(JAR_PATH_SEPARATOR);
 		if (separatorIndex != -1) {
-			rootEntryPath = rootEntryPath.substring(separatorIndex
-					+ JAR_PATH_SEPARATOR.length());
+			rootEntryPath = rootEntryPath.substring(separatorIndex + JAR_PATH_SEPARATOR.length());
 		} else {
 			rootEntryPath = "";
 		}
