@@ -84,6 +84,7 @@ public interface StringPool {
 	final String CRLF = "\r\n";
 	final String PROTOCOL_START = "://";
 	final String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
+	final String IMPORT = "import";
 	// final String FILE_SEPARATOR = SLASH;
 
 	final String HTML_NBSP = "&nbsp;";

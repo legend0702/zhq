@@ -4,8 +4,8 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import cn.zhuhongqing.exception.UtilsException;
@@ -23,15 +23,10 @@ import cn.zhuhongqing.exception.UtilsException;
 
 public class BeanInfoUtil {
 
-	static List<PropertyDescriptor> OBJECT_PROPERTY = new ArrayList<PropertyDescriptor>(
-			0);
+	static HashSet<PropertyDescriptor> OBJECT_PROPERTY = new HashSet<>(0);
 
 	static {
-		OBJECT_PROPERTY = Arrays.asList(getPropertyDescriptors(Object.class));
-	}
-
-	public static PropertyDescriptor[] getPropertyDescriptors(Class<?> beanClass) {
-		return getBeanInfo(beanClass).getPropertyDescriptors();
+		OBJECT_PROPERTY = new HashSet<>(getPropertyDescriptorsList(Object.class));
 	}
 
 	static BeanInfo getBeanInfo(Class<?> beanClass) {
@@ -42,8 +37,15 @@ public class BeanInfoUtil {
 		}
 	}
 
-	public static PropertyDescriptor findPropertyDescriptor(Class<?> target,
-			String name) {
+	public static PropertyDescriptor[] getPropertyDescriptors(Class<?> beanClass) {
+		return getBeanInfo(beanClass).getPropertyDescriptors();
+	}
+
+	public static List<PropertyDescriptor> getPropertyDescriptorsList(Class<?> beanClass) {
+		return Arrays.asList(getPropertyDescriptors(beanClass));
+	}
+
+	public static PropertyDescriptor findPropertyDescriptor(Class<?> target, String name) {
 		PropertyDescriptor[] props = getPropertyDescriptors(target);
 		for (int i = 0; i < props.length; i++) {
 			if (OBJECT_PROPERTY.contains(props[i]))
@@ -51,8 +53,7 @@ public class BeanInfoUtil {
 			if (props[i].getName().equals(name))
 				return props[i];
 		}
-		throw new UtilsException("Can not find [" + name + "] property from"
-				+ target);
+		throw new UtilsException("Can not find [" + name + "] property from" + target);
 	}
 
 }
