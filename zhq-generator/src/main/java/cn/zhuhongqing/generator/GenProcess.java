@@ -48,8 +48,8 @@ public class GenProcess {
 	}
 
 	public GenProcess(GenConfig config, Collection<?> models) {
-		this.config = config;
-		this.models = models;
+		this();
+		init(config, models);
 	}
 
 	public void init(GenConfig config, Collection<?> models) {
@@ -95,7 +95,7 @@ public class GenProcess {
 
 		for (Object model : getModels()) {
 			boolean discard = false;
-			for (GeneratorFilter filter : config.getGeneratorFilters()) {
+			for (GeneratorFilter filter : config.getFilters()) {
 				model = filter.beforeAll(model);
 				if (GeneralUtil.isNull(model)) {
 					discard = true;
@@ -116,7 +116,7 @@ public class GenProcess {
 			Object currentModel = model;
 			FileIOParams inParams = new FileIOParams(temp.getAbsolutePath(), config.getTempFileParams().getCharset());
 			boolean discard = false;
-			for (GeneratorFilter filter : config.getGeneratorFilters()) {
+			for (GeneratorFilter filter : config.getFilters()) {
 				currentModel = filter.beforeGen(currentModel, inParams);
 				if (GeneralUtil.isNull(currentModel)) {
 					discard = true;

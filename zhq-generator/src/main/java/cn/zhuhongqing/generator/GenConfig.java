@@ -1,7 +1,7 @@
 package cn.zhuhongqing.generator;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 import cn.zhuhongqing.io.FileIOParams;
 
@@ -29,9 +29,9 @@ public class GenConfig {
 	private FileIOParams outFileOrRootPath;
 
 	/**
-	 * 生成过滤器
+	 * 过滤器列表 有顺执行
 	 */
-	private Collection<GeneratorFilter> generatorFilters = new ArrayList<GeneratorFilter>();
+	private List<GeneratorFilter> filters = new ArrayList<GeneratorFilter>();
 
 	/**
 	 * 是否清理生成目标文件或是文件目录<br/>
@@ -108,16 +108,16 @@ public class GenConfig {
 		this.outFileOrRootPath = outFileOrRootPath;
 	}
 
-	public Collection<GeneratorFilter> getGeneratorFilters() {
-		return generatorFilters;
+	public List<GeneratorFilter> getFilters() {
+		return filters;
 	}
 
-	public void setGeneratorFilters(Collection<GeneratorFilter> generatorFilters) {
-		this.generatorFilters = generatorFilters;
+	public void setFilters(List<GeneratorFilter> generatorFilters) {
+		this.filters = generatorFilters;
 	}
 
-	public void addGeneratorFilter(GeneratorFilter filter) {
-		this.generatorFilters.add(filter);
+	public void addFilter(GeneratorFilter filter) {
+		this.filters.add(filter);
 	}
 
 	public String[] getIncludePatterns() {
