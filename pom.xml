@@ -54,6 +54,7 @@
     	<module>zhq-template</module>
     	<module>zhq-template-velocity</module>
     	<module>zhq-generator</module>
+    	<module>zhq-generator-db</module>
   </modules>
 
 	<dependencyManagement>
@@ -185,6 +186,11 @@
 			<dependency>
 				<groupId>cn.zhuhongqing</groupId>
 				<artifactId>zhq-generator</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>cn.zhuhongqing</groupId>
+				<artifactId>zhq-generator-db</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
