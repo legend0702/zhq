@@ -3,6 +3,7 @@ package cn.zhuhongqing.generator;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.zhuhongqing.generator.filter.GeneratorFilter;
 import cn.zhuhongqing.io.FileIOParams;
 
 /**

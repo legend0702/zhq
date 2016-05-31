@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import cn.zhuhongqing.Template;
 import cn.zhuhongqing.anno.NotThreadSafe;
+import cn.zhuhongqing.generator.filter.GeneratorFilter;
 import cn.zhuhongqing.io.FileIOParams;
 import cn.zhuhongqing.io.FileUtil;
+import cn.zhuhongqing.utils.BeanWrap;
 import cn.zhuhongqing.utils.CollectionUtil;
 import cn.zhuhongqing.utils.GeneralUtil;
 import cn.zhuhongqing.utils.StreamUtil;
@@ -74,13 +76,18 @@ public class GenProcess {
 	}
 
 	/**
-	 * 主要思路
+	 * 主要流程:
+	 * 
+	 * <pre>
+	 * 1.检查参数
+	 * 2.扫描模板文件并检查
+	 * 3.循环模型参数并执行过滤器部分->循环模板文件并执行过滤器部分->用模型渲染模板生成文件
+	 * </pre>
 	 */
 
 	public void execute() {
 		checkParam();
-		Set<File> tempFiles = fs.getResources(StringUtil.endPadSlashAndAllPattern(config.getTempFileOrRootPath()),
-				new FileInAndExcludeResourceFilter(config.getIncludePatterns(), config.getExcludePatterns()));
+		Set<File> tempFiles = getTempFiles();
 
 		if (tempFiles.isEmpty()) {
 			throw new GeneratorException(
@@ -94,48 +101,54 @@ public class GenProcess {
 		LOG.info("Found " + tempFiles.size() + "Template-Files,now is start generate Render-File.");
 
 		for (Object model : getModels()) {
-			boolean discard = false;
-			for (GeneratorFilter filter : config.getFilters()) {
-				model = filter.beforeAll(model);
-				if (GeneralUtil.isNull(model)) {
-					discard = true;
-					break;
-				}
-			}
-			if (discard) {
-				continue;
-			}
-			gen0(tempFiles, config, model);
+			execute0(model, tempFiles);
 		}
 
 		LOG.info("Gen is finished.The Out-File path is:" + config.getOutFileOrRootPath());
 	}
 
-	private void gen0(Set<File> temps, GenConfig config, Object model) {
-		for (File temp : temps) {
-			Object currentModel = model;
-			FileIOParams inParams = new FileIOParams(temp.getAbsolutePath(), config.getTempFileParams().getCharset());
-			boolean discard = false;
-			for (GeneratorFilter filter : config.getFilters()) {
-				currentModel = filter.beforeGen(currentModel, inParams);
-				if (GeneralUtil.isNull(currentModel)) {
-					discard = true;
-					break;
-				}
+	private void execute0(Object model, Set<File> tempFiles) {
+		BeanWrap beanWrap = new BeanWrap(model);
+		for (GeneratorFilter filter : config.getFilters()) {
+			if (!filter.beforeAll(beanWrap)) {
+				LOG.info("The model [ " + beanWrap.merge() + "] is abandoned by [ " + filter + " ] filter.");
+				return;
 			}
-			if (discard) {
-				continue;
-			}
-			InputStreamReader isr = inParams.toInStreamReader();
-			OutputStreamWriter osw = createOutFileIoParams(temp, currentModel).toOutStreamWriter();
-			try {
-				template.render(isr, osw, currentModel);
-			} finally {
-				StreamUtil.close(isr);
-				StreamUtil.close(osw);
-			}
-
 		}
+		gen0(tempFiles, beanWrap);
+	}
+
+	private void gen0(Set<File> temps, BeanWrap mainWrap) {
+		for (File temp : temps) {
+			gen1(temp, mainWrap);
+		}
+	}
+
+	private void gen1(File temp, BeanWrap mainWrap) {
+		BeanWrap cloneWrap = mainWrap.clone();
+		FileIOParams inParams = new FileIOParams(temp.getAbsolutePath(), config.getTempFileParams().getCharset());
+		for (GeneratorFilter filter : config.getFilters()) {
+			if (!filter.beforeGen(cloneWrap, inParams)) {
+				LOG.info("The tempFile [ " + temp + "] on model [ " + cloneWrap.merge() + " ] is abandoned by [ "
+						+ filter + " ] filter.");
+				return;
+			}
+		}
+		Object model = cloneWrap.merge();
+		InputStreamReader isr = inParams.toInStreamReader();
+		OutputStreamWriter osw = createOutFileIoParams(temp, model).toOutStreamWriter();
+		try {
+			template.render(isr, osw, model);
+		} finally {
+			StreamUtil.close(isr);
+			StreamUtil.close(osw);
+		}
+
+	}
+
+	private Set<File> getTempFiles() {
+		return fs.getResources(StringUtil.endPadSlashAndAllPattern(config.getTempFileOrRootPath()),
+				new FileInAndExcludeResourceFilter(config.getIncludePatterns(), config.getExcludePatterns()));
 	}
 
 	private FileIOParams createOutFileIoParams(File temp, Object model) {
