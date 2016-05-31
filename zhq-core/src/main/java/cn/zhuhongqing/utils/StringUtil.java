@@ -133,8 +133,7 @@ public class StringUtil {
 		if (name.length() == 0) {
 			return name;
 		}
-		if (name.length() > 1 && Character.isUpperCase(name.charAt(1))
-				&& Character.isUpperCase(name.charAt(0))) {
+		if (name.length() > 1 && Character.isUpperCase(name.charAt(1)) && Character.isUpperCase(name.charAt(0))) {
 			return name;
 		}
 
@@ -160,8 +159,7 @@ public class StringUtil {
 	 *            String to insert
 	 * @return a String with the replacements
 	 */
-	public static String replace(String inString, String oldPattern,
-			String newPattern) {
+	public static String replace(String inString, String oldPattern, String newPattern) {
 		if (isEmpty(inString) || isEmpty(oldPattern) || isEmpty(newPattern)) {
 			return inString;
 		}
@@ -204,8 +202,7 @@ public class StringUtil {
 		if (path == null) {
 			return null;
 		}
-		String pathToUse = replace(path, WINDOWS_FOLDER_SEPARATOR,
-				FOLDER_SEPARATOR);
+		String pathToUse = replace(path, WINDOWS_FOLDER_SEPARATOR, FOLDER_SEPARATOR);
 
 		// Strip prefix from path to analyze, to not treat it as part of the
 		// first path element. This is necessary to correctly parse paths like
@@ -222,8 +219,7 @@ public class StringUtil {
 			pathToUse = pathToUse.substring(1);
 		}
 
-		String[] pathArray = delimitedListToStringArray(pathToUse,
-				FOLDER_SEPARATOR);
+		String[] pathArray = delimitedListToStringArray(pathToUse, FOLDER_SEPARATOR);
 		List<String> pathElements = new LinkedList<String>();
 		int tops = 0;
 
@@ -251,8 +247,7 @@ public class StringUtil {
 			pathElements.add(0, TOP_PATH);
 		}
 
-		return prefix
-				+ collectionToDelimitedString(pathElements, FOLDER_SEPARATOR);
+		return prefix + collectionToDelimitedString(pathElements, FOLDER_SEPARATOR);
 	}
 
 	/**
@@ -265,10 +260,8 @@ public class StringUtil {
 	 *            the delimiter to use (probably a ",")
 	 * @return the delimited String
 	 */
-	public static String collectionToDelimitedString(Collection<?> coll,
-			String delim) {
-		return collectionToDelimitedString(coll, delim, StringPool.EMPTY,
-				StringPool.EMPTY);
+	public static String collectionToDelimitedString(Collection<?> coll, String delim) {
+		return collectionToDelimitedString(coll, delim, StringPool.EMPTY, StringPool.EMPTY);
 	}
 
 	/**
@@ -285,8 +278,7 @@ public class StringUtil {
 	 *            the String to end each element with
 	 * @return the delimited String
 	 */
-	public static String collectionToDelimitedString(Collection<?> coll,
-			String delim, String prefix, String suffix) {
+	public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
 		if (coll == null || coll.isEmpty()) {
 			return "";
 		}
@@ -317,8 +309,7 @@ public class StringUtil {
 	 * @return an array of the tokens in the list
 	 * @see #tokenizeToStringArray
 	 */
-	public static String[] delimitedListToStringArray(String str,
-			String delimiter) {
+	public static String[] delimitedListToStringArray(String str, String delimiter) {
 		return delimitedListToStringArray(str, delimiter, null);
 	}
 
@@ -342,8 +333,7 @@ public class StringUtil {
 	 * @return an array of the tokens in the list
 	 * @see #tokenizeToStringArray
 	 */
-	public static String[] delimitedListToStringArray(String str,
-			String delimiter, String charsToDelete) {
+	public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
 		if (str == null) {
 			return new String[0];
 		}
@@ -460,9 +450,12 @@ public class StringUtil {
 		return endPad(str, StringPool.SLASH);
 	}
 
+	public static String endPadDot(String str) {
+		return endPad(str, StringPool.DOT);
+	}
+
 	public static String endPadSlashAndAllPattern(String str) {
-		if (str.endsWith(PathMatcher.ALL_PATTERN)
-				|| str.endsWith(PathMatcher.ALL_WORD_PATTERN)) {
+		if (str.endsWith(PathMatcher.ALL_PATTERN) || str.endsWith(PathMatcher.ALL_WORD_PATTERN)) {
 			return str;
 		}
 		String reStr = endPadSlash(str);
@@ -475,8 +468,7 @@ public class StringUtil {
 	 */
 	public static String forwardFilling2(int value) {
 		if (value < 0) {
-			throw new IllegalArgumentException("Value must be positive: "
-					+ value);
+			throw new IllegalArgumentException("Value must be positive: " + value);
 		}
 		if (value < 10) {
 			return '0' + Integer.toString(value);
@@ -492,8 +484,7 @@ public class StringUtil {
 	 */
 	public static String forwardFilling3(int value) {
 		if (value < 0) {
-			throw new IllegalArgumentException("Value must be positive: "
-					+ value);
+			throw new IllegalArgumentException("Value must be positive: " + value);
 		}
 		if (value < 10) {
 			return "00" + Integer.toString(value);
@@ -712,6 +703,25 @@ public class StringUtil {
 	}
 
 	/**
+	 * a/b/c/d,a/b,/ ==> /c
+	 */
+
+	public static String cutStartToLastIndex(String str, String start, String lastStr) {
+		int startIndex = str.indexOf(start);
+		if (startIndex == -1) {
+			return str;
+		}
+		StringBuilder sb = new StringBuilder(str);
+		sb = sb.delete(0, startIndex + start.length());
+		int endIndex = sb.lastIndexOf(lastStr);
+		if (endIndex == -1) {
+			return sb.toString();
+		}
+		return sb.substring(0, endIndex);
+
+	}
+
+	/**
 	 * @see #cutSurrounding(String, String, String)
 	 */
 	public static String cutSurrounding(String string, String fix) {
@@ -721,8 +731,7 @@ public class StringUtil {
 	/**
 	 * Removes surrounding prefix and suffixes.
 	 */
-	public static String cutSurrounding(String string, String prefix,
-			String suffix) {
+	public static String cutSurrounding(String string, String prefix, String suffix) {
 		int start = 0;
 		int end = string.length();
 		if (string.startsWith(prefix)) {

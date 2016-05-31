@@ -1435,6 +1435,14 @@ public class FileUtil {
 	}
 
 	/**
+	 * The child's parent is equals parent;
+	 */
+
+	public static boolean isParent(File parent, File child) {
+		return parent.equals(getParentFile(child));
+	}
+
+	/**
 	 * Check if one file is an ancestor of second one.
 	 * 
 	 * @param strict

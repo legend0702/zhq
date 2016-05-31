@@ -1,5 +1,6 @@
 package cn.zhuhongqing.utils;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -118,6 +119,10 @@ public class URIUtil implements SchemeAndProtocol {
 
 	public static String getLowerScheme(URI uri) {
 		return uri.getScheme().toLowerCase();
+	}
+
+	public static String getSchemeSpecificPart(File file) {
+		return file.toURI().getSchemeSpecificPart();
 	}
 
 }
