@@ -3,7 +3,6 @@ package cn.zhuhongqing;
 import java.util.Collection;
 import java.util.Collections;
 
-import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.generator.GenConfig;
 import cn.zhuhongqing.generator.GenProcess;
 import cn.zhuhongqing.io.FileIOParams;
@@ -29,7 +28,6 @@ import cn.zhuhongqing.module.Module;
  *         </nl>
  */
 
-@NotThreadSafe
 public class Generator extends Module {
 	private static GenProcess genProcess = new GenProcess();
 

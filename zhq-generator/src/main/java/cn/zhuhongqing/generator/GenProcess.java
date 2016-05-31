@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.zhuhongqing.Template;
-import cn.zhuhongqing.anno.NotThreadSafe;
 import cn.zhuhongqing.generator.filter.GeneratorFilter;
 import cn.zhuhongqing.io.FileIOParams;
 import cn.zhuhongqing.io.FileUtil;
@@ -25,7 +24,15 @@ import cn.zhuhongqing.utils.scan.ResourceScan;
 import cn.zhuhongqing.utils.scan.ResourceScanManager;
 
 /**
- * Gen Process.
+ * 模板渲染执行器<br/>
+ * 
+ * 主要流程:<br/>
+ * 
+ * <pre>
+ * 1.检查参数
+ * 2.扫描模板文件并检查
+ * 3.循环模型参数并执行过滤器部分->循环模板文件并执行过滤器部分->用模型渲染模板生成文件
+ * </pre>
  * 
  * @author HongQing.Zhu
  *         <nl>
@@ -35,7 +42,6 @@ import cn.zhuhongqing.utils.scan.ResourceScanManager;
  *         </nl>
  */
 
-@NotThreadSafe
 public class GenProcess {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GenProcess.class);
@@ -74,16 +80,6 @@ public class GenProcess {
 	public void setModels(Collection<?> models) {
 		this.models = models;
 	}
-
-	/**
-	 * 主要流程:
-	 * 
-	 * <pre>
-	 * 1.检查参数
-	 * 2.扫描模板文件并检查
-	 * 3.循环模型参数并执行过滤器部分->循环模板文件并执行过滤器部分->用模型渲染模板生成文件
-	 * </pre>
-	 */
 
 	public void execute() {
 		checkParam();
@@ -128,7 +124,7 @@ public class GenProcess {
 		BeanWrap cloneWrap = mainWrap.clone();
 		FileIOParams inParams = new FileIOParams(temp.getAbsolutePath(), config.getTempFileParams().getCharset());
 		for (GeneratorFilter filter : config.getFilters()) {
-			if (!filter.beforeGen(cloneWrap, inParams)) {
+			if (!filter.beforeGen(cloneWrap, config.getTempFileParams(), inParams)) {
 				LOG.info("The tempFile [ " + temp + "] on model [ " + cloneWrap.merge() + " ] is abandoned by [ "
 						+ filter + " ] filter.");
 				return;

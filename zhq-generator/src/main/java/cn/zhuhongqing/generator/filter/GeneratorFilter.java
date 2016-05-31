@@ -35,14 +35,15 @@ public interface GeneratorFilter {
 	 * 
 	 * @param modelWrap
 	 *            如果存在多个Filter,该参数会顺序传递.但是对于不同的模板文件,该参数不会产生传递.
-	 * 
+	 * @param tempRootParams
+	 *            模板文件根目录文件信息
 	 * @param currentInParams
 	 *            当前准备渲染的模板文件信息
 	 * 
 	 * @return 如果返回false,那么针对本次模板文件的渲染会被抛弃.
 	 */
 
-	public default boolean beforeGen(BeanWrap modelWrap, FileIOParams currentInParams) {
+	public default boolean beforeGen(BeanWrap modelWrap, FileIOParams tempRootParams, FileIOParams currentInParams) {
 		return true;
 	}
 
