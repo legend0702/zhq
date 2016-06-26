@@ -1,4 +1,4 @@
-package cn.zhuhongqing.utils;
+package cn.zhuhongqing.io;
 
 // Copyright (c) 2003-2013, Jodd Team (jodd.org). All Rights Reserved.
 import static cn.zhuhongqing.Core.BYTE_SIZE;
@@ -16,7 +16,6 @@ import java.io.Reader;
 import java.io.Writer;
 
 import cn.zhuhongqing.exception.UtilsException;
-import cn.zhuhongqing.io.FastByteArrayOutputStream;
 
 /**
  * Optimized byte and character stream utilities.
