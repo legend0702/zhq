@@ -8,7 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import cn.zhuhongqing.template.TemplateProcess;
-import cn.zhuhongqing.utils.factory.SingleImplementFacadeFactory;
+import cn.zhuhongqing.utils.SPIUtil;
 import cn.zhuhongqing.utils.loader.ClassPathResourceLoader;
 
 /**
@@ -20,8 +20,7 @@ public class TemplateVelocityTest {
 
 	@Before
 	public void before() {
-		tp = SingleImplementFacadeFactory
-				.getSingleImplement(TemplateProcess.class);
+		tp = SPIUtil.load(TemplateProcess.class);
 	}
 
 	@Test
@@ -29,9 +28,7 @@ public class TemplateVelocityTest {
 		HashMap<String, Object> model = new HashMap<String, Object>(1);
 		model.put("w", "Velocity!");
 		StringWriter sw = new StringWriter(1024);
-		tp.render(
-				new InputStreamReader(new ClassPathResourceLoader()
-						.loaderAsStream("velocityTemp")), sw, model);
+		tp.render(new InputStreamReader(new ClassPathResourceLoader().loaderAsStream("velocityTemp")), sw, model);
 		System.out.println(sw.toString());
 	}
 

@@ -15,7 +15,7 @@ import cn.zhuhongqing.io.FileIOParams;
 import cn.zhuhongqing.module.Module;
 import cn.zhuhongqing.template.TemplateProcess;
 import cn.zhuhongqing.template.exception.TemplateException;
-import cn.zhuhongqing.utils.factory.SingleImplementFacadeFactory;
+import cn.zhuhongqing.utils.SPIUtil;
 
 /**
  * 模板工具包<br/>
@@ -32,12 +32,12 @@ import cn.zhuhongqing.utils.factory.SingleImplementFacadeFactory;
 @NotThreadSafe
 public class Template extends Module {
 
-	private static TemplateProcess STATIC_TP = SingleImplementFacadeFactory.getSingleImplement(TemplateProcess.class);
+	private static TemplateProcess STATIC_TP = SPIUtil.load(TemplateProcess.class);
 
 	private TemplateProcess tp;
 
 	protected Template() {
-		tp = SingleImplementFacadeFactory.getSingleImplement(TemplateProcess.class);
+		tp = SPIUtil.load(TemplateProcess.class);
 	}
 
 	/**
