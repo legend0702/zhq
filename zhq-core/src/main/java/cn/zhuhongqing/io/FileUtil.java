@@ -32,7 +32,6 @@ import cn.zhuhongqing.ZHQ;
 import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.utils.ArraysUtil;
 import cn.zhuhongqing.utils.SchemeAndProtocol;
-import cn.zhuhongqing.utils.StreamUtil;
 import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.SystemUtil;
 import cn.zhuhongqing.utils.URIUtil;

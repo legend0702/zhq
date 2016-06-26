@@ -8,6 +8,8 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
+import cn.zhuhongqing.io.StreamUtil;
+
 /**
  * Simple HttpClient.
  *

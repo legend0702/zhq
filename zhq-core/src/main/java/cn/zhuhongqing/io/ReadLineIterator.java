@@ -6,8 +6,6 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import cn.zhuhongqing.utils.StreamUtil;
-
 /**
  * An Iterator over the lines in a <code>Reader</code>.
  * <p>
