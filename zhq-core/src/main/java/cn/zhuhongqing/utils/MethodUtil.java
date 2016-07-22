@@ -21,10 +21,13 @@ public class MethodUtil {
 		ReflectUtil.makeAccessible(method);
 		try {
 			return method.invoke(target, params);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new UtilsException(e);
 		}
+	}
+
+	public static boolean isVoid(Method method) {
+		return Void.TYPE.equals(method.getReturnType());
 	}
 
 }
