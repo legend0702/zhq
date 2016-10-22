@@ -148,8 +148,12 @@ public class FileUtil {
 	 * Converts file to URL in a correct way. Returns <code>null</code> in case
 	 * of error.
 	 */
-	public static URL toURL(File file) throws MalformedURLException {
-		return file.toURI().toURL();
+	public static URL toURL(File file) {
+		try {
+			return file.toURI().toURL();
+		} catch (MalformedURLException e) {
+			throw new UtilsException(e);
+		}
 	}
 
 	/**
@@ -240,7 +244,7 @@ public class FileUtil {
 	/**
 	 * @see #touch(java.io.File)
 	 */
-	public static void touch(String file) throws IOException {
+	public static void touch(String file) {
 		touch(file(file));
 	}
 
@@ -249,9 +253,13 @@ public class FileUtil {
 	 * or, if the file exists already, it is opened and closed without modifying
 	 * it, but updating the file date and time.
 	 */
-	public static void touch(File file) throws IOException {
+	public static void touch(File file) {
 		if (file.exists() == false) {
-			StreamUtil.close(new FileOutputStream(file));
+			try {
+				StreamUtil.close(new FileOutputStream(file));
+			} catch (FileNotFoundException e) {
+				throw new UtilsException(e);
+			}
 		}
 		file.setLastModified(System.currentTimeMillis());
 	}
@@ -263,11 +271,7 @@ public class FileUtil {
 	 * params.
 	 */
 	public static FileUtilParams cloneParams() {
-		try {
-			return fileUtilParams.clone();
-		} catch (CloneNotSupportedException ignore) {
-			return null;
-		}
+		return fileUtilParams.clone();
 	}
 
 	/**
@@ -283,21 +287,21 @@ public class FileUtil {
 	/**
 	 * @see #copyFile(java.io.File, java.io.File, FileUtilParams)
 	 */
-	public static void copyFile(String src, String dest) throws IOException {
+	public static void copyFile(String src, String dest) {
 		copyFile(file(src), file(dest), fileUtilParams);
 	}
 
 	/**
 	 * @see #copyFile(java.io.File, java.io.File, FileUtilParams)
 	 */
-	public static void copyFile(String src, String dest, FileUtilParams params) throws IOException {
+	public static void copyFile(String src, String dest, FileUtilParams params) {
 		copyFile(file(src), file(dest), params);
 	}
 
 	/**
 	 * @see #copyFile(java.io.File, java.io.File, FileUtilParams)
 	 */
-	public static void copyFile(File src, File dest) throws IOException {
+	public static void copyFile(File src, File dest) {
 		copyFile(src, dest, fileUtilParams);
 	}
 
@@ -305,29 +309,29 @@ public class FileUtil {
 	 * Copies a file to another file with specified {@link FileUtilParams copy
 	 * params}.
 	 */
-	public static void copyFile(File src, File dest, FileUtilParams params) throws IOException {
+	public static void copyFile(File src, File dest, FileUtilParams params) {
 		checkFileCopy(src, dest, params);
 		doCopyFile(src, dest, params);
 	}
 
-	private static void checkFileCopy(File src, File dest, FileUtilParams params) throws IOException {
+	private static void checkFileCopy(File src, File dest, FileUtilParams params) {
 		if (src.exists() == false) {
-			throw new FileNotFoundException(MSG_NOT_FOUND + src);
+			throw new UtilsException(new FileNotFoundException(MSG_NOT_FOUND + src));
 		}
 		if (src.isFile() == false) {
-			throw new IOException(MSG_NOT_A_FILE + src);
+			throw new UtilsException(new IOException(MSG_NOT_A_FILE + src));
 		}
 		if (equals(src, dest) == true) {
-			throw new IOException("Files '" + src + "' and '" + dest + "' are equal");
+			throw new UtilsException(new IOException("Files '" + src + "' and '" + dest + "' are equal"));
 		}
 
 		File destParent = dest.getParentFile();
 		if (destParent != null && destParent.exists() == false) {
 			if (params.createDirs == false) {
-				throw new IOException(MSG_NOT_FOUND + destParent);
+				throw new UtilsException(new IOException(MSG_NOT_FOUND + destParent));
 			}
 			if (destParent.mkdirs() == false) {
-				throw new IOException(MSG_CANT_CREATE + destParent);
+				throw new UtilsException(new IOException(MSG_CANT_CREATE + destParent));
 			}
 		}
 	}
@@ -369,21 +373,21 @@ public class FileUtil {
 	/**
 	 * @see #copyFileToDir(java.io.File, java.io.File, FileUtilParams)
 	 */
-	public static File copyFileToDir(String src, String destDir) throws IOException {
+	public static File copyFileToDir(String src, String destDir) {
 		return copyFileToDir(file(src), file(destDir), fileUtilParams);
 	}
 
 	/**
 	 * @see #copyFileToDir(java.io.File, java.io.File, FileUtilParams)
 	 */
-	public static File copyFileToDir(String src, String destDir, FileUtilParams params) throws IOException {
+	public static File copyFileToDir(String src, String destDir, FileUtilParams params) {
 		return copyFileToDir(file(src), file(destDir), params);
 	}
 
 	/**
 	 * @see #copyFileToDir(java.io.File, java.io.File, FileUtilParams)
 	 */
-	public static File copyFileToDir(File src, File destDir) throws IOException {
+	public static File copyFileToDir(File src, File destDir) {
 		return copyFileToDir(src, destDir, fileUtilParams);
 	}
 
@@ -391,9 +395,9 @@ public class FileUtil {
 	 * Copies a file to folder with specified copy params and returns copied
 	 * destination.
 	 */
-	public static File copyFileToDir(File src, File destDir, FileUtilParams params) throws IOException {
+	public static File copyFileToDir(File src, File destDir, FileUtilParams params) {
 		if (destDir.exists() && destDir.isDirectory() == false) {
-			throw new IOException(MSG_NOT_A_DIRECTORY + destDir);
+			throw new UtilsException(new IOException(MSG_NOT_A_DIRECTORY + destDir));
 		}
 		File dest = file(destDir, src.getName());
 		copyFile(src, dest, params);
@@ -402,22 +406,22 @@ public class FileUtil {
 
 	// ---------------------------------------------------------------- copy dir
 
-	public static void copyDir(String srcDir, String destDir) throws IOException {
+	public static void copyDir(String srcDir, String destDir) {
 		copyDir(file(srcDir), file(destDir), fileUtilParams);
 	}
 
-	public static void copyDir(String srcDir, String destDir, FileUtilParams params) throws IOException {
+	public static void copyDir(String srcDir, String destDir, FileUtilParams params) {
 		copyDir(file(srcDir), file(destDir), params);
 	}
 
-	public static void copyDir(File srcDir, File destDir) throws IOException {
+	public static void copyDir(File srcDir, File destDir) {
 		copyDir(srcDir, destDir, fileUtilParams);
 	}
 
 	/**
 	 * Copies directory with specified copy params.
 	 */
-	public static void copyDir(File srcDir, File destDir, FileUtilParams params) throws IOException {
+	public static void copyDir(File srcDir, File destDir, FileUtilParams params) {
 		checkDirCopy(srcDir, destDir);
 		doCopyDirectory(srcDir, destDir, params);
 	}
@@ -472,30 +476,30 @@ public class FileUtil {
 	// ---------------------------------------------------------------- move
 	// file
 
-	public static void moveFile(String src, String dest) throws IOException {
+	public static void moveFile(String src, String dest) {
 		moveFile(file(src), file(dest), fileUtilParams);
 	}
 
-	public static void moveFile(String src, String dest, FileUtilParams params) throws IOException {
+	public static void moveFile(String src, String dest, FileUtilParams params) {
 		moveFile(file(src), file(dest), params);
 	}
 
-	public static void moveFile(File src, File dest) throws IOException {
+	public static void moveFile(File src, File dest) {
 		moveFile(src, dest, fileUtilParams);
 	}
 
-	public static void moveFile(File src, File dest, FileUtilParams params) throws IOException {
+	public static void moveFile(File src, File dest, FileUtilParams params) {
 		checkFileCopy(src, dest, params);
 		doMoveFile(src, dest, params);
 	}
 
-	private static void doMoveFile(File src, File dest, FileUtilParams params) throws IOException {
+	private static void doMoveFile(File src, File dest, FileUtilParams params) {
 		if (dest.exists()) {
 			if (dest.isFile() == false) {
-				throw new IOException(MSG_NOT_A_FILE + dest);
+				throw new UtilsException(new IOException(MSG_NOT_A_FILE + dest));
 			}
 			if (params.overwrite == false) {
-				throw new IOException(MSG_ALREADY_EXISTS + dest);
+				throw new UtilsException(new IOException(MSG_ALREADY_EXISTS + dest));
 			}
 			dest.delete();
 		}
@@ -510,28 +514,28 @@ public class FileUtil {
 	// ---------------------------------------------------------------- move
 	// file to dir
 
-	public static void moveFileToDir(String src, String destDir) throws IOException {
+	public static void moveFileToDir(String src, String destDir) {
 		moveFileToDir(file(src), file(destDir), fileUtilParams);
 	}
 
-	public static void moveFileToDir(String src, String destDir, FileUtilParams params) throws IOException {
+	public static void moveFileToDir(String src, String destDir, FileUtilParams params) {
 		moveFileToDir(file(src), file(destDir), params);
 	}
 
-	public static void moveFileToDir(File src, File destDir) throws IOException {
+	public static void moveFileToDir(File src, File destDir) {
 		moveFileToDir(src, destDir, fileUtilParams);
 	}
 
-	public static void moveFileToDir(File src, File destDir, FileUtilParams params) throws IOException {
+	public static void moveFileToDir(File src, File destDir, FileUtilParams params) {
 		if (destDir.exists() && destDir.isDirectory() == false) {
-			throw new IOException(MSG_NOT_A_DIRECTORY + destDir);
+			throw new UtilsException(new IOException(MSG_NOT_A_DIRECTORY + destDir));
 		}
 		moveFile(src, file(destDir, src.getName()), params);
 	}
 
 	// ---------------------------------------------------------------- move dir
 
-	public static void moveDir(String srcDir, String destDir) throws IOException {
+	public static void moveDir(String srcDir, String destDir) {
 		moveDir(file(srcDir), file(destDir));
 	}
 
@@ -701,7 +705,7 @@ public class FileUtil {
 	// ----------------------------------------------------------------
 	// read/write chars
 
-	public static char[] readUTFChars(String fileName) throws IOException {
+	public static char[] readUTFChars(String fileName) {
 		return readUTFChars(file(fileName));
 	}
 
@@ -710,12 +714,12 @@ public class FileUtil {
 	 * 
 	 * @see UnicodeInputStream
 	 */
-	public static char[] readUTFChars(File file) throws IOException {
+	public static char[] readUTFChars(File file) {
 		if (file.exists() == false) {
-			throw new FileNotFoundException(MSG_NOT_FOUND + file);
+			throw new UtilsException(new FileNotFoundException(MSG_NOT_FOUND + file));
 		}
 		if (file.isFile() == false) {
-			throw new IOException(MSG_NOT_A_FILE + file);
+			throw new UtilsException(new IOException(MSG_NOT_A_FILE + file));
 		}
 		long len = file.length();
 		if (len >= Integer.MAX_VALUE) {
@@ -731,32 +735,34 @@ public class FileUtil {
 			}
 			StreamUtil.copy(in, fastCharArrayWriter, encoding);
 			return fastCharArrayWriter.toCharArray();
+		} catch (FileNotFoundException e) {
+			throw new UtilsException(e);
 		} finally {
 			StreamUtil.close(in);
 		}
 	}
 
-	public static char[] readChars(String fileName) throws IOException {
+	public static char[] readChars(String fileName) {
 		return readChars(file(fileName), fileUtilParams.encoding);
 	}
 
-	public static char[] readChars(File file) throws IOException {
+	public static char[] readChars(File file) {
 		return readChars(file, fileUtilParams.encoding);
 	}
 
-	public static char[] readChars(String fileName, String encoding) throws IOException {
+	public static char[] readChars(String fileName, String encoding) {
 		return readChars(file(fileName), encoding);
 	}
 
 	/**
 	 * Reads file content as char array.
 	 */
-	public static char[] readChars(File file, String encoding) throws IOException {
+	public static char[] readChars(File file, String encoding) {
 		if (file.exists() == false) {
-			throw new FileNotFoundException(MSG_NOT_FOUND + file);
+			throw new UtilsException(new FileNotFoundException(MSG_NOT_FOUND + file));
 		}
 		if (file.isFile() == false) {
-			throw new IOException(MSG_NOT_A_FILE + file);
+			throw new UtilsException(new IOException(MSG_NOT_A_FILE + file));
 		}
 		long len = file.length();
 		if (len >= Integer.MAX_VALUE) {
@@ -772,45 +778,46 @@ public class FileUtil {
 			FastCharArrayWriter fastCharArrayWriter = new FastCharArrayWriter((int) len);
 			StreamUtil.copy(in, fastCharArrayWriter, encoding);
 			return fastCharArrayWriter.toCharArray();
+		} catch (FileNotFoundException e) {
+			throw new UtilsException(e);
 		} finally {
 			StreamUtil.close(in);
 		}
 	}
 
-	public static void writeChars(File dest, char[] data) throws IOException {
+	public static void writeChars(File dest, char[] data) {
 		outChars(dest, data, DEFAULT_ENCODING, false);
 	}
 
-	public static void writeChars(String dest, char[] data) throws IOException {
+	public static void writeChars(String dest, char[] data) {
 		outChars(file(dest), data, DEFAULT_ENCODING, false);
 	}
 
-	public static void writeChars(File dest, char[] data, String encoding) throws IOException {
+	public static void writeChars(File dest, char[] data, String encoding) {
 		outChars(dest, data, encoding, false);
 	}
 
-	public static void writeChars(String dest, char[] data, String encoding) throws IOException {
+	public static void writeChars(String dest, char[] data, String encoding) {
 		outChars(file(dest), data, encoding, false);
 	}
 
-	protected static void outChars(File dest, char[] data, String encoding, boolean append) throws IOException {
+	protected static void outChars(File dest, char[] data, String encoding, boolean append) {
 		if (dest.exists() == true) {
 			if (dest.isFile() == false) {
-				throw new IOException(MSG_NOT_A_FILE + dest);
+				throw new UtilsException(new IOException(MSG_NOT_A_FILE + dest));
 			}
 		}
-		Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dest, append), encoding));
-		try {
+		try (Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dest, append), encoding))) {
 			out.write(data);
-		} finally {
-			StreamUtil.close(out);
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		}
 	}
 
 	// ----------------------------------------------------------------
 	// read/write string
 
-	public static String readUTFString(String fileName) throws IOException {
+	public static String readUTFString(String fileName) {
 		return readUTFString(file(fileName));
 	}
 
@@ -820,29 +827,27 @@ public class FileUtil {
 	 * 
 	 * @see UnicodeInputStream
 	 */
-	public static String readUTFString(File file) throws IOException {
+	public static String readUTFString(File file) {
 		if (file.exists() == false) {
-			throw new FileNotFoundException(MSG_NOT_FOUND + file);
+			throw new UtilsException(new FileNotFoundException(MSG_NOT_FOUND + file));
 		}
 		if (file.isFile() == false) {
-			throw new IOException(MSG_NOT_A_FILE + file);
+			throw new UtilsException(new IOException(MSG_NOT_A_FILE + file));
 		}
 		long len = file.length();
 		if (len >= Integer.MAX_VALUE) {
 			len = Integer.MAX_VALUE;
 		}
-		UnicodeInputStream in = null;
-		try {
-			in = new UnicodeInputStream(new FileInputStream(file), null);
-			FastCharArrayWriter out = new FastCharArrayWriter((int) len);
+		try (UnicodeInputStream in = new UnicodeInputStream(new FileInputStream(file), null);
+				FastCharArrayWriter out = new FastCharArrayWriter((int) len)) {
 			String encoding = in.getDetectedEncoding();
 			if (encoding == null) {
 				encoding = DEFAULT_ENCODING;
 			}
 			StreamUtil.copy(in, out, encoding);
 			return out.toString();
-		} finally {
-			StreamUtil.close(in);
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		}
 	}
 
@@ -850,31 +855,29 @@ public class FileUtil {
 	 * Detects optional BOM and reads UTF string from an input stream. If BOM is
 	 * missing, UTF-8 is assumed.
 	 */
-	public static String readUTFString(InputStream inputStream) throws IOException {
-		UnicodeInputStream in = null;
-		try {
-			in = new UnicodeInputStream(inputStream, null);
-			FastCharArrayWriter out = new FastCharArrayWriter();
+	public static String readUTFString(InputStream inputStream) {
+		try (UnicodeInputStream in = new UnicodeInputStream(inputStream, null);
+				FastCharArrayWriter out = new FastCharArrayWriter()) {
 			String encoding = in.getDetectedEncoding();
 			if (encoding == null) {
 				encoding = DEFAULT_ENCODING;
 			}
 			StreamUtil.copy(in, out, encoding);
 			return out.toString();
-		} finally {
-			StreamUtil.close(in);
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		}
 	}
 
-	public static String readString(String source) throws IOException {
+	public static String readString(String source) {
 		return readString(file(source), fileUtilParams.encoding);
 	}
 
-	public static String readString(String source, String encoding) throws IOException {
+	public static String readString(String source, String encoding) {
 		return readString(file(source), encoding);
 	}
 
-	public static String readString(File source) throws IOException {
+	public static String readString(File source) {
 		return readString(source, fileUtilParams.encoding);
 	}
 
@@ -882,12 +885,12 @@ public class FileUtil {
 	 * Reads file content as string encoded in provided encoding. For UTF
 	 * encoded files, detects optional BOM characters.
 	 */
-	public static String readString(File file, String encoding) throws IOException {
+	public static String readString(File file, String encoding) {
 		if (file.exists() == false) {
-			throw new FileNotFoundException(MSG_NOT_FOUND + file);
+			throw new UtilsException(new FileNotFoundException(MSG_NOT_FOUND + file));
 		}
 		if (file.isFile() == false) {
-			throw new IOException(MSG_NOT_A_FILE + file);
+			throw new UtilsException(new IOException(MSG_NOT_A_FILE + file));
 		}
 		long len = file.length();
 		if (len >= Integer.MAX_VALUE) {
@@ -902,104 +905,96 @@ public class FileUtil {
 			FastCharArrayWriter out = new FastCharArrayWriter((int) len);
 			StreamUtil.copy(in, out, encoding);
 			return out.toString();
+		} catch (FileNotFoundException e) {
+			throw new UtilsException(e);
 		} finally {
 			StreamUtil.close(in);
 		}
 	}
 
-	public static void writeString(String dest, String data) throws IOException {
+	public static void writeString(String dest, String data) {
 		outString(file(dest), data, fileUtilParams.encoding, false);
 	}
 
-	public static void writeString(String dest, String data, String encoding) throws IOException {
+	public static void writeString(String dest, String data, String encoding) {
 		outString(file(dest), data, encoding, false);
 	}
 
-	public static void writeString(File dest, String data) throws IOException {
+	public static void writeString(File dest, String data) {
 		outString(dest, data, fileUtilParams.encoding, false);
 	}
 
-	public static void writeString(File dest, String data, String encoding) throws IOException {
+	public static void writeString(File dest, String data, String encoding) {
 		outString(dest, data, encoding, false);
 	}
 
-	public static void appendString(String dest, String data) throws IOException {
+	public static void appendString(String dest, String data) {
 		outString(file(dest), data, fileUtilParams.encoding, true);
 	}
 
-	public static void appendString(String dest, String data, String encoding) throws IOException {
+	public static void appendString(String dest, String data, String encoding) {
 		outString(file(dest), data, encoding, true);
 	}
 
-	public static void appendString(File dest, String data) throws IOException {
+	public static void appendString(File dest, String data) {
 		outString(dest, data, fileUtilParams.encoding, true);
 	}
 
-	public static void appendString(File dest, String data, String encoding) throws IOException {
+	public static void appendString(File dest, String data, String encoding) {
 		outString(dest, data, encoding, true);
 	}
 
-	protected static void outString(File dest, String data, String encoding, boolean append) throws IOException {
+	protected static void outString(File dest, String data, String encoding, boolean append) {
 		if (dest.exists() == true) {
 			if (dest.isFile() == false) {
-				throw new IOException(MSG_NOT_A_FILE + dest);
+				throw new UtilsException(new IOException(MSG_NOT_A_FILE + dest));
 			}
 		}
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(dest, append);
+		try (FileOutputStream out = new FileOutputStream(dest, append)) {
 			out.write(data.getBytes(encoding));
-		} finally {
-			StreamUtil.close(out);
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		}
 	}
 
 	// ---------------------------------------------------------------- stream
 
-	public static void writeStream(File dest, InputStream in) throws IOException {
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(dest);
+	public static void writeStream(File dest, InputStream in) {
+		try (FileOutputStream out = new FileOutputStream(dest)) {
 			StreamUtil.copy(in, out);
-		} finally {
-			StreamUtil.close(out);
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		}
 	}
 
-	public static void writeStream(String dest, InputStream in) throws IOException {
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(dest);
-			StreamUtil.copy(in, out);
-		} finally {
-			StreamUtil.close(out);
-		}
+	public static void writeStream(String dest, InputStream in) {
+		writeStream(new File(dest), in);
 	}
 
 	// ----------------------------------------------------------------
 	// read/write string lines
 
-	public static String[] readLines(String source) throws IOException {
+	public static String[] readLines(String source) {
 		return readLines(file(source), fileUtilParams.encoding);
 	}
 
-	public static String[] readLines(String source, String encoding) throws IOException {
+	public static String[] readLines(String source, String encoding) {
 		return readLines(file(source), encoding);
 	}
 
-	public static String[] readLines(File source) throws IOException {
+	public static String[] readLines(File source) {
 		return readLines(source, fileUtilParams.encoding);
 	}
 
 	/**
 	 * Reads lines from source files.
 	 */
-	public static String[] readLines(File file, String encoding) throws IOException {
+	public static String[] readLines(File file, String encoding) {
 		if (file.exists() == false) {
-			throw new FileNotFoundException(MSG_NOT_FOUND + file);
+			throw new UtilsException(new FileNotFoundException(MSG_NOT_FOUND + file));
 		}
 		if (file.isFile() == false) {
-			throw new IOException(MSG_NOT_A_FILE + file);
+			throw new UtilsException(new IOException(MSG_NOT_A_FILE + file));
 		}
 		List<String> list = new ArrayList<String>();
 
@@ -1015,6 +1010,8 @@ public class FileUtil {
 			while ((strLine = br.readLine()) != null) {
 				list.add(strLine);
 			}
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		} finally {
 			StreamUtil.close(in);
 			StreamUtil.close(br);
@@ -1033,7 +1030,7 @@ public class FileUtil {
 	 *             in case of an I/O error (file closed)
 	 * @see #lineIterator(File, String)
 	 */
-	public static ReadLineIterator lineIterator(File file) throws IOException {
+	public static ReadLineIterator lineIterator(File file) {
 		return lineIterator(file, ZHQ.DEFAULT_ENCODING);
 	}
 
@@ -1071,98 +1068,91 @@ public class FileUtil {
 	 * @throws IOException
 	 *             in case of an I/O error (file closed)
 	 */
-	public static ReadLineIterator lineIterator(File file, String encoding) throws IOException {
-		InputStream in = null;
-		try {
-			in = new FileInputStream(file);
+	public static ReadLineIterator lineIterator(File file, String encoding) {
+		try (InputStream in = new FileInputStream(file)) {
 			return new ReadLineIterator(new InputStreamReader(in, encoding));
 		} catch (IOException ex) {
-			throw ex;
-		} catch (RuntimeException ex) {
-			throw ex;
-		} finally {
-			StreamUtil.close(in);
+			throw new UtilsException(ex);
 		}
 	}
 
 	// ----------------------------------------------------------------
 	// read/write bytearray
 
-	public static byte[] readBytes(String file) throws IOException {
+	public static byte[] readBytes(String file) {
 		return readBytes(file(file));
 	}
 
-	public static byte[] readBytes(File file) throws IOException {
+	public static byte[] readBytes(File file) {
 		if (file.exists() == false) {
-			throw new FileNotFoundException(MSG_NOT_FOUND + file);
+			throw new UtilsException(new FileNotFoundException(MSG_NOT_FOUND + file));
 		}
 		if (file.isFile() == false) {
-			throw new IOException(MSG_NOT_A_FILE + file);
+			throw new UtilsException(new IOException(MSG_NOT_A_FILE + file));
 		}
 		long len = file.length();
 		if (len >= Integer.MAX_VALUE) {
-			throw new IOException("File is larger then max array size");
+			throw new UtilsException(new IOException("File is larger then max array size"));
 		}
 
 		byte[] bytes = new byte[(int) len];
-		RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
-		randomAccessFile.readFully(bytes);
-		randomAccessFile.close();
-
+		try (RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");) {
+			randomAccessFile.readFully(bytes);
+		} catch (IOException e) {
+			throw new UtilsException(e);
+		}
 		return bytes;
 	}
 
-	public static void writeBytes(String dest, byte[] data) throws IOException {
+	public static void writeBytes(String dest, byte[] data) {
 		outBytes(file(dest), data, 0, data.length, false);
 	}
 
-	public static void writeBytes(String dest, byte[] data, int off, int len) throws IOException {
+	public static void writeBytes(String dest, byte[] data, int off, int len) {
 		outBytes(file(dest), data, off, len, false);
 	}
 
-	public static void writeBytes(File dest, byte[] data) throws IOException {
+	public static void writeBytes(File dest, byte[] data) {
 		outBytes(dest, data, 0, data.length, false);
 	}
 
-	public static void writeBytes(File dest, byte[] data, int off, int len) throws IOException {
+	public static void writeBytes(File dest, byte[] data, int off, int len) {
 		outBytes(dest, data, off, len, false);
 	}
 
-	public static void appendBytes(String dest, byte[] data) throws IOException {
+	public static void appendBytes(String dest, byte[] data) {
 		outBytes(file(dest), data, 0, data.length, true);
 	}
 
-	public static void appendBytes(String dest, byte[] data, int off, int len) throws IOException {
+	public static void appendBytes(String dest, byte[] data, int off, int len) {
 		outBytes(file(dest), data, off, len, true);
 	}
 
-	public static void appendBytes(File dest, byte[] data) throws IOException {
+	public static void appendBytes(File dest, byte[] data) {
 		outBytes(dest, data, 0, data.length, true);
 	}
 
-	public static void appendBytes(File dest, byte[] data, int off, int len) throws IOException {
+	public static void appendBytes(File dest, byte[] data, int off, int len) {
 		outBytes(dest, data, off, len, true);
 	}
 
-	protected static void outBytes(File dest, byte[] data, int off, int len, boolean append) throws IOException {
+	protected static void outBytes(File dest, byte[] data, int off, int len, boolean append) {
 		if (dest.exists() == true) {
 			if (dest.isFile() == false) {
-				throw new IOException(MSG_NOT_A_FILE + dest);
+				throw new UtilsException(new IOException(MSG_NOT_A_FILE + dest));
 			}
 		}
-		FileOutputStream out = null;
-		try {
-			out = new FileOutputStream(dest, append);
+		try (FileOutputStream out = new FileOutputStream(dest, append)) {
 			out.write(data, off, len);
-		} finally {
-			StreamUtil.close(out);
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		}
 	}
 
 	// ---------------------------------------------------------------- equals
 	// content
 
-	public static boolean compare(String file1, String file2) throws IOException {
+	public static boolean compare(String file1, String file2) {
 		return compare(file(file1), file(file2));
 	}
 
@@ -1175,7 +1165,7 @@ public class FileUtil {
 	 * <p>
 	 * Code origin: Avalon
 	 */
-	public static boolean compare(File file1, File file2) throws IOException {
+	public static boolean compare(File file1, File file2) {
 		boolean file1Exists = file1.exists();
 		if (file1Exists != file2.exists()) {
 			return false;
@@ -1186,7 +1176,7 @@ public class FileUtil {
 		}
 
 		if ((file1.isFile() == false) || (file2.isFile() == false)) {
-			throw new IOException("Only files can be compared");
+			throw new UtilsException(new IOException("Only files can be compared"));
 		}
 
 		if (file1.length() != file2.length()) {
@@ -1197,15 +1187,10 @@ public class FileUtil {
 			return true;
 		}
 
-		InputStream input1 = null;
-		InputStream input2 = null;
-		try {
-			input1 = new FileInputStream(file1);
-			input2 = new FileInputStream(file2);
+		try (InputStream input1 = new FileInputStream(file1); InputStream input2 = new FileInputStream(file2);) {
 			return StreamUtil.compare(input1, input2);
-		} finally {
-			StreamUtil.close(input1);
-			StreamUtil.close(input2);
+		} catch (IOException e) {
+			throw new UtilsException(e);
 		}
 	}
 
@@ -1283,15 +1268,15 @@ public class FileUtil {
 	// ---------------------------------------------------------------- smart
 	// copy
 
-	public static void copy(String src, String dest) throws IOException {
+	public static void copy(String src, String dest) {
 		copy(file(src), file(dest), fileUtilParams);
 	}
 
-	public static void copy(String src, String dest, FileUtilParams params) throws IOException {
+	public static void copy(String src, String dest, FileUtilParams params) {
 		copy(file(src), file(dest), params);
 	}
 
-	public static void copy(File src, File dest) throws IOException {
+	public static void copy(File src, File dest) {
 		copy(src, dest, fileUtilParams);
 	}
 
@@ -1300,7 +1285,7 @@ public class FileUtil {
 	 * if destination is directory, copy source file to it. Otherwise, try to
 	 * copy source file to destination file.
 	 */
-	public static void copy(File src, File dest, FileUtilParams params) throws IOException {
+	public static void copy(File src, File dest, FileUtilParams params) {
 		if (src.isDirectory() == true) {
 			copyDir(src, dest, params);
 			return;
@@ -1315,15 +1300,15 @@ public class FileUtil {
 	// ---------------------------------------------------------------- smart
 	// move
 
-	public static void move(String src, String dest) throws IOException {
+	public static void move(String src, String dest) {
 		move(file(src), file(dest), fileUtilParams);
 	}
 
-	public static void move(String src, String dest, FileUtilParams params) throws IOException {
+	public static void move(String src, String dest, FileUtilParams params) {
 		move(file(src), file(dest), params);
 	}
 
-	public static void move(File src, File dest) throws IOException {
+	public static void move(File src, File dest) {
 		move(src, dest, fileUtilParams);
 	}
 
@@ -1332,7 +1317,7 @@ public class FileUtil {
 	 * if destination is directory, move source file to it. Otherwise, try to
 	 * move source file to destination file.
 	 */
-	public static void move(File src, File dest, FileUtilParams params) throws IOException {
+	public static void move(File src, File dest, FileUtilParams params) {
 		if (src.isDirectory() == true) {
 			moveDir(src, dest);
 			return;
@@ -1347,11 +1332,11 @@ public class FileUtil {
 	// ---------------------------------------------------------------- smart
 	// delete
 
-	public static void delete(String dest) throws IOException {
+	public static void delete(String dest) {
 		delete(file(dest), fileUtilParams);
 	}
 
-	public static void delete(String dest, FileUtilParams params) throws IOException {
+	public static void delete(String dest, FileUtilParams params) {
 		delete(file(dest), params);
 	}
 
@@ -1371,6 +1356,10 @@ public class FileUtil {
 	}
 
 	// ---------------------------------------------------------------- misc
+
+	public static boolean isJavaFile(File file) {
+		return (file.getName().endsWith(StringPool.DOT_JAVA));
+	}
 
 	public static boolean isExisAndReadable(File file) {
 		return (file.exists() && file.canRead());
@@ -1507,7 +1496,7 @@ public class FileUtil {
 	 * Determines whether the specified file is a symbolic link rather than an
 	 * actual file. Always returns <code>false</code> on Windows.
 	 */
-	public static boolean isSymlink(final File file) throws IOException {
+	public static boolean isSymlink(final File file) {
 		if (SystemUtil.isHostWindows()) {
 			return false;
 		}
@@ -1517,11 +1506,20 @@ public class FileUtil {
 		if (file.getParent() == null) {
 			fileInCanonicalDir = file;
 		} else {
-			File canonicalDir = file.getParentFile().getCanonicalFile();
+			File canonicalDir;
+			try {
+				canonicalDir = file.getParentFile().getCanonicalFile();
+			} catch (IOException e) {
+				throw new UtilsException(e);
+			}
 			fileInCanonicalDir = new File(canonicalDir, file.getName());
 		}
 
-		return !fileInCanonicalDir.getCanonicalFile().equals(fileInCanonicalDir.getAbsoluteFile());
+		try {
+			return !fileInCanonicalDir.getCanonicalFile().equals(fileInCanonicalDir.getAbsoluteFile());
+		} catch (IOException e) {
+			throw new UtilsException(e);
+		}
 	}
 
 	/**
@@ -1602,8 +1600,12 @@ public class FileUtil {
 		// ------------------------------------------------------------ clone
 
 		@Override
-		public FileUtilParams clone() throws CloneNotSupportedException {
-			return (FileUtilParams) super.clone();
+		public FileUtilParams clone() {
+			try {
+				return (FileUtilParams) super.clone();
+			} catch (CloneNotSupportedException e) {
+				throw new UtilsException(e);
+			}
 		}
 	}
 }
