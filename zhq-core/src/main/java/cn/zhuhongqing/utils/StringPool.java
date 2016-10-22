@@ -61,7 +61,6 @@ public interface StringPool {
 	final String QUESTION_MARK = "?";
 	final String EXCLAMATION_MARK = "!";
 	final String QUOTE = "\"";
-	final String RETURN = "\r";
 	final String TAB = "\t";
 	final String RIGHT_BRACE = "}";
 	final String RIGHT_BRACKET = ")";
