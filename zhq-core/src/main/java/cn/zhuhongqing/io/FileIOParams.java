@@ -23,10 +23,10 @@ public class FileIOParams {
 
 	private String path;
 	private File file;
-	private Charset cs = Charset.forName(ZHQ.DEFAULT_ENCODING);
+	private Charset cs;
 
 	public FileIOParams(String path) {
-		this(path, ZHQ.DEFAULT_ENCODING);
+		this(path, ZHQ.DEFAULT_CHARSET);
 	}
 
 	public FileIOParams(String path, String csName) {

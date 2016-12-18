@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Properties;
 
+import cn.zhuhongqing.exception.RuntimeExceptionWrapper;
 import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.io.FileIOParams;
 import cn.zhuhongqing.io.OrderedProperties;
@@ -22,12 +23,7 @@ import cn.zhuhongqing.io.OrderedProperties;
 public class GeneralUtil {
 
 	/**
-	 * 判断obj是否为null
-	 * 
-	 * 不支持简单类型
-	 * 
-	 * @param obj
-	 * @return
+	 * The obj is null?
 	 */
 
 	public static boolean isNull(Object obj) {
@@ -35,10 +31,7 @@ public class GeneralUtil {
 	}
 
 	/**
-	 * 循环一个数组 只要存在一个是null的 就返回true
-	 * 
-	 * @param objs
-	 * @return
+	 * Is null in obj'Arr?
 	 */
 
 	public static boolean hasNull(Object... objs) {
@@ -51,12 +44,7 @@ public class GeneralUtil {
 	}
 
 	/**
-	 * 判断obj是否不是null
-	 * 
-	 * 不支持简单类型
-	 * 
-	 * @param obj
-	 * @return
+	 * @see #isNull(Object)
 	 */
 
 	public static boolean isNotNull(Object obj) {
@@ -67,7 +55,6 @@ public class GeneralUtil {
 	 * To determine whether the package name.
 	 * 
 	 * @param packageName
-	 * @return
 	 */
 
 	public static boolean isPackageName(String packageName) {
@@ -75,15 +62,22 @@ public class GeneralUtil {
 	}
 
 	/**
-	 * If val is null,return def;
+	 * If val is null,return def.
 	 * 
 	 * @param val
 	 * @param def
-	 * @return
 	 */
 
 	public static <T> T defValue(T val, T def) {
 		return isNull(val) ? def : val;
+	}
+
+	/**
+	 * @see #loadProp(FileIOParams)
+	 */
+
+	public static Properties loadProp(String propPath) {
+		return loadProp(new FileIOParams(propPath));
 	}
 
 	/**
@@ -92,15 +86,22 @@ public class GeneralUtil {
 	 * @return {@link OrderedProperties}
 	 */
 
-	public static Properties loadProp(String propPath) {
-		FileIOParams io = new FileIOParams(propPath);
+	public static Properties loadProp(FileIOParams fileParams) {
 		OrderedProperties prop = new OrderedProperties();
-		try (Reader r = io.toInStreamReader()) {
+		try (Reader r = fileParams.toInStreamReader()) {
 			prop.load(r);
 		} catch (IOException e) {
 			throw new UtilsException(e);
 		}
 		return prop;
+	}
+
+	public static void throwClassNotFound(String strClassName) {
+		runtimeExceptionWrapper(new ClassNotFoundException("Can't load class by className:" + strClassName));
+	}
+
+	public static void runtimeExceptionWrapper(Exception e) {
+		throw new RuntimeExceptionWrapper(e);
 	}
 
 	// ----------------------------------------------------------------

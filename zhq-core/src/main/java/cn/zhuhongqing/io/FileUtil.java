@@ -1069,10 +1069,10 @@ public class FileUtil {
 	 *             in case of an I/O error (file closed)
 	 */
 	public static ReadLineIterator lineIterator(File file, String encoding) {
-		try (InputStream in = new FileInputStream(file)) {
-			return new ReadLineIterator(new InputStreamReader(in, encoding));
-		} catch (IOException ex) {
-			throw new UtilsException(ex);
+		try {
+			return new ReadLineIterator(new InputStreamReader(new FileInputStream(file), encoding));
+		} catch (IllegalArgumentException | UnsupportedEncodingException | FileNotFoundException e) {
+			throw new UtilsException(e);
 		}
 	}
 

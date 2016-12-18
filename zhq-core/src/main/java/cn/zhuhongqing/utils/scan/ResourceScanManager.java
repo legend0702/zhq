@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 
+import com.alibaba.dubbo.common.URL;
+
 import cn.zhuhongqing.utils.GeneralUtil;
 
 public final class ResourceScanManager {
@@ -17,21 +19,19 @@ public final class ResourceScanManager {
 		TYPE_MAPPING.put(File.class, new FileScan());
 		TYPE_MAPPING.put(JarEntry.class, new JarScan());
 		TYPE_MAPPING.put(Class.class, new ClassScan());
+		TYPE_MAPPING.put(URL.class, new URLScan());
 	}
 
 	public static <R> R autoGetResource(String path, Class<R> type) {
-		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance
-				.get(type);
+		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance.get(type);
 		if (GeneralUtil.isNull(rs)) {
 			return null;
 		}
 		return rs.getResource(path);
 	}
 
-	public static <R> R autoGetResource(String path, Class<R> type,
-			ResourceFilter<R> filter) {
-		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance
-				.get(type);
+	public static <R> R autoGetResource(String path, Class<R> type, ResourceFilter<R> filter) {
+		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance.get(type);
 		if (GeneralUtil.isNull(rs)) {
 			return null;
 		}
@@ -39,18 +39,15 @@ public final class ResourceScanManager {
 	}
 
 	public static <R> Set<R> autoGetResources(String path, Class<R> type) {
-		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance
-				.get(type);
+		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance.get(type);
 		if (GeneralUtil.isNull(rs)) {
 			return Collections.emptySet();
 		}
 		return rs.getResources(path);
 	}
 
-	public static <R> Set<R> autoGetResources(String path, Class<R> type,
-			ResourceFilter<R> filter) {
-		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance
-				.get(type);
+	public static <R> Set<R> autoGetResources(String path, Class<R> type, ResourceFilter<R> filter) {
+		ResourceScan<R> rs = (ResourceScan<R>) ResourceScanManagerInstance.get(type);
 		if (GeneralUtil.isNull(rs)) {
 			return Collections.emptySet();
 		}

@@ -50,8 +50,7 @@ public class ReadLineIterator implements Iterator<String> {
 	 * @throws IllegalArgumentException
 	 *             if the reader is null
 	 */
-	public ReadLineIterator(final Reader reader)
-			throws IllegalArgumentException {
+	public ReadLineIterator(final Reader reader) throws IllegalArgumentException {
 		if (reader == null) {
 			throw new IllegalArgumentException("Reader must not be null");
 		}
@@ -83,6 +82,7 @@ public class ReadLineIterator implements Iterator<String> {
 					String line = bufferedReader.readLine();
 					if (line == null) {
 						finished = true;
+						close();
 						return false;
 					} else if (isValidLine(line)) {
 						cachedLine = line;
@@ -153,8 +153,7 @@ public class ReadLineIterator implements Iterator<String> {
 	 *             always
 	 */
 	public void remove() {
-		throw new UnsupportedOperationException(
-				"Remove unsupported on LineIterator");
+		throw new UnsupportedOperationException("Remove unsupported on LineIterator");
 	}
 
 	// -----------------------------------------------------------------------

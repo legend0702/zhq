@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -60,13 +61,11 @@ public class ReflectUtil {
 
 	static {
 		try {
-			_getMethod0 = Class.class.getDeclaredMethod("getMethod0",
-					String.class, Class[].class);
+			_getMethod0 = Class.class.getDeclaredMethod("getMethod0", String.class, Class[].class);
 			_getMethod0.setAccessible(true);
 		} catch (Exception ignore) {
 			try {
-				_getMethod0 = Class.class.getMethod("getMethod", String.class,
-						Class[].class);
+				_getMethod0 = Class.class.getMethod("getMethod", String.class, Class[].class);
 			} catch (Exception ignored) {
 				_getMethod0 = null;
 			}
@@ -87,8 +86,7 @@ public class ReflectUtil {
 	 *            parameter types
 	 * @return founded method, or null
 	 */
-	public static Method getMethod0(Class<?> c, String name,
-			Class<?>... parameterTypes) {
+	public static Method getMethod0(Class<?> c, String name, Class<?>... parameterTypes) {
 		try {
 			return (Method) _getMethod0.invoke(c, name, parameterTypes);
 		} catch (Exception ignore) {
@@ -121,8 +119,7 @@ public class ReflectUtil {
 		return findDeclaredMethod(c, methodName, false);
 	}
 
-	private static Method findDeclaredMethod(Class<?> c, String methodName,
-			boolean publicOnly) {
+	private static Method findDeclaredMethod(Class<?> c, String methodName, boolean publicOnly) {
 		if ((methodName == null) || (c == null)) {
 			return null;
 		}
@@ -169,8 +166,7 @@ public class ReflectUtil {
 	 * @param params
 	 *            parameters
 	 */
-	public static Object invoke(Class<?> c, Object obj, String method,
-			Class<?>[] paramClasses, Object[] params) {
+	public static Object invoke(Class<?> c, Object obj, String method, Class<?>[] paramClasses, Object[] params) {
 		Method m;
 		try {
 			m = c.getMethod(method, paramClasses);
@@ -179,8 +175,7 @@ public class ReflectUtil {
 		}
 		try {
 			return m.invoke(obj, params);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new UtilsException(e);
 		}
 	}
@@ -188,8 +183,7 @@ public class ReflectUtil {
 	/**
 	 * Invokes static method.
 	 */
-	public static Object invoke(Class<?> c, String method,
-			Class<?>[] paramClasses, Object[] params) {
+	public static Object invoke(Class<?> c, String method, Class<?>[] paramClasses, Object[] params) {
 		return invoke(c, null, method, paramClasses, params);
 	}
 
@@ -205,8 +199,7 @@ public class ReflectUtil {
 	 * @param paramClasses
 	 *            method parameter types
 	 */
-	public static Object invoke(Object obj, String method,
-			Class<?>[] paramClasses, Object[] params) {
+	public static Object invoke(Object obj, String method, Class<?>[] paramClasses, Object[] params) {
 		return invoke(obj.getClass(), method, paramClasses, params);
 	}
 
@@ -226,8 +219,7 @@ public class ReflectUtil {
 		return invoke(obj, method, paramClass, params);
 	}
 
-	public static Object invoke(Class<?> c, Object obj, String method,
-			Object... params) {
+	public static Object invoke(Class<?> c, Object obj, String method, Object... params) {
 		Class<?>[] paramClass = getClasses(params);
 		return invoke(c, obj, method, paramClass, params);
 	}
@@ -257,8 +249,8 @@ public class ReflectUtil {
 	 * @param params
 	 *            parameters
 	 */
-	public static Object invokeDeclared(Class<?> c, Object obj, String method,
-			Class<?>[] paramClasses, Object[] params) {
+	public static Object invokeDeclared(Class<?> c, Object obj, String method, Class<?>[] paramClasses,
+			Object[] params) {
 		Method m;
 		try {
 			m = c.getDeclaredMethod(method, paramClasses);
@@ -268,14 +260,12 @@ public class ReflectUtil {
 		m.setAccessible(true);
 		try {
 			return m.invoke(obj, params);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new UtilsException("Is it a callable method?", e);
 		}
 	}
 
-	public static Object invokeDeclared(Class<?> c, String method,
-			Class<?>[] paramClasses, Object[] params) {
+	public static Object invokeDeclared(Class<?> c, String method, Class<?>[] paramClasses, Object[] params) {
 		return invokeDeclared(c, null, method, paramClasses, params);
 	}
 
@@ -291,19 +281,16 @@ public class ReflectUtil {
 	 * @param params
 	 *            parameters
 	 */
-	public static Object invokeDeclared(Object obj, String method,
-			Class<?>[] paramClasses, Object[] params) {
+	public static Object invokeDeclared(Object obj, String method, Class<?>[] paramClasses, Object[] params) {
 		return invokeDeclared(obj.getClass(), obj, method, paramClasses, params);
 	}
 
-	public static Object invokeDeclared(Object obj, String method,
-			Object... params) {
+	public static Object invokeDeclared(Object obj, String method, Object... params) {
 		Class<?>[] paramClasses = getClasses(params);
 		return invokeDeclared(obj.getClass(), obj, method, paramClasses, params);
 	}
 
-	public static Object invokeDeclared(Class<?> c, Object obj, String method,
-			Object... params) {
+	public static Object invokeDeclared(Class<?> c, Object obj, String method, Object... params) {
 		Class<?>[] paramClass = getClasses(params);
 		return invokeDeclared(c, obj, method, paramClass, params);
 	}
@@ -337,8 +324,7 @@ public class ReflectUtil {
 	/**
 	 * Returns <code>true</code> if provided class is interface implementation.
 	 */
-	public static boolean isInterfaceImpl(Class<?> thisClass,
-			Class<?> targetInterface) {
+	public static boolean isInterfaceImpl(Class<?> thisClass, Class<?> targetInterface) {
 		for (Class<?> x = thisClass; x != null; x = x.getSuperclass()) {
 			Class<?>[] interfaces = x.getInterfaces();
 			for (Class<?> i : interfaces) {
@@ -373,8 +359,7 @@ public class ReflectUtil {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public static <T, S extends T> Class<T> getTopClass(Class<S> subClass,
-			Class<T> topClass) {
+	public static <T, S extends T> Class<T> getTopClass(Class<S> subClass, Class<T> topClass) {
 		if (topClass.isInterface()) {
 			return getTopClassOfInterface(subClass, topClass);
 		}
@@ -390,10 +375,8 @@ public class ReflectUtil {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public static <T, S extends T> Class<T> getTopClassOfInterface(
-			Class<S> subClass, Class<T> topInterface) {
-		for (Class<T> x = (Class<T>) subClass; x != OBJECT_CLASS; x = (Class<T>) x
-				.getSuperclass()) {
+	public static <T, S extends T> Class<T> getTopClassOfInterface(Class<S> subClass, Class<T> topInterface) {
+		for (Class<T> x = (Class<T>) subClass; x != OBJECT_CLASS; x = (Class<T>) x.getSuperclass()) {
 			Class<?>[] interfaces = x.getInterfaces();
 			for (Class<?> i : interfaces) {
 				if (i == topInterface) {
@@ -499,8 +482,7 @@ public class ReflectUtil {
 		return methods;
 	}
 
-	private static void addMethodIfNotExist(List<Method> allMethods,
-			Method newMethod) {
+	private static void addMethodIfNotExist(List<Method> allMethods, Method newMethod) {
 		for (Method m : allMethods) {
 			if (compareSignatures(m, newMethod) == true) {
 				return;
@@ -605,28 +587,37 @@ public class ReflectUtil {
 		return supportedMethods.toArray(new Method[supportedMethods.size()]);
 	}
 
+	public static Field getSupportedField(Class<?> clazz, String name) {
+		Field[] fields = getSupportedFields(clazz, OBJECT_CLASS, name);
+		if (fields.length == 1)
+			return fields[0];
+		return null;
+	}
+
 	public static Field[] getSupportedFields(Class<?> clazz) {
 		return getSupportedFields(clazz, OBJECT_CLASS);
 	}
 
 	public static Field[] getSupportedFields(Class<?> clazz, Class<?> limit) {
-		ArrayList<Field> supportedFields = new ArrayList<Field>();
+		return getSupportedFields(clazz, limit, null);
+	}
+
+	public static Field[] getSupportedFields(Class<?> clazz, Class<?> limit, String name) {
+		LinkedHashMap<String, Field> supportedFields = new LinkedHashMap<>();
 		for (Class<?> c = clazz; c != limit; c = c.getSuperclass()) {
 			Field[] fields = c.getDeclaredFields();
 			for (Field field : fields) {
-				boolean found = false;
-				for (Field supportedField : supportedFields) {
-					if (compareSignatures(field, supportedField)) {
-						found = true;
-						break;
-					}
-				}
-				if (found == false) {
-					supportedFields.add(field);
+				if (supportedFields.containsKey(field.getName()))
+					continue;
+
+				supportedFields.put(field.getName(), field);
+
+				if (field.getName().equals(name)) {
+					return new Field[] { field };
 				}
 			}
 		}
-		return supportedFields.toArray(new Field[supportedFields.size()]);
+		return supportedFields.values().toArray((new Field[supportedFields.size()]));
 	}
 
 	// ---------------------------------------------------------------- compare
@@ -648,20 +639,17 @@ public class ReflectUtil {
 		if (first.getName().equals(second.getName()) == false) {
 			return false;
 		}
-		return compareParameters(first.getParameterTypes(),
-				second.getParameterTypes());
+		return compareParameters(first.getParameterTypes(), second.getParameterTypes());
 	}
 
 	/**
 	 * Compares constructor signatures: names and parameters.
 	 */
-	public static boolean compareSignatures(Constructor<?> first,
-			Constructor<?> second) {
+	public static boolean compareSignatures(Constructor<?> first, Constructor<?> second) {
 		if (first.getName().equals(second.getName()) == false) {
 			return false;
 		}
-		return compareParameters(first.getParameterTypes(),
-				second.getParameterTypes());
+		return compareParameters(first.getParameterTypes(), second.getParameterTypes());
 	}
 
 	public static boolean compareSignatures(Field first, Field second) {
@@ -687,8 +675,7 @@ public class ReflectUtil {
 	 * 得到无参构造函数
 	 */
 
-	public static <T> Constructor<T> getNoParamAndUsableConstructor(
-			Class<T> claz) {
+	public static <T> Constructor<T> getNoParamAndUsableConstructor(Class<T> claz) {
 		try {
 			return claz.getConstructor();
 		} catch (NoSuchMethodException | SecurityException e) {
@@ -784,8 +771,7 @@ public class ReflectUtil {
 				returnObj = Character.valueOf((char) 0);
 			}
 			if (returnObj == null)
-				throw new IllegalArgumentException("Invalid primitive type: "
-						+ type);
+				throw new IllegalArgumentException("Invalid primitive type: " + type);
 			return (T) returnObj;
 		}
 		if (type == Integer.class) {
@@ -885,15 +871,15 @@ public class ReflectUtil {
 		}
 
 		if (null == finalConstructor) {
-			throw new UtilsException(new NoSuchMethodException(
-					"Can not find a constructor for:" + tClass + ":" + args));
+			throw new UtilsException(
+					new NoSuchMethodException("Can not find a constructor for:" + tClass + ":" + args));
 		}
 
 		makeAccessible(finalConstructor);
 		try {
 			return (T) finalConstructor.newInstance(args);
-		} catch (InstantiationException | IllegalAccessException
-				| IllegalArgumentException | InvocationTargetException e) {
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
 			throw new UtilsException(e);
 		} finally {
 			finalConstructor.setAccessible(false);
@@ -916,25 +902,16 @@ public class ReflectUtil {
 	 * one.
 	 */
 	public static boolean isAssignableFrom(Member member1, Member member2) {
-		return member1.getDeclaringClass().isAssignableFrom(
-				member2.getDeclaringClass());
+		return member1.getDeclaringClass().isAssignableFrom(member2.getDeclaringClass());
 	}
 
 	/**
 	 * Returns all superclasses.
 	 */
-	public static Class<?>[] getSuperclasses(Class<?> type) {
-		int i = 0;
-		for (Class<?> x = type.getSuperclass(); x != null; x = x
-				.getSuperclass()) {
-			i++;
-		}
-		Class<?>[] result = new Class[i];
-		i = 0;
-		for (Class<?> x = type.getSuperclass(); x != null; x = x
-				.getSuperclass()) {
-			result[i] = x;
-			i++;
+	public static List<Class<?>> getSuperClasses(Class<?> type) {
+		ArrayList<Class<?>> result = new ArrayList<>();
+		for (Class<?> x = type.getSuperclass(); x != null; x = x.getSuperclass()) {
+			result.add(x);
 		}
 		return result;
 	}
@@ -1118,8 +1095,7 @@ public class ReflectUtil {
 	 * returns the <b>first</b> component type.If you give less than 0,it will
 	 * pick component type from the end.
 	 */
-	public static Class<?> getComponentType(Type type, Class<?> implClass,
-			int index) {
+	public static Class<?> getComponentType(Type type, Class<?> implClass, int index) {
 		if (type instanceof Class) {
 			Class<?> clazz = (Class<?>) type;
 			if (clazz.isArray()) {
@@ -1216,8 +1192,7 @@ public class ReflectUtil {
 			return OBJECT_CLASS;
 		}
 		if (type instanceof GenericArrayType) {
-			Type genericComponentType = ((GenericArrayType) type)
-					.getGenericComponentType();
+			Type genericComponentType = ((GenericArrayType) type).getGenericComponentType();
 			Class<?> rawType = getRawType(genericComponentType, implClass);
 			// this is sort of stupid, but there seems no other way (consider
 			// don't creating new instances each time)...
@@ -1243,8 +1218,7 @@ public class ReflectUtil {
 	/**
 	 * Resolves <code>TypeVariable</code> with given implementation class.
 	 */
-	public static Type resolveVariable(TypeVariable<?> variable,
-			final Class<?> implClass) {
+	public static Type resolveVariable(TypeVariable<?> variable, final Class<?> implClass) {
 		final Class<?> rawType = getRawType(implClass, null);
 
 		int index = ArraysUtil.indexOf(rawType.getTypeParameters(), variable);
@@ -1268,23 +1242,19 @@ public class ReflectUtil {
 			}
 
 			final Type resolved = resolveVariable(variable, rawInterface);
-			if (resolved instanceof Class
-					|| resolved instanceof ParameterizedType) {
+			if (resolved instanceof Class || resolved instanceof ParameterizedType) {
 				return resolved;
 			}
 
 			if (resolved instanceof TypeVariable) {
 				final TypeVariable<?> typeVariable = (TypeVariable<?>) resolved;
-				index = ArraysUtil.indexOf(rawInterface.getTypeParameters(),
-						typeVariable);
+				index = ArraysUtil.indexOf(rawInterface.getTypeParameters(), typeVariable);
 
 				if (index < 0) {
-					throw new IllegalArgumentException(
-							"Can't resolve type variable:" + typeVariable);
+					throw new IllegalArgumentException("Can't resolve type variable:" + typeVariable);
 				}
 
-				final Type type = i < genericInterfaces.length ? genericInterfaces[i]
-						: rawType.getGenericSuperclass();
+				final Type type = i < genericInterfaces.length ? genericInterfaces[i] : rawType.getGenericSuperclass();
 
 				if (type instanceof Class) {
 					return OBJECT_CLASS;
@@ -1322,8 +1292,7 @@ public class ReflectUtil {
 		return sb.toString();
 	}
 
-	private static void typeToString(StringBuilder sb, Type type,
-			Set<Type> visited) {
+	private static void typeToString(StringBuilder sb, Type type, Set<Type> visited) {
 		if (type instanceof ParameterizedType) {
 			ParameterizedType parameterizedType = (ParameterizedType) type;
 			final Class<?> rawType = (Class<?>) parameterizedType.getRawType();
@@ -1447,8 +1416,7 @@ public class ReflectUtil {
 			return SECURITY_MANAGER.getCallerClass(framesToSkip);
 		}
 
-		StackTraceElement[] stackTraceElements = new Throwable()
-				.getStackTrace();
+		StackTraceElement[] stackTraceElements = new Throwable().getStackTrace();
 
 		if (framesToSkip >= 2) {
 			framesToSkip += 4;
@@ -1457,8 +1425,7 @@ public class ReflectUtil {
 		String className = stackTraceElements[framesToSkip].getClassName();
 
 		try {
-			return Thread.currentThread().getContextClassLoader()
-					.loadClass(className);
+			return Thread.currentThread().getContextClassLoader().loadClass(className);
 		} catch (ClassNotFoundException cnfex) {
 			throw new UnsupportedOperationException(className + " not found.");
 		}
@@ -1467,66 +1434,51 @@ public class ReflectUtil {
 	/**
 	 * Determine whether the given member is a "public static final" constant.
 	 * 
-	 * @param field
-	 *            the field to check
+	 * @param Member
+	 *            the member to check
 	 */
 	public static boolean isPublicStaticFinal(Member member) {
 		int modifiers = member.getModifiers();
-		return (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && Modifier
-				.isFinal(modifiers));
+		return (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers));
 	}
 
 	/**
-	 * Make the given field accessible, explicitly setting it accessible if
+	 * Make the given object accessible, explicitly setting it accessible if
 	 * necessary. The {@code setAccessible(true)} method is only called when
 	 * actually necessary, to avoid unnecessary conflicts with a JVM
 	 * SecurityManager (if active).
 	 * 
-	 * @param field
-	 *            the field to make accessible
-	 * @see java.lang.reflect.Field#setAccessible
+	 * @param <T>
+	 *            the object to make accessible
+	 * @see java.lang.reflect.AccessibleObject#setAccessible
 	 */
-	public static void makeAccessible(Field field) {
-		if ((!Modifier.isPublic(field.getModifiers())
-				|| !Modifier.isPublic(field.getDeclaringClass().getModifiers()) || Modifier
-					.isFinal(field.getModifiers())) && !field.isAccessible()) {
-			field.setAccessible(true);
+	public static <T extends AccessibleObject & Member> boolean makeAccessible(T obj) {
+		if ((!Modifier.isPublic(obj.getModifiers()) || !Modifier.isPublic(obj.getDeclaringClass().getModifiers())
+				|| Modifier.isFinal(obj.getModifiers())) && !obj.isAccessible()) {
+			obj.setAccessible(true);
+			return true;
 		}
+		return false;
 	}
 
 	/**
-	 * Make the given method accessible, explicitly setting it accessible if
+	 * Close the given object accessible, explicitly setting it accessible if
 	 * necessary. The {@code setAccessible(true)} method is only called when
 	 * actually necessary, to avoid unnecessary conflicts with a JVM
 	 * SecurityManager (if active).
 	 * 
-	 * @param method
-	 *            the method to make accessible
-	 * @see java.lang.reflect.Method#setAccessible
+	 * @param <T>
+	 *            the object to close accessible
+	 * @see java.lang.reflect.AccessibleObject#setAccessible
 	 */
-	public static void makeAccessible(Method method) {
-		if ((!Modifier.isPublic(method.getModifiers()) || !Modifier
-				.isPublic(method.getDeclaringClass().getModifiers()))
-				&& !method.isAccessible()) {
-			method.setAccessible(true);
-		}
-	}
 
-	/**
-	 * Make the given constructor accessible, explicitly setting it accessible
-	 * if necessary. The {@code setAccessible(true)} method is only called when
-	 * actually necessary, to avoid unnecessary conflicts with a JVM
-	 * SecurityManager (if active).
-	 * 
-	 * @param ctor
-	 *            the constructor to make accessible
-	 * @see java.lang.reflect.Constructor#setAccessible
-	 */
-	public static void makeAccessible(Constructor<?> ctor) {
-		if ((!Modifier.isPublic(ctor.getModifiers()) || !Modifier.isPublic(ctor
-				.getDeclaringClass().getModifiers())) && !ctor.isAccessible()) {
-			ctor.setAccessible(true);
+	public static <T extends AccessibleObject & Member> boolean closeAccessible(T obj) {
+		if ((!Modifier.isPublic(obj.getModifiers()) || !Modifier.isPublic(obj.getDeclaringClass().getModifiers())
+				|| Modifier.isFinal(obj.getModifiers())) && !obj.isAccessible()) {
+			obj.setAccessible(false);
+			return true;
 		}
+		return false;
 	}
 
 }

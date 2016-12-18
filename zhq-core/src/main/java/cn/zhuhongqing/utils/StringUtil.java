@@ -148,6 +148,67 @@ public class StringUtil {
 	}
 
 	/**
+	 * Null to {@link StringPool#EMPTY}
+	 */
+
+	public static String toString(Object obj) {
+		return obj == null ? StringPool.EMPTY : obj.toString();
+	}
+
+	public static boolean isJson(String json) {
+		return (isJsonObj(json) || isJsonArray(json));
+	}
+
+	public static boolean isJsonObj(String json) {
+		if (json != null && json.startsWith(StringPool.LEFT_BRACE) && json.endsWith(StringPool.RIGHT_BRACE)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean isJsonArray(String json) {
+		if (json != null && json.startsWith(StringPool.LEFT_SQ_BRACKET) && json.endsWith(StringPool.RIGHT_SQ_BRACKET)) {
+			return true;
+		}
+		return false;
+	}
+
+	public static String toJson(String name, Object value) {
+		return StringPool.LEFT_BRACE + name + StringPool.COLON + toString(value) + StringPool.RIGHT_BRACE;
+	}
+
+	public static String toJson(String... nameValues) {
+		if (ArraysUtil.isEmpty(nameValues))
+			return StringPool.JSON_OBJ;
+		if (nameValues.length == 1)
+			return toJson(nameValues[0], StringPool.EMPTY);
+		StringBuffer sb = new StringBuffer(50);
+		sb.append(StringPool.LEFT_BRACE);
+		int index = 0;
+		int compen = nameValues.length % 2;
+		do {
+			sb.append(nameValues[index]);
+			sb.append(StringPool.COLON);
+			String val = StringPool.EMPTY;
+			if (compen == 0)
+				val = toString(nameValues[++index]);
+			if (compen == 1) {
+				if (index + compen == nameValues.length)
+					val = StringPool.EMPTY;
+				else
+					val = toString(nameValues[++index]);
+			}
+			sb.append(val);
+			index++;
+			if (index < nameValues.length) {
+				sb.append(StringPool.COMMA);
+			}
+		} while (index < nameValues.length);
+		sb.append(StringPool.RIGHT_BRACE);
+		return sb.toString();
+	}
+
+	/**
 	 * Replace all occurences of a substring within a string with another
 	 * string.
 	 * 

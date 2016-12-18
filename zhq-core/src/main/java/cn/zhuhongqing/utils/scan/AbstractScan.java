@@ -3,6 +3,7 @@ package cn.zhuhongqing.utils.scan;
 import java.io.File;
 import java.net.URI;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -144,7 +145,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 			LinkedHashSet<R> files = new LinkedHashSet<R>();
 			if (StringUtil.isEmpty(pathCouple.pattern)) {
 				// getResource
-				files.add(chooseAndConvert(uri, pathCouple));
+				addChooseToCollection(files, chooseAndConvert(uri, pathCouple));
 			} else {
 				// getResources
 				pathCouple.setFullPattern(uri);
@@ -171,10 +172,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 					deepMatchAndFindInFile(rSet, pathCouple, FileUtil.toURIs(file.listFiles()));
 				}
 			} else if (file.isFile() && matchPath(pathCouple.pattern, subPath)) {
-				R r = chooseAndConvert(uri, pathCouple);
-				if (GeneralUtil.isNotNull(r)) {
-					rSet.add(r);
-				}
+				addChooseToCollection(rSet, chooseAndConvert(uri, pathCouple));
 			}
 		}
 	}
@@ -190,7 +188,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 			if (entryPath.startsWith(rootEntryPath)) {
 				String relativePath = entryPath.substring(rootEntryPath.length());
 				if (getPathMatcher().match(pathCouple.pattern, relativePath)) {
-					result.add(chooseAndConvert(
+					addChooseToCollection(result, chooseAndConvert(
 							URIUtil.toURI(uri.getScheme(), uri.getSchemeSpecificPart() + relativePath), pathCouple));
 				}
 			}
@@ -213,6 +211,12 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 			}
 		}
 		return null;
+	}
+
+	private void addChooseToCollection(Collection<R> rCol, R r) {
+		if (GeneralUtil.isNotNull(r)) {
+			rCol.add(r);
+		}
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package cn.zhuhongqing;
 
+import java.nio.charset.Charset;
+
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.StringPool;
 import cn.zhuhongqing.utils.StringUtil;
@@ -22,16 +24,20 @@ public class ZHQ {
 	};
 
 	/**
-	 * Default file encoding (UTF8).
+	 * Default encoding (UTF8).
 	 */
 	public static String DEFAULT_ENCODING = "UTF-8";
+
+	/**
+	 * Default Charset (UTF8).
+	 */
+	public static Charset DEFAULT_CHARSET = Charset.forName(DEFAULT_ENCODING);
 
 	/**
 	 * ZHQ's package-name.
 	 */
 
-	public static final String DEFAULT_PACKAGE_NAME = ClassUtil
-			.getPackageName(ZHQ.class);
+	public static final String DEFAULT_PACKAGE_NAME = ClassUtil.getPackageName(ZHQ.class);
 
 	/**
 	 * Checks module is loaded.
@@ -40,8 +46,7 @@ public class ZHQ {
 		ClassLoader classLoader = ZHQ.class.getClassLoader();
 		moduleName = StringUtil.capitalize(moduleName);
 		try {
-			classLoader.loadClass(DEFAULT_PACKAGE_NAME.concat(StringPool.DOT)
-					.concat(moduleName));
+			classLoader.loadClass(DEFAULT_PACKAGE_NAME.concat(StringPool.DOT).concat(moduleName));
 			return true;
 		} catch (ClassNotFoundException cnfex) {
 			return false;

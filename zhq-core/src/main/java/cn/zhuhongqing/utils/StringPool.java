@@ -83,10 +83,15 @@ public interface StringPool {
 	final String CRLF = "\r\n";
 	final String PROTOCOL_START = "://";
 	final String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
+	final String JSON_OBJ = StringPool.LEFT_BRACE + StringPool.RIGHT_BRACE;
+	final String JSON_LIST = StringPool.LEFT_SQ_BRACKET + StringPool.RIGHT_SQ_BRACKET;
 
 	final String PACKAGE = "package";
 	final String IMPORT = "import";
 	// final String FILE_SEPARATOR = SLASH;
+	final String DEFAULT = "DEFAULT";
+	final String BEAN_SET = "set";
+	final String BEAN_GET = "get";
 
 	final String HTML_NBSP = "&nbsp;";
 	final String HTML_AMP = "&amp";

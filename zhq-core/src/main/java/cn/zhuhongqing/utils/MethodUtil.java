@@ -23,6 +23,8 @@ public class MethodUtil {
 			return method.invoke(target, params);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new UtilsException(e);
+		} finally {
+			ReflectUtil.closeAccessible(method);
 		}
 	}
 

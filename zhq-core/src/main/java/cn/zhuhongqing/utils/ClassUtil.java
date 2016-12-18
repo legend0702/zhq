@@ -1,8 +1,13 @@
 package cn.zhuhongqing.utils;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Proxy;
+import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +15,7 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.TypeUtils;
 
 /**
  * Some utilities about class.
@@ -24,6 +30,9 @@ import org.slf4j.LoggerFactory;
 public class ClassUtil {
 
 	private static final Logger log = LoggerFactory.getLogger(ClassUtil.class);
+
+	/** Object's class. */
+	public static final Class<?> OBJECT_CLASS = Object.class;
 
 	/** The package separator String "." */
 	public static final String PACKAGE_SEPARATOR = StringPool.DOT;
@@ -58,6 +67,19 @@ public class ClassUtil {
 			cl = ClassUtil.class.getClassLoader();
 		}
 		return cl;
+	}
+
+	public static Enumeration<URL> getResources(String name) {
+		Enumeration<URL> urls = null;
+		try {
+			urls = getDefaultClassLoader().getResources(name);
+			if (GeneralUtil.isNull(urls)) {
+				urls = ClassLoader.getSystemResources(name);
+			}
+		} catch (IOException e) {
+			return null;
+		}
+		return urls;
 	}
 
 	public static boolean isClassFile(String path) {
@@ -181,6 +203,30 @@ public class ClassUtil {
 		return StringUtil.endPadSlash(str);
 	}
 
+	public static boolean isObjectClass(Class<?> clazz) {
+		return OBJECT_CLASS.equals(clazz);
+	}
+
+	/**
+	 * Is abstract class?
+	 */
+	public static boolean isAbstract(Class<?> clazz) {
+		return Modifier.isAbstract(clazz.getModifiers());
+	}
+
+	/**
+	 * A pure class like {@link Object}.
+	 */
+
+	public static boolean isPureClass(Class<?> clazz) {
+		if (isAbstract(clazz) || clazz.isInterface() || clazz.isPrimitive() || clazz.isArray() || clazz.isEnum()
+				|| clazz.isAnnotation() || clazz.isAnonymousClass() || clazz.isSynthetic() || clazz.isPrimitive()
+				|| clazz.isLocalClass() || clazz.isMemberClass()) {
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Check if the right-hand side type may be assigned to the left-hand side
 	 * type, assuming setting by reflection. Considers primitive wrapper classes
@@ -279,6 +325,15 @@ public class ClassUtil {
 		return isAssignable(List.class, clazz);
 	}
 
+	public static boolean hasInterface(Class<?> clazz) {
+		return !ArraysUtil.isEmpty(clazz.getInterfaces());
+	}
+
+	public static boolean hasSuperClass(Class<?> clazz) {
+		Class<?> superClass = clazz.getSuperclass();
+		return !(OBJECT_CLASS.equals(superClass) || superClass == null);
+	}
+
 	/**
 	 * Return all interfaces that the given instance implements as array,
 	 * including ones implemented by superclasses.
@@ -365,7 +420,7 @@ public class ClassUtil {
 	public static Set<Class<?>> getAllInterfacesForClassAsSet(Class<?> clazz, ClassLoader classLoader) {
 		Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
 		if (clazz.isInterface() && isVisible(clazz, classLoader)) {
-			return interfaces;
+			return Collections.singleton(clazz);
 		}
 		while (clazz != null) {
 			Class<?>[] ifcs = clazz.getInterfaces();
