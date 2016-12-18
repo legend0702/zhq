@@ -1,13 +1,12 @@
 package cn.zhuhongqing.utils.scan;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
-
-import com.alibaba.dubbo.common.URL;
 
 import cn.zhuhongqing.utils.GeneralUtil;
 

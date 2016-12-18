@@ -15,7 +15,6 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.TypeUtils;
 
 /**
  * Some utilities about class.
@@ -237,7 +236,7 @@ public class ClassUtil {
 	 * @param rhsType
 	 *            the value type that should be assigned to the target type
 	 * @return if the target type is assignable from the value type
-	 * @see TypeUtils#isAssignable
+	 * @see Class#isAssignableFrom(Class)
 	 */
 	public static boolean isAssignable(Class<?> lhsType, Class<?> rhsType) {
 		if (lhsType.isAssignableFrom(rhsType)) {
