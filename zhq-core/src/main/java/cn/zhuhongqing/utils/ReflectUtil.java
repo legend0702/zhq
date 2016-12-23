@@ -683,6 +683,14 @@ public class ReflectUtil {
 		}
 	}
 
+	public static <T> Constructor<T> getParamsAndUsableConstructor(Class<T> claz, Class<?>... paramTypes) {
+		try {
+			return claz.getConstructor(paramTypes);
+		} catch (NoSuchMethodException | SecurityException e) {
+			return null;
+		}
+	}
+
 	// ---------------------------------------------------------------- force
 
 	/**
@@ -906,13 +914,23 @@ public class ReflectUtil {
 	}
 
 	/**
-	 * Returns all superclasses.
+	 * Returns all superclasses with {@link #OBJECT_CLASS}
 	 */
 	public static List<Class<?>> getSuperClasses(Class<?> type) {
 		ArrayList<Class<?>> result = new ArrayList<>();
 		for (Class<?> x = type.getSuperclass(); x != null; x = x.getSuperclass()) {
 			result.add(x);
 		}
+		return result;
+	}
+
+	/**
+	 * Returns all superclasses without {@link #OBJECT_CLASS}
+	 */
+
+	public static List<Class<?>> getSuperClassesWithOutObject(Class<?> type) {
+		List<Class<?>> result = getSuperClasses(type);
+		result.remove(result.size() - 1);
 		return result;
 	}
 

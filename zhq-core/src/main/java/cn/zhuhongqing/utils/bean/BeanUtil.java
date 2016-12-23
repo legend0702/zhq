@@ -2,6 +2,7 @@ package cn.zhuhongqing.utils.bean;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -147,6 +148,48 @@ public class BeanUtil {
 			return;
 		}
 		setProperty(target, BeanInfoUtil.findPropertyDescriptor(target.getClass(), name), value);
+	}
+
+	// BeanFactory
+
+	static String getClassNameForGroup(Class<?> clazz) {
+		return clazz.getSimpleName();
+	}
+
+	public static String getClassNameForGroup(BeanDefinition define) {
+		return getClassNameForGroup(define.getMetaType());
+	}
+
+	// throw
+
+	public static void throwNoBeanFind(Class<?> clazz) {
+		throw new IllegalArgumentException(
+				"Can't find BeanDefinition for class:" + clazz + ",maybe no interface or implement registered.");
+	}
+
+	public static void throwNoBeanFind(Class<?> clazz, String group) {
+		throw new IllegalArgumentException("Can't find BeanDefinition for class:" + clazz + " by groupName:" + group
+				+ ",maybe no implement registered.");
+	}
+
+	public static void throwNoGroupFind(Class<?> clazz, String group) {
+		throw new IllegalArgumentException("Can't find group information [" + group + "] or on the class:" + clazz
+				+ ",maybe no SPI Annotation on the class.");
+	}
+
+	public static void throwDupGroup(Class<?> ifsClass, String group, Class<?>... dupClass) {
+		throw new IllegalStateException("The class [ " + ifsClass + " ] has more than one implement class "
+				+ Arrays.toString(dupClass) + " on same group [" + group + "].");
+	}
+
+	public static void throwNoConstructor(Class<?> clazz, String group) {
+		throw new IllegalStateException(
+				"Can't find useable Constructor in the class [ " + clazz + " ] on group [" + group + "].");
+	}
+
+	public static void throwDupConstructor(Class<?> clazz, String group) {
+		throw new IllegalStateException(
+				"The class [ " + clazz + " ] has more than one Constructor on same group [" + group + "].");
 	}
 
 }

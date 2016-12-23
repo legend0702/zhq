@@ -28,6 +28,15 @@ public class MethodUtil {
 		}
 	}
 
+	/**
+	 * 得到当前执行的方法
+	 */
+
+	public static Method getCurrentMethod() {
+		StackTraceElement stack = Thread.currentThread().getStackTrace()[2];
+		return ReflectUtil.findMethod(ClassUtil.forName(stack.getClassName()), stack.getMethodName());
+	}
+
 	public static boolean isVoid(Method method) {
 		return Void.TYPE.equals(method.getReturnType());
 	}

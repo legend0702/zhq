@@ -2,6 +2,8 @@ package cn.zhuhongqing.utils.scan;
 
 import java.io.FileFilter;
 
+import cn.zhuhongqing.utils.struct.AcceptFilter;
+
 /**
  * Like {@link FileFilter}<br/>
  * Return true to accept resource or false to discard it.<br/>
@@ -14,7 +16,7 @@ import java.io.FileFilter;
  *         </nl>
  */
 
-public interface ResourceFilter<R> {
+public interface ResourceFilter<R> extends AcceptFilter<R> {
 
 	/**
 	 * Return true to accept resource or false to discard it.

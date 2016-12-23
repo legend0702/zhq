@@ -2,6 +2,8 @@ package cn.zhuhongqing.io;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -41,6 +43,10 @@ public class ReadLineIterator implements Iterator<String> {
 	private String cachedLine;
 	/** A flag indicating if the iterator has been fully read. */
 	private boolean finished = false;
+
+	public ReadLineIterator(final InputStream is) {
+		this(new InputStreamReader(is));
+	}
 
 	/**
 	 * Constructs an iterator of the lines for a <code>Reader</code>.

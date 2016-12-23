@@ -708,6 +708,19 @@ public class StringUtil {
 	}
 
 	/**
+	 * Cuts this String from beginning to the first lastIndex of provided
+	 * subString and add addLength
+	 */
+
+	public static String cutToLastIndexOf(String string, String subString, int addLength) {
+		int i = string.lastIndexOf(subString);
+		if (i != -1) {
+			return string.substring(i + addLength, string.length());
+		}
+		return string;
+	}
+
+	/**
 	 * Cuts the string from the first index of provided substring to the end.
 	 */
 	public static String cutFromIndexOf(String string, String substring) {

@@ -1,5 +1,7 @@
 package cn.zhuhongqing.utils;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -23,6 +25,18 @@ public class URLUtil {
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+
+	public static InputStream getInputSteam(URL url) {
+		try {
+			return url.openStream();
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	public static String getLastPath(URL url) {
+		return StringUtil.cutToLastIndexOf(url.getPath(), StringPool.SLASH, 1);
 	}
 
 }

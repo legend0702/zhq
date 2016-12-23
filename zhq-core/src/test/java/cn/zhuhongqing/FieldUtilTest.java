@@ -7,8 +7,8 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
+import cn.zhuhongqing.io.StreamUtil;
 import cn.zhuhongqing.reflect.FieldReference;
-import cn.zhuhongqing.utils.StreamUtil;
 
 public class FieldUtilTest {
 
