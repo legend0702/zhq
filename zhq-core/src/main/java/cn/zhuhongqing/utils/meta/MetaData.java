@@ -8,7 +8,7 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-import cn.zhuhongqing.utils.bean.BeanProperty;
+import cn.zhuhongqing.bean.BeanProperty;
 
 /**
  * 将Java内部的Member跟AnnotatedElement整合一下<br/>

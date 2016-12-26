@@ -10,8 +10,8 @@ import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
-import cn.zhuhongqing.utils.bean.DefaultBeanConstructor;
-import cn.zhuhongqing.utils.bean.DefaultBeanMethod;
+import cn.zhuhongqing.bean.DefaultBeanConstructor;
+import cn.zhuhongqing.bean.DefaultBeanMethod;
 
 /**
  * 可执行对象 整合{@link MetaData}

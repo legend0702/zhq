@@ -3,7 +3,7 @@ package cn.zhuhongqing.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-import cn.zhuhongqing.utils.bean.BeanUtil;
+import cn.zhuhongqing.bean.BeanUtil;
 
 /**
  * 包装一个Java Bean 以不改变原始Java Bean结构的情况下 追加参数

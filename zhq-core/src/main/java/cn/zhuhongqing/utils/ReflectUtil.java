@@ -387,6 +387,14 @@ public class ReflectUtil {
 		return null;
 	}
 
+	public static boolean isFinal(Member member) {
+		return Modifier.isFinal(member.getModifiers());
+	}
+
+	public static boolean isNative(Member member) {
+		return Modifier.isNative(member.getModifiers());
+	}
+
 	/**
 	 * Is abstract class?
 	 */
@@ -397,6 +405,10 @@ public class ReflectUtil {
 
 	public static boolean isAbstract(Member member) {
 		return MEMBER_ABSTRACT == member.getModifiers();
+	}
+
+	public static boolean isWriteable(Member member) {
+		return !(isFinal(member) & isNative(member));
 	}
 
 	/**

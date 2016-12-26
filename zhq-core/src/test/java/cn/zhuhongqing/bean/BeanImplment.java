@@ -1,7 +1,5 @@
 package cn.zhuhongqing.bean;
 
-import cn.zhuhongqing.utils.spi.SPI;
-
 @SPI("A")
 public class BeanImplment implements BeanInterface {
 

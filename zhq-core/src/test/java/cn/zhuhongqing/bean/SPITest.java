@@ -6,12 +6,12 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
+import cn.zhuhongqing.bean.AbstractBeanFactory;
+import cn.zhuhongqing.bean.BeanFactory;
+import cn.zhuhongqing.bean.spi.SPIBeanFactory;
 import cn.zhuhongqing.utils.ArraysUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.bean.AbstractBeanFactory;
-import cn.zhuhongqing.utils.bean.BeanFactory;
 import cn.zhuhongqing.utils.meta.MetaData;
-import cn.zhuhongqing.utils.spi.SPIBeanFactory;
 
 public class SPITest {
 

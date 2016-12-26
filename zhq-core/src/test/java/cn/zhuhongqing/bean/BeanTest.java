@@ -8,10 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cn.zhuhongqing.utils.FieldUtil;
 import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.bean.BeanAutowired;
-import cn.zhuhongqing.utils.spi.SPI;
 
-public class BeanTest implements BeanAutowired, BeanInterface {
+public class BeanTest implements BeanInterface {
 
 	private String name;
 
