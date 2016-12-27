@@ -11,8 +11,8 @@ package cn.zhuhongqing.call;
  *         </nl>
  */
 
-public interface CallBack<P> {
+public interface CallBackThr<P> {
 
-	void invoke(P param);
+	void invoke(P param) throws Exception;
 
 }
