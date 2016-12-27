@@ -24,7 +24,7 @@ public final class BeanFactoryHole {
 
 	static void register(Collection<Class<?>> classes) {
 		for (Class<?> clazz : classes) {
-			register(clazz);
+			BEAN_FACTORY.register(clazz);
 		}
 	}
 
