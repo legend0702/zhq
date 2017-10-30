@@ -1,12 +1,14 @@
 package cn.zhuhongqing.bean;
 
+import cn.zhuhongqing.utils.StringPool;
+
 public class DefaultObjectState implements ObjectState {
 
 	private String group;
 	private ObjectScope scope;
 
 	public DefaultObjectState() {
-		this(null, null);
+		this(StringPool.DEFAULT, ObjectScope.DEFAULT);
 	}
 
 	public DefaultObjectState(String group, ObjectScope scope) {
@@ -20,6 +22,11 @@ public class DefaultObjectState implements ObjectState {
 	}
 
 	@Override
+	public void setScope(ObjectScope scope) {
+		this.scope = scope;
+	}
+
+	@Override
 	public String getGroup() {
 		return group;
 	}
@@ -27,11 +34,6 @@ public class DefaultObjectState implements ObjectState {
 	@Override
 	public ObjectScope getScope() {
 		return scope;
-	}
-
-	@Override
-	public void setScope(ObjectScope scope) {
-		this.scope = scope;
 	}
 
 }

@@ -42,7 +42,7 @@ public abstract class ObjectStateWithAttrbuteHole<K, V> extends MapAttrbuteHole<
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " [Object =" + getTarget() + " ,group=" + group + "]";
+		return getClass().getName() + " [" + getClass().getSimpleName() + " =" + getTarget() + " ,group=" + group + "]";
 	}
 
 	@Override

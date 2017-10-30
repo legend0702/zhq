@@ -62,34 +62,4 @@ public class DefaultBeanConstructor extends ObjectStateWithAttrbuteHole<Integer,
 		return con;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((con == null) ? 0 : con.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (!super.equals(obj))
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DefaultBeanConstructor other = (DefaultBeanConstructor) obj;
-		if (con == null) {
-			if (other.con != null)
-				return false;
-		} else if (!con.equals(other.con))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "DefaultBeanConstructor [constructor=" + con + "]";
-	}
-
 }

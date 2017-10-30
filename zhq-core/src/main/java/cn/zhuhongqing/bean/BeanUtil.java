@@ -112,12 +112,12 @@ public class BeanUtil {
 		return parmsMap;
 	}
 
-	static void setProperty(Object origin, Object target, PropertyDescriptor descriptor) {
+	public static void setProperty(Object origin, Object target, PropertyDescriptor descriptor) {
 		Object value = getProperty(origin, descriptor);
 		setProperty(target, descriptor, value);
 	}
 
-	static void setProperty(Object target, PropertyDescriptor descriptor, Object value) {
+	public static void setProperty(Object target, PropertyDescriptor descriptor, Object value) {
 		if (BeanInfoUtil.OBJECT_PROPERTY.contains(descriptor))
 			return;
 		Method setMethod = descriptor.getWriteMethod();
@@ -126,7 +126,7 @@ public class BeanUtil {
 		MethodUtil.invoke(setMethod, target, value);
 	}
 
-	static Object getProperty(Object target, PropertyDescriptor descriptor) {
+	public static Object getProperty(Object target, PropertyDescriptor descriptor) {
 		if (BeanInfoUtil.OBJECT_PROPERTY.contains(descriptor))
 			return null;
 		Method getMethod = descriptor.getReadMethod();
@@ -152,7 +152,7 @@ public class BeanUtil {
 
 	// BeanFactory
 
-	static String getClassNameForGroup(Class<?> clazz) {
+	public static String getClassNameForGroup(Class<?> clazz) {
 		return clazz.getSimpleName();
 	}
 

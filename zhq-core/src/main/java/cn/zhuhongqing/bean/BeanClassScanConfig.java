@@ -10,7 +10,7 @@ public interface BeanClassScanConfig {
 	static final ClassScan CLASS_SCAN = ClassScan.INSTANCE;
 
 	default String startPackage() {
-		return this.getClass().getPackage().getName();
+		return getClass().getPackage().getName();
 	}
 
 	default Collection<Class<?>> getScanClass() {

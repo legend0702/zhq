@@ -30,7 +30,7 @@ public class SPIBeanFactory {
 			return new SPIDefaultBeanFactory(roots);
 		}
 
-		public static BeanFactory BuildByBasePackage(String root) {
+		public static BeanFactory BuildByRootPackage(String root) {
 			return new SPIClassScanBeanFactory(root);
 		}
 	}

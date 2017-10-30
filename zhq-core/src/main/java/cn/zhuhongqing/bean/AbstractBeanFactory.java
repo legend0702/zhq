@@ -2,12 +2,14 @@ package cn.zhuhongqing.bean;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cn.zhuhongqing.bean.spi.SPIUtil;
 import cn.zhuhongqing.utils.ArraysUtil;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.GeneralUtil;
@@ -23,19 +25,13 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 
 	private static final String DEF_GROUP = StringPool.DEFAULT;
 
-	public static final ConcurrentMap<Class<?>, BeanDefinitionGroup> BEAN_DEFINITION_GROUP = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<Class<?>, BeanDefinitionGroup> BEAN_DEFINITION_GROUP = new ConcurrentHashMap<>();
 	private static final ConcurrentMap<BeanDefinition, Object> SINGLETON_INSTANCES = new ConcurrentHashMap<>();
 
 	@Override
 	public <T> T getBean(Class<T> clazz, String group) {
-		BeanDefinitionGroup defineGroup = getBeanDefinitionGroup(clazz);
-		if (GeneralUtil.isNull(defineGroup) || defineGroup.isEmptyAttribute()) {
-			BeanUtil.throwNoBeanFind(clazz);
-		}
-		String group0 = group;
-		if (GeneralUtil.isNull(group0)) {
-			group0 = getGroup(clazz);
-		}
+		BeanDefinitionGroup defineGroup = checkAndGetDefGroup(clazz);
+		String group0 = getGroup(clazz, group);
 		BeanDefinition define = defineGroup.getAttribute(group0);
 		if (GeneralUtil.isNull(define)) {
 			Collection<BeanDefinition> defineArr = defineGroup.attributeValues();
@@ -57,10 +53,34 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 		if (define.isSingleton()) {
 			bean = putSingletonInstance(define, bean);
 		}
-		if (!BeanAutowired.class.isAssignableFrom(clazz)) {
-			injectBeanProperty(bean, define);
-		}
+		injectBeanProperty(bean, define);
 		return clazz.cast(bean);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<T> getBeans(Class<T> clazz) {
+		BeanDefinitionGroup defineGroup = checkAndGetDefGroup(clazz);
+		List<T> instances = new ArrayList<>();
+		for (BeanDefinition beanDef : defineGroup.attributeValues()) {
+			instances.add((T) getBean(beanDef.getMetaType(), beanDef.getGroup()));
+		}
+		return instances;
+	}
+
+	private BeanDefinitionGroup checkAndGetDefGroup(Class<?> clazz) {
+		BeanDefinitionGroup defineGroup = getBeanDefinitionGroup(clazz);
+		if (GeneralUtil.isNull(defineGroup) || defineGroup.isEmptyAttribute()) {
+			BeanUtil.throwNoBeanFind(clazz);
+		}
+		return defineGroup;
+	}
+
+	private String getGroup(Class<?> clazz, String groupParam) {
+		if (GeneralUtil.isNull(groupParam)) {
+			groupParam = getGroup(clazz);
+		}
+		return groupParam;
 	}
 
 	@Override

@@ -1,5 +1,21 @@
 package cn.zhuhongqing.bean;
 
+import java.util.List;
+
+import cn.zhuhongqing.bean.spi.SPI;
+
+/**
+ * 类工厂 主要管理类的生命周期以及依赖关系
+ * 
+ * @author HongQing.Zhu
+ *         <nl>
+ *         <li>Mail:qwepoidjdj(a)gmail.com</li>
+ *         <li>HomePage:www.zhuhongqing.cn</li>
+ *         <li>Github:github.com/legend0702</li>
+ *         </nl>
+ *
+ */
+
 @SPI
 public interface BeanFactory {
 
@@ -8,6 +24,8 @@ public interface BeanFactory {
 	}
 
 	<T> T getBean(Class<T> clazz, String group);
+
+	<T> List<T> getBeans(Class<T> clazz);
 
 	void inject(Object bean);
 

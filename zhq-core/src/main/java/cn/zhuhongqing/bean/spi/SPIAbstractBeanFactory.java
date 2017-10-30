@@ -13,7 +13,6 @@ import cn.zhuhongqing.bean.BeanDefinition;
 import cn.zhuhongqing.bean.BeanDefinitionGroup;
 import cn.zhuhongqing.bean.BeanInvokable;
 import cn.zhuhongqing.bean.BeanProperty;
-import cn.zhuhongqing.bean.SPIUtil;
 import cn.zhuhongqing.utils.ClassUtil;
 import cn.zhuhongqing.utils.LockUtil;
 import cn.zhuhongqing.utils.StringUtil;

@@ -5,10 +5,13 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import cn.zhuhongqing.exception.UtilsException;
+import cn.zhuhongqing.utils.GeneralUtil;
 
 /**
  * Some utilities for JavaBean's meta-data.
@@ -23,7 +26,7 @@ import cn.zhuhongqing.exception.UtilsException;
 
 public class BeanInfoUtil {
 
-	static HashSet<PropertyDescriptor> OBJECT_PROPERTY = new HashSet<>(0);
+	static Set<PropertyDescriptor> OBJECT_PROPERTY = Collections.emptySet();
 
 	static {
 		OBJECT_PROPERTY = new HashSet<>(getPropertyDescriptorsList(Object.class));
@@ -54,6 +57,14 @@ public class BeanInfoUtil {
 				return props[i];
 		}
 		throw new UtilsException("Can not find [" + name + "] property from" + target);
+	}
+
+	public static boolean isWriteable(PropertyDescriptor descriptor) {
+		return GeneralUtil.isNotNull(descriptor.getWriteMethod());
+	}
+
+	public static boolean isReadable(PropertyDescriptor descriptor) {
+		return GeneralUtil.isNotNull(descriptor.getReadMethod());
 	}
 
 }
