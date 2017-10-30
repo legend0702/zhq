@@ -23,8 +23,7 @@ public class DateUtil {
 	public static final String YYYY_MM_DD = "yyyy-MM-dd";
 
 	public static Calendar getCurrentCalendar() {
-		return Calendar.getInstance(TimeZoneUtil.getTimeZone(),
-				LocaleUtil.getLocale());
+		return Calendar.getInstance(TimeZoneUtil.getTimeZone(), LocaleUtil.getLocale());
 	}
 
 	public static Calendar dateToCalendar(Date date) {
@@ -44,6 +43,10 @@ public class DateUtil {
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		return calendar.getTime();
+	}
+
+	public static String getCurrentDayStr() {
+		return defaultFormat(getCurrentDate());
 	}
 
 	public static Timestamp getCurrentTimestamp() {

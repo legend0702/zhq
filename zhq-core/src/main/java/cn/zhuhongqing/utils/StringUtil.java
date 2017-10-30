@@ -91,28 +91,50 @@ public class StringUtil {
 	}
 
 	/**
+	 * Capitalize a {@code String}, changing the first letter to upper case as
+	 * per {@link Character#toUpperCase(char)}. No other letters are changed.
+	 * 
 	 * Thus "fooBah" becomes "FooBah" and "X" becomes "X".
 	 * 
-	 * @param name
-	 *            The string to be capitalized.
-	 * @return The capitalized version of the string.
+	 * @param str
+	 *            the {@code String} to capitalize
+	 * @return the capitalized {@code String}
 	 */
+	public static String capitalize(String str) {
+		return changeFirstCharacterCase(str, true);
+	}
 
-	public static String capitalize(String name) {
-		if (name.length() == 0) {
-			return name;
+	/**
+	 * Uncapitalize a {@code String}, changing the first letter to lower case as
+	 * per {@link Character#toLowerCase(char)}. No other letters are changed.
+	 * 
+	 * @param str
+	 *            the {@code String} to uncapitalize
+	 * @return the uncapitalized {@code String}
+	 */
+	public static String uncapitalize(String str) {
+		return changeFirstCharacterCase(str, false);
+	}
+
+	private static String changeFirstCharacterCase(String str, boolean capitalize) {
+		if (isEmpty(str)) {
+			return str;
 		}
-		if (Character.isUpperCase(name.charAt(0))) {
-			return name;
+
+		char baseChar = str.charAt(0);
+		char updatedChar;
+		if (capitalize) {
+			updatedChar = Character.toUpperCase(baseChar);
+		} else {
+			updatedChar = Character.toLowerCase(baseChar);
 		}
-		char chars[] = name.toCharArray();
-		char c = chars[0];
-		char modifiedChar = Character.toUpperCase(c);
-		if (modifiedChar == c) {
-			return name;
+		if (baseChar == updatedChar) {
+			return str;
 		}
-		chars[0] = modifiedChar;
-		return new String(chars);
+
+		char[] chars = str.toCharArray();
+		chars[0] = updatedChar;
+		return new String(chars, 0, chars.length);
 	}
 
 	/**
@@ -155,9 +177,17 @@ public class StringUtil {
 		return obj == null ? StringPool.EMPTY : obj.toString();
 	}
 
+	/**
+	 * Is Json-Schema String
+	 */
+
 	public static boolean isJson(String json) {
 		return (isJsonObj(json) || isJsonArray(json));
 	}
+
+	/**
+	 * Is Json-Object-Schema String
+	 */
 
 	public static boolean isJsonObj(String json) {
 		if (json != null && json.startsWith(StringPool.LEFT_BRACE) && json.endsWith(StringPool.RIGHT_BRACE)) {
@@ -166,6 +196,10 @@ public class StringUtil {
 		return false;
 	}
 
+	/**
+	 * Is Json-Array-Schema String
+	 */
+
 	public static boolean isJsonArray(String json) {
 		if (json != null && json.startsWith(StringPool.LEFT_SQ_BRACKET) && json.endsWith(StringPool.RIGHT_SQ_BRACKET)) {
 			return true;
@@ -173,9 +207,17 @@ public class StringUtil {
 		return false;
 	}
 
+	/**
+	 * name,value => {name:value}
+	 */
+
 	public static String toJson(String name, Object value) {
 		return StringPool.LEFT_BRACE + name + StringPool.COLON + toString(value) + StringPool.RIGHT_BRACE;
 	}
+
+	/**
+	 * name,value,name2,value2 => {name:value,name2:value2}
+	 */
 
 	public static String toJson(String... nameValues) {
 		if (ArraysUtil.isEmpty(nameValues))
@@ -317,6 +359,18 @@ public class StringUtil {
 	 * 
 	 * @param coll
 	 *            the Collection to display
+	 * @return the delimited String
+	 */
+	public static String collectionToDelimitedString(Collection<?> coll) {
+		return collectionToDelimitedString(coll, StringPool.COMMA, StringPool.EMPTY, StringPool.EMPTY);
+	}
+
+	/**
+	 * Convenience method to return a Collection as a delimited (e.g. CSV)
+	 * String. E.g. useful for {@code toString()} implementations.
+	 * 
+	 * @param coll
+	 *            the Collection to display
 	 * @param delim
 	 *            the delimiter to use (probably a ",")
 	 * @return the delimited String
@@ -355,21 +409,16 @@ public class StringUtil {
 	}
 
 	/**
-	 * Take a String which is a delimited list and convert it to a String array.
-	 * <p>
-	 * A single delimiter can consists of more than one character: It will still
-	 * be considered as single delimiter string, rather than as bunch of
-	 * potential delimiter characters - in contrast to
-	 * {@code tokenizeToStringArray}.
-	 * 
-	 * @param str
-	 *            the input String
-	 * @param delimiter
-	 *            the delimiter between elements (this is a single delimiter,
-	 *            rather than a bunch individual delimiter characters)
-	 * @return an array of the tokens in the list
-	 * @see #tokenizeToStringArray
+	 * @see #delimitedListToStringArray(String, String, String)
 	 */
+	public static String[] delimitedListToStringArray(String str) {
+		return delimitedListToStringArray(str, StringPool.COMMA, null);
+	}
+
+	/**
+	 * @see #delimitedListToStringArray(String, String, String)
+	 */
+
 	public static String[] delimitedListToStringArray(String str, String delimiter) {
 		return delimitedListToStringArray(str, delimiter, null);
 	}
@@ -379,8 +428,7 @@ public class StringUtil {
 	 * <p>
 	 * A single delimiter can consists of more than one character: It will still
 	 * be considered as single delimiter string, rather than as bunch of
-	 * potential delimiter characters - in contrast to
-	 * {@code tokenizeToStringArray}.
+	 * potential delimiter characters.
 	 * 
 	 * @param str
 	 *            the input String
@@ -392,7 +440,6 @@ public class StringUtil {
 	 *            line breaks: e.g. "\r\n\f" will delete all new lines and line
 	 *            feeds in a String.
 	 * @return an array of the tokens in the list
-	 * @see #tokenizeToStringArray
 	 */
 	public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
 		if (str == null) {

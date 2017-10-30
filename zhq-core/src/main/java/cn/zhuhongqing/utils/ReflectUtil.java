@@ -16,6 +16,7 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -569,7 +570,11 @@ public class ReflectUtil {
 	// supported methods
 
 	public static Method[] getSupportedMethods(Class<?> clazz) {
-		return getSupportedMethods(clazz, OBJECT_CLASS);
+		return getSupportedMethods(clazz, OBJECT_CLASS, null);
+	}
+	
+	public static Method getSupportedMethods(Class<?> clazz, String methodName) {
+		return getSupportedMethods(clazz, OBJECT_CLASS, Collections.singleton(methodName))[0];
 	}
 
 	/**
@@ -579,8 +584,9 @@ public class ReflectUtil {
 	 * used to eliminate them methods defined by <code>java.lang.Object</code>.
 	 * If limit is <code>null</code> then all methods are returned.
 	 */
-	public static Method[] getSupportedMethods(Class<?> clazz, Class<?> limit) {
+	public static Method[] getSupportedMethods(Class<?> clazz, Class<?> limit, Set<String> methodNameSet) {
 		ArrayList<Method> supportedMethods = new ArrayList<Method>();
+		Set<String> methodNames = GeneralUtil.defValue(methodNameSet, Collections.emptySet());
 		for (Class<?> c = clazz; c != limit; c = c.getSuperclass()) {
 			Method[] methods = c.getDeclaredMethods();
 			for (Method method : methods) {
@@ -592,6 +598,8 @@ public class ReflectUtil {
 					}
 				}
 				if (found == false) {
+					if (!methodNames.isEmpty() && !methodNames.contains(method.getName()))
+						continue;
 					supportedMethods.add(method);
 				}
 			}

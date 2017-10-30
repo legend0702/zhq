@@ -6,13 +6,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 
 import cn.zhuhongqing.bean.BeanProperty;
 
 /**
- * 将Java内部的Member跟AnnotatedElement整合一下<br/>
- * 实现类必须实现以及覆盖以下方法：<br/>
+ * 将Java内部的Member跟AnnotatedElement整合一下 并再扩展一些方法<br/>
+ * 实现类必须实现(覆盖)以下方法：<br/>
  * <br/>
  * 
  * {@link #getMetaType()}<br/>
@@ -30,7 +31,7 @@ import cn.zhuhongqing.bean.BeanProperty;
 
 public interface MetaData extends AnnotatedElement, Member {
 
-	// static
+	// static of
 
 	static MetaData of(Class<?> clazz) {
 		return ClassMeta.of(clazz);
@@ -100,7 +101,7 @@ public interface MetaData extends AnnotatedElement, Member {
 		return getAnnotatedElement().getDeclaredAnnotations();
 	}
 
-	// Is
+	// Type is
 
 	default boolean isClass() {
 		return ClassMeta.class.isAssignableFrom(getMember().getClass());
@@ -120,6 +121,101 @@ public interface MetaData extends AnnotatedElement, Member {
 
 	default boolean isParameter() {
 		return ParameterMember.class.isAssignableFrom(getMember().getClass());
+	}
+
+	// Modifier
+
+	/**
+	 * @see Modifier#isPublic(int)
+	 */
+	default boolean isPublic() {
+		return Modifier.isPublic(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isProtected(int)
+	 */
+	default boolean isProtected() {
+		return Modifier.isProtected(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isPrivate(int)
+	 */
+	default boolean isPrivate() {
+		return Modifier.isPrivate(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isStatic(int)
+	 */
+	default boolean isStatic() {
+		return Modifier.isStatic(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isFinal(int)
+	 */
+	default boolean isFinal() {
+		return Modifier.isFinal(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isSynchronized(int)
+	 */
+	default boolean isSynchronized() {
+		return Modifier.isSynchronized(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isVolatile(int)
+	 */
+	default boolean isVolatile() {
+		return Modifier.isVolatile(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isTransient(int)
+	 */
+	default boolean isTransient() {
+		return Modifier.isTransient(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isNative(int)
+	 */
+	default boolean isNative() {
+		return Modifier.isNative(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isInterface(int)
+	 */
+	default boolean isInterface() {
+		return Modifier.isInterface(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isAbstract(int)
+	 */
+	default boolean isAbstract() {
+		return Modifier.isAbstract(getModifiers());
+	}
+
+	/**
+	 * @see Modifier#isStrict(int)
+	 */
+
+	default boolean isStrict() {
+		return Modifier.isStrict(getModifiers());
+	}
+
+	default boolean isPublicStaticFinal() {
+		return (isPublic() && isStatic() && isFinal());
+	}
+
+	default boolean isOverWriteAble() {
+		return !(isFinal() & isNative());
 	}
 
 }

@@ -31,6 +31,10 @@ public class ClassObjectHole implements Cloneable {
 		hole.put(obj.getClass(), obj);
 	}
 
+	public void put(Class<?> key, Object val) {
+		hole.put(key, val);
+	}
+
 	@SuppressWarnings("unchecked")
 	public <T> T get(Class<T> clz) {
 		return (T) hole.get(clz);

@@ -10,6 +10,8 @@ import java.lang.reflect.Array;
  * More array utilities. <b>DO NOT MODIFY: this source is generated.</b>
  */
 public final class ArraysUtil {
+	
+	public static final String[] EMPTY_ARRAY = new String[0];
 
 	/**
 	 * Creates an empty array.

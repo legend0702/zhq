@@ -1,9 +1,18 @@
 package cn.zhuhongqing.utils.generic;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
+import java.util.ArrayList;
+import java.util.Map;
+
+import cn.zhuhongqing.bean.BeanInfoUtil;
+import cn.zhuhongqing.utils.ArraysUtil;
+import cn.zhuhongqing.utils.BeanWrap;
+import cn.zhuhongqing.utils.ClassUtil;
+import cn.zhuhongqing.utils.ReflectUtil;
 
 /**
  * Some utilities for generic.
@@ -60,19 +69,17 @@ public class GenericUtil {
 	 * @since 3.2.5
 	 * @see #resolveReturnType
 	 */
-	public static Class<?> resolveReturnTypeForGenericMethod(Method method,
-			Object[] args, ClassLoader classLoader) {
+	public static Class<?> resolveReturnTypeForGenericMethod(Method method, Object[] args, ClassLoader classLoader) {
 
-		TypeVariable<Method>[] declaredTypeVariables = method
-				.getTypeParameters();
-		Type genericReturnType = method.getGenericReturnType();
-		Type[] methodArgumentTypes = method.getGenericParameterTypes();
-
+		TypeVariable<Method>[] declaredTypeVariables = method.getTypeParameters();
 		// No declared type variables to inspect, so just return the standard
 		// return type.
 		if (declaredTypeVariables.length == 0) {
 			return method.getReturnType();
 		}
+
+		Type genericReturnType = method.getGenericReturnType();
+		Type[] methodArgumentTypes = method.getGenericParameterTypes();
 
 		// The supplied argument list is too short for the method's signature,
 		// so
@@ -100,21 +107,18 @@ public class GenericUtil {
 				}
 				if (currentMethodArgumentType instanceof ParameterizedType) {
 					ParameterizedType parameterizedType = (ParameterizedType) currentMethodArgumentType;
-					Type[] actualTypeArguments = parameterizedType
-							.getActualTypeArguments();
+					Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
 					for (Type typeArg : actualTypeArguments) {
 						if (typeArg.equals(genericReturnType)) {
 							Object arg = args[i];
 							if (arg instanceof Class) {
 								return (Class<?>) arg;
-							} else if (arg instanceof String
-									&& classLoader != null) {
+							} else if (arg instanceof String && classLoader != null) {
 								try {
 									return classLoader.loadClass((String) arg);
 								} catch (ClassNotFoundException ex) {
 									throw new IllegalStateException(
-											"Could not resolve specific class name argument ["
-													+ arg + "]", ex);
+											"Could not resolve specific class name argument [" + arg + "]", ex);
 								}
 							} else {
 								// Consider adding logic to determine the class
@@ -155,8 +159,7 @@ public class GenericUtil {
 	 * @return the resolved type of the argument, or {@code null} if not
 	 *         resolvable
 	 */
-	public static Class<?> resolveTypeArgument(Class<?> clazz,
-			Class<?> generic, int index) {
+	public static Class<?> resolveTypeArgument(Class<?> clazz, Class<?> generic, int index) {
 		ResolvableType resolvableType = forClassAs(clazz, generic);
 		if (!resolvableType.hasGenerics()) {
 			return null;
@@ -168,8 +171,7 @@ public class GenericUtil {
 		return ResolvableType.forClass(clazz).as(generic);
 	}
 
-	private static Class<?> getSingleGeneric(ResolvableType resolvableType,
-			int index) {
+	private static Class<?> getSingleGeneric(ResolvableType resolvableType, int index) {
 		return resolvableType.getGeneric(index).resolve();
 	}
 
@@ -187,8 +189,7 @@ public class GenericUtil {
 	 *         the number of actual type arguments, or {@code null} if not
 	 *         resolvable
 	 */
-	public static Class<?>[] resolveTypeArguments(Class<?> clazz,
-			Class<?> genericIfc) {
+	public static Class<?>[] resolveTypeArguments(Class<?> clazz, Class<?> genericIfc) {
 		ResolvableType type = ResolvableType.forClass(clazz).as(genericIfc);
 		if (!type.hasGenerics() || type.isEntirelyUnresolvable()) {
 			return null;
@@ -196,4 +197,39 @@ public class GenericUtil {
 		return type.resolveGenerics(Object.class);
 	}
 
+	public static Class<?>[] resolvePropertyArguments(PropertyDescriptor property) {
+		if (BeanInfoUtil.isReadable(property)) {
+			return null;
+		}
+
+		if (BeanInfoUtil.isWriteable(property)) {
+			return null;
+		}
+		return null;
+	}
+
+	public static Object resolveMethodArguments(Method method) {
+		Type[] declaredTypeVariables = method.getGenericParameterTypes();
+		// No declared type variables to inspect, so just return the standard
+		// return type.
+		if (declaredTypeVariables.length == 0) {
+			return method.getParameterTypes();
+		}
+		return declaredTypeVariables;
+	}
+
+	public static void main(String[] args) {
+		// add elementData(int)
+		Method method = ReflectUtil.getSupportedMethods(TestClass.class, "iterator");
+		// System.out.println(resolveMethodArguments(method));
+		System.out.println(resolveReturnTypeForGenericMethod(method, ArraysUtil.emptyArray(Object.class),
+				ClassUtil.getDefaultClassLoader()));
+	}
+
+	static class TestClass extends ArrayList<BeanWrap> {
+		private static final long serialVersionUID = 1L;
+
+		public void test(Map<String, BeanWrap> wrap) {
+		}
+	}
 }

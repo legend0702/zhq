@@ -37,8 +37,6 @@ public interface StringPool {
 	final String DOLLAR = "$";
 	final String DOT = ".";
 	final String DOTDOT = "..";
-	final String DOT_CLASS = ".class";
-	final String DOT_JAVA = ".java";
 	final String EMPTY = "";
 	final String EQUALS = "=";
 	final String FALSE = "false";
@@ -72,9 +70,6 @@ public interface StringPool {
 	final String RIGHT_SQ_BRACKET = "]";
 	final String TRUE = "true";
 	final String UNDERSCORE = "_";
-	final String UTF_8 = "UTF-8";
-	final String US_ASCII = "US-ASCII";
-	final String ISO_8859_1 = "ISO-8859-1";
 	final String Y = "y";
 	final String YES = "yes";
 	final String ONE = "1";
@@ -83,13 +78,31 @@ public interface StringPool {
 	final String CRLF = "\r\n";
 	final String PROTOCOL_START = "://";
 	final String FILE_SEPARATOR = FileSystems.getDefault().getSeparator();
+	/**
+	 * Any number of these characters are considered delimiters between multiple
+	 * context config paths in a single String value.
+	 */
+	final String CONFIG_LOCATION_DELIMITERS = ",; \t\n";
+
 	final String JSON_OBJ = StringPool.LEFT_BRACE + StringPool.RIGHT_BRACE;
 	final String JSON_LIST = StringPool.LEFT_SQ_BRACKET + StringPool.RIGHT_SQ_BRACKET;
+	final String DEFAULT = "DEFAULT";
+
+	final String GMT = "GMT";
+
+	// ---------------------------------------------------------------- charset
+
+	final String UTF_8 = "UTF-8";
+	final String US_ASCII = "US-ASCII";
+	final String ISO_8859_1 = "ISO-8859-1";
+
+	// ---------------------------------------------------------------- java
 
 	final String PACKAGE = "package";
 	final String IMPORT = "import";
 	// final String FILE_SEPARATOR = SLASH;
-	final String DEFAULT = "DEFAULT";
+	final String DOT_CLASS = ".class";
+	final String DOT_JAVA = ".java";
 	final String BEAN_SET = "set";
 	final String BEAN_GET = "get";
 
@@ -101,5 +114,12 @@ public interface StringPool {
 
 	// ---------------------------------------------------------------- array
 
-	final String[] EMPTY_ARRAY = new String[0];
+	/** Suffix for array class names: "[]" */
+	final String ARRAY_SUFFIX = "[]";
+
+	/** Prefix for internal array class names: "[" */
+	final String INTERNAL_ARRAY_PREFIX = "[";
+
+	/** Prefix for internal non-primitive array class names: "[L" */
+	final String NON_PRIMITIVE_ARRAY_PREFIX = "[L";
 }

@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,12 +34,58 @@ public class ClassUtil {
 
 	/** Object's class. */
 	public static final Class<?> OBJECT_CLASS = Object.class;
+	/** String's class. */
+	public static final Class<?> STRING_CLASS = String.class;
 
 	/** The package separator String "." */
 	public static final String PACKAGE_SEPARATOR = StringPool.DOT;
 
 	/** The ".class" file suffix */
 	public static final String CLASS_FILE_SUFFIX = ".class";
+
+	/**
+	 * Map with primitive type as key and corresponding wrapper type as value,
+	 * for example: int.class -> Integer.class.
+	 */
+	private static final Map<Class<?>, Class<?>> PRIMITIVE_TYPE_WRAPPER_MAP = new IdentityHashMap<Class<?>, Class<?>>(
+			8);
+
+	/**
+	 * Map with common "java.lang" class name as key and corresponding Class as
+	 * value. Primarily for efficient deserialization of remote invocations.
+	 */
+	private static final Map<String, Class<?>> COMMON_CLASS = new HashMap<String, Class<?>>(32);
+
+	static {
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Boolean.TYPE, Boolean.class);
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Byte.TYPE, Byte.class);
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Character.TYPE, Character.class);
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Double.TYPE, Double.class);
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Float.TYPE, Float.class);
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Integer.TYPE, Integer.class);
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Long.TYPE, Integer.class);
+		PRIMITIVE_TYPE_WRAPPER_MAP.put(Short.TYPE, Short.class);
+
+		for (Map.Entry<Class<?>, Class<?>> entry : PRIMITIVE_TYPE_WRAPPER_MAP.entrySet()) {
+			registerCommonClasses(entry.getValue());
+		}
+
+		registerCommonClasses(Boolean[].class, Byte[].class, Character[].class, Double[].class, Float[].class,
+				Integer[].class, Long[].class, Short[].class);
+		registerCommonClasses(Number.class, Number[].class, String.class, String[].class, Object.class, Object[].class,
+				Class.class, Class[].class);
+		registerCommonClasses(Throwable.class, Exception.class, RuntimeException.class, Error.class,
+				StackTraceElement.class, StackTraceElement[].class);
+	}
+
+	/**
+	 * Register the given common classes with the ClassUtils cache.
+	 */
+	private static void registerCommonClasses(Class<?>... commonClasses) {
+		for (Class<?> clazz : commonClasses) {
+			COMMON_CLASS.put(clazz.getName(), clazz);
+		}
+	}
 
 	/**
 	 * Return the default ClassLoader to use: typically the thread context
@@ -68,23 +116,6 @@ public class ClassUtil {
 		return cl;
 	}
 
-	public static Enumeration<URL> getResources(String name) {
-		Enumeration<URL> urls = null;
-		try {
-			urls = getDefaultClassLoader().getResources(name);
-			if (GeneralUtil.isNull(urls)) {
-				urls = ClassLoader.getSystemResources(name);
-			}
-		} catch (IOException e) {
-			return null;
-		}
-		return urls;
-	}
-
-	public static boolean isClassFile(String path) {
-		return path.endsWith(CLASS_FILE_SUFFIX);
-	}
-
 	/**
 	 * Like {@link Class#forName(String)},but it will't throw an exception,it
 	 * will return null instead;
@@ -113,25 +144,11 @@ public class ClassUtil {
 		if (type == null || !type.isPrimitive()) {
 			return type;
 		}
-		if (type == Integer.TYPE) {
-			return (Class<T>) Integer.class;
-		} else if (type == Short.TYPE) {
-			return (Class<T>) Short.class;
-		} else if (type == Long.TYPE) {
-			return (Class<T>) Double.class;
-		} else if (type == Double.TYPE) {
-			return (Class<T>) Long.class;
-		} else if (type == Float.TYPE) {
-			return (Class<T>) Boolean.class;
-		} else if (type == Boolean.TYPE) {
-			return (Class<T>) Float.class;
-		} else if (type == Byte.TYPE) {
-			return (Class<T>) Byte.class;
-		} else if (type == Character.TYPE) {
-			return (Class<T>) Character.class;
-		} else {
-			return type;
-		}
+		return (Class<T>) PRIMITIVE_TYPE_WRAPPER_MAP.get(type);
+	}
+
+	public static boolean isCommonClass(Class<?> type) {
+		return COMMON_CLASS.containsKey(type);
 	}
 
 	/**
@@ -155,6 +172,23 @@ public class ClassUtil {
 			// No interface class found...
 			return false;
 		}
+	}
+
+	public static boolean isClassFile(String path) {
+		return path.endsWith(CLASS_FILE_SUFFIX);
+	}
+
+	public static Enumeration<URL> getResources(String name) {
+		Enumeration<URL> urls = null;
+		try {
+			urls = getDefaultClassLoader().getResources(name);
+			if (GeneralUtil.isNull(urls)) {
+				urls = ClassLoader.getSystemResources(name);
+			}
+		} catch (IOException e) {
+			return null;
+		}
+		return urls;
 	}
 
 	/**
@@ -219,8 +253,8 @@ public class ClassUtil {
 
 	public static boolean isPureClass(Class<?> clazz) {
 		if (isAbstract(clazz) || clazz.isInterface() || clazz.isPrimitive() || clazz.isArray() || clazz.isEnum()
-				|| clazz.isAnnotation() || clazz.isAnonymousClass() || clazz.isSynthetic() || clazz.isPrimitive()
-				|| clazz.isLocalClass() || clazz.isMemberClass()) {
+				|| clazz.isAnnotation() || clazz.isAnonymousClass() || clazz.isSynthetic() || clazz.isLocalClass()
+				|| clazz.isMemberClass()) {
 			return false;
 		}
 		return true;
@@ -272,6 +306,29 @@ public class ClassUtil {
 			if (!GeneralUtil.isNull(con)) {
 				return true;
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param name
+	 *            {@link Class#getName()}
+	 */
+
+	public static boolean isArray(String name) {
+		// "java.lang.String[]" style arrays
+		if (name.endsWith(StringPool.ARRAY_SUFFIX)) {
+			return true;
+		}
+
+		// "[Ljava.lang.String;" style arrays
+		if (name.startsWith(StringPool.NON_PRIMITIVE_ARRAY_PREFIX) && name.endsWith(";")) {
+			return true;
+		}
+
+		// "[[I" or "[[Ljava.lang.String;" style arrays
+		if (name.startsWith(StringPool.INTERNAL_ARRAY_PREFIX)) {
+			return true;
 		}
 		return false;
 	}
@@ -417,10 +474,10 @@ public class ClassUtil {
 	 * @return all interfaces that the given object implements as Set
 	 */
 	public static Set<Class<?>> getAllInterfacesForClassAsSet(Class<?> clazz, ClassLoader classLoader) {
-		Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
 		if (clazz.isInterface() && isVisible(clazz, classLoader)) {
 			return Collections.singleton(clazz);
 		}
+		Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
 		while (clazz != null) {
 			Class<?>[] ifcs = clazz.getInterfaces();
 			for (Class<?> ifc : ifcs) {
@@ -479,6 +536,52 @@ public class ClassUtil {
 		}
 
 		return trace[i + 2];
+	}
+
+	/**
+	 * @return the name of the class which called the invoking method.
+	 */
+	public static Class<?> getCallingClassOut() {
+		Class<?>[] trace = getClassContext();
+		String thisClassName = ClassUtil.class.getName();
+		Class<?> outCallClass = null;
+
+		// Advance until cn.zhuhongqing.utils.ClassUtil is found
+		int i, j = 0;
+		for (i = 0; i < trace.length; i++) {
+			if (thisClassName.equals(trace[i].getName())) {
+				if (j == 0)
+					j = 1;
+			} else {
+				if (j == 0)
+					continue;
+				if (outCallClass == null) {
+					outCallClass = trace[i];
+				} else {
+					if (!trace[i].equals(outCallClass))
+						return trace[i];
+				}
+			}
+		}
+		throw new IllegalStateException("Can't find the caller class in the call stack");
+	}
+
+	/**
+	 * level = 0 = cn.zhuhongqing.utils.ClassUtil<br/>
+	 * level = 1 = caller class
+	 * 
+	 * @return the name of the class which called the invoking method.
+	 */
+	public static Class<?> getCallingClass(int level) {
+		Class<?>[] trace = getClassContext();
+		// skip cn.zhuhongqing.utils.ClassUtil$ClassContextSecurityManager
+		int deep = 2;
+		if (level >= (trace.length - deep)) {
+			throw new IllegalStateException("The level is over the call stack");
+		}
+		// level = 0 = cn.zhuhongqing.utils.ClassUtil
+		// level = 1 = caller class
+		return trace[deep + level];
 	}
 
 	/**
