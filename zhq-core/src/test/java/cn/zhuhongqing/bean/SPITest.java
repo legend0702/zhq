@@ -22,7 +22,7 @@ public class SPITest {
 
 	@Test
 	public void classLoad() {
-		BeanFactory factory = SPIBeanFactory.Builder.Build("cn/zhuhongqing/bean/*");
+		BeanFactory factory = SPIBeanFactory.Builder.BuildByRootPackage("cn/zhuhongqing/bean/*");
 		System.out.println(factory.getRegisterCount());
 		System.out.println(ArraysUtils.toString(factory.getRegisterClasses()));
 	}
@@ -45,7 +45,7 @@ public class SPITest {
 
 	@Test
 	public void getBean() {
-		BeanFactory factory = SPIBeanFactory.Builder.Build("cn/zhuhongqing/bean/*");
+		BeanFactory factory = SPIBeanFactory.Builder.BuildByRootPackage("cn/zhuhongqing/bean/*");
 		BeanInterface fis = factory.getBean(BeanInterface.class, "Bean");
 		BeanInterface fis2 = factory.getBean(BeanInterface.class);
 		System.out.println(fis + ":" + fis.create("Hello SPI!").getName());
