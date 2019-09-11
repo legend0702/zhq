@@ -65,6 +65,12 @@ public class StringUtil {
 		return (!isEmpty(str));
 	}
 
+	public static String trim(String str) {
+		if (str == null)
+			return str;
+		return str.trim();
+	}
+	
 	/**
 	 * Trim <i>all</i> whitespace from the given String: leading, trailing, and
 	 * in between characters.

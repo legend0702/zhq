@@ -1328,6 +1328,10 @@ public class FileUtil {
 		}
 		moveFile(src, dest, params);
 	}
+	
+	public static boolean rename(File file, String newName) {
+		return file.renameTo(file(file.getParentFile(), newName));
+	}
 
 	// ---------------------------------------------------------------- smart
 	// delete
