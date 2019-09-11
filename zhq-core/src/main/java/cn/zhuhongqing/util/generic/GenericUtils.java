@@ -8,7 +8,7 @@ import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Map;
 
-import cn.zhuhongqing.bean.BeanInfoUtil;
+import cn.zhuhongqing.bean.BeanInfoUtils;
 import cn.zhuhongqing.util.ArraysUtils;
 import cn.zhuhongqing.util.BeanWrap;
 import cn.zhuhongqing.util.ClassUtils;
@@ -198,11 +198,11 @@ public class GenericUtils {
 	}
 
 	public static Class<?>[] resolvePropertyArguments(PropertyDescriptor property) {
-		if (BeanInfoUtil.isReadable(property)) {
+		if (BeanInfoUtils.isReadable(property)) {
 			return null;
 		}
 
-		if (BeanInfoUtil.isWriteable(property)) {
+		if (BeanInfoUtils.isWriteable(property)) {
 			return null;
 		}
 		return null;

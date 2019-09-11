@@ -2,7 +2,7 @@ package cn.zhuhongqing.bean.spi;
 
 import java.util.Collection;
 
-import cn.zhuhongqing.utils.scan.ClassScan;
+import cn.zhuhongqing.util.scan.ClassScan;
 
 public class SPIClassScanBeanFactory extends SPIAbstractBeanFactory {
 

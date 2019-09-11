@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 import cn.zhuhongqing.bean.ObjectScope;
 import cn.zhuhongqing.bean.ObjectState;
-import cn.zhuhongqing.utils.StringPool;
+import cn.zhuhongqing.util.StringPool;
 
 /**
  * @see ObjectState

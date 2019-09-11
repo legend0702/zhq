@@ -6,7 +6,7 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Member;
 import java.util.LinkedHashMap;
 
-import cn.zhuhongqing.utils.ConstructorUtil;
+import cn.zhuhongqing.util.ConstructorUtils;
 
 /**
  * 构造函数
@@ -17,7 +17,7 @@ import cn.zhuhongqing.utils.ConstructorUtil;
  * 
  */
 
-public class DefaultBeanConstructor extends ObjectStateWithAttrbuteHole<Integer, BeanProperty>
+public class DefaultBeanConstructor extends ObjectStateWithAttrHole<Integer, BeanProperty>
 		implements BeanInvokable {
 
 	private Constructor<?> con;
@@ -44,7 +44,7 @@ public class DefaultBeanConstructor extends ObjectStateWithAttrbuteHole<Integer,
 
 	@Override
 	public Object invoke(Object obj, Object... args) {
-		return ConstructorUtil.invoke(con, args);
+		return ConstructorUtils.invoke(con, args);
 	}
 
 	@Override

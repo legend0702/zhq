@@ -1,6 +1,6 @@
 package cn.zhuhongqing.bean;
 
-public class DefaultBeanDefinition extends ObjectStateWithAttrbuteHole<String, BeanProperty> implements BeanDefinition {
+public class DefaultBeanDefinition extends ObjectStateWithAttrHole<String, BeanProperty> implements BeanDefinition {
 
 	private Class<?> clazz;
 

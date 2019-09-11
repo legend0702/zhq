@@ -3,7 +3,7 @@ package cn.zhuhongqing.bean;
 import java.util.Collection;
 import java.util.Collections;
 
-import cn.zhuhongqing.utils.scan.ClassScan;
+import cn.zhuhongqing.util.scan.ClassScan;
 
 public interface BeanClassScanConfig {
 

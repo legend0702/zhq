@@ -10,8 +10,9 @@ import java.util.Iterator;
 
 import cn.zhuhongqing.exception.ExceptionMessage;
 import cn.zhuhongqing.exception.UncheckedException;
+import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.exception.i18n.GeneralExceptionType;
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.util.GeneralUtils;
 
 /**
  * <pre>
@@ -202,7 +203,7 @@ public class MethodUtil {
 			MethodType methodType, Class<?>... parameterTypes) {
 
 		// 参数为空就抛出异常
-		if (GeneralUtil.hasNull(methodName, clazz, methodType)) {
+		if (GeneralUtils.hasNull(methodName, clazz, methodType)) {
 			throw new IllegalArgumentException(new ExceptionMessage(
 					GeneralExceptionType.DEBUG1001).toString());
 		}

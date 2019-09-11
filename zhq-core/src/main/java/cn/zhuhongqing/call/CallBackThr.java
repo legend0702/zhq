@@ -1,18 +1,26 @@
 package cn.zhuhongqing.call;
 
-/**
- * Call Back.
- * 
- * @author HongQing.Zhu
- *         <nl>
- *         <li>Mail:qwepoidjdj(a)gmail.com</li>
- *         <li>HomePage:www.zhuhongqing.cn</li>
- *         <li>Github:github.com/legend0702</li>
- *         </nl>
- */
+import cn.zhuhongqing.exception.UtilsException;
 
-public interface CallBackThr<P> {
+public interface CallBackThr<P> extends CallBack<P> {
 
-	void invoke(P param) throws Exception;
+	/**
+	 * Don't implement this method!!!
+	 */
+
+	@Override
+	default void invoke(P param) throws RuntimeException {
+		try {
+			invokeThr(param);
+		} catch (Exception e) {
+			throw UtilsException.wrap(e);
+		}
+	}
+
+	/**
+	 * Implement this method instead :)
+	 */
+
+	void invokeThr(P param) throws Exception;
 
 }

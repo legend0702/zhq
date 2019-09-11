@@ -6,8 +6,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import cn.zhuhongqing.utils.FieldUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
+import cn.zhuhongqing.bean.spi.SPI;
+import cn.zhuhongqing.util.FieldUtils;
+import cn.zhuhongqing.util.ReflectUtils;
 
 public class BeanTest implements BeanInterface {
 
@@ -49,10 +50,10 @@ public class BeanTest implements BeanInterface {
 		e = System.currentTimeMillis();
 		System.out.println("Use time:" + (e - s));
 
-		Field field = ReflectUtil.getSupportedField(BeanTest.class, "name");
+		Field field = ReflectUtils.getSupportedField(BeanTest.class, "name");
 		s = System.currentTimeMillis();
 		for (Integer i = 0; i < count; i++) {
-			FieldUtil.set(field, bean, name);
+			FieldUtils.set(field, bean, name);
 		}
 		e = System.currentTimeMillis();
 		System.out.println("Reflect Use time:" + (e - s));

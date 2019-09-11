@@ -5,9 +5,9 @@ package cn.zhuhongqing.reflect;
 import static cn.zhuhongqing.reflect.ReferenceType.STRONG;
 
 import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
-import java.lang.ref.ReferenceQueue;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.Iterator;
@@ -17,7 +17,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import cn.zhuhongqing.utils.StringPool;
+import cn.zhuhongqing.util.StringPool;
 
 /**
  * Concurrent hash map that wraps keys and/or values in SOFT or WEAK references.

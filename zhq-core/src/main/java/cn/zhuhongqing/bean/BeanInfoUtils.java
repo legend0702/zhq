@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import cn.zhuhongqing.exception.UtilsException;
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.util.GeneralUtils;
 
 /**
  * Some utilities for JavaBean's meta-data.
@@ -24,7 +24,7 @@ import cn.zhuhongqing.utils.GeneralUtil;
  *
  */
 
-public class BeanInfoUtil {
+public class BeanInfoUtils {
 
 	static Set<PropertyDescriptor> OBJECT_PROPERTY = Collections.emptySet();
 
@@ -60,11 +60,11 @@ public class BeanInfoUtil {
 	}
 
 	public static boolean isWriteable(PropertyDescriptor descriptor) {
-		return GeneralUtil.isNotNull(descriptor.getWriteMethod());
+		return GeneralUtils.isNotNull(descriptor.getWriteMethod());
 	}
 
 	public static boolean isReadable(PropertyDescriptor descriptor) {
-		return GeneralUtil.isNotNull(descriptor.getReadMethod());
+		return GeneralUtils.isNotNull(descriptor.getReadMethod());
 	}
 
 }

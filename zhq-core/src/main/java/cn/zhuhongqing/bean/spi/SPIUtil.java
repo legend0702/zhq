@@ -11,17 +11,17 @@ import java.util.ServiceLoader;
 
 import cn.zhuhongqing.anno.NotNull;
 import cn.zhuhongqing.bean.BeanDefinition;
-import cn.zhuhongqing.bean.BeanInfoUtil;
+import cn.zhuhongqing.bean.BeanInfoUtils;
 import cn.zhuhongqing.bean.BeanInvokable;
 import cn.zhuhongqing.bean.BeanProperty;
-import cn.zhuhongqing.bean.BeanUtil;
+import cn.zhuhongqing.bean.BeanUtils;
 import cn.zhuhongqing.bean.ObjectScope;
 import cn.zhuhongqing.bean.ObjectState;
 import cn.zhuhongqing.exception.UtilsException;
-import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.GeneralUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.meta.MetaData;
+import cn.zhuhongqing.util.ClassUtils;
+import cn.zhuhongqing.util.GeneralUtils;
+import cn.zhuhongqing.util.ReflectUtils;
+import cn.zhuhongqing.util.meta.MetaData;
 
 /**
  * Utils for SPI.
@@ -41,7 +41,7 @@ public class SPIUtil {
 	private static SPI DEF_SPI = SPIUtil.class.getAnnotation(SPI.class);
 
 	public static <S> S load(Class<S> ifs) {
-		return load(ifs, ClassUtil.getDefaultClassLoader());
+		return load(ifs, ClassUtils.getDefaultClassLoader());
 	}
 
 	public static <S> S load(Class<S> ifs, ClassLoader classLoader) {
@@ -69,20 +69,20 @@ public class SPIUtil {
 	public static BeanDefinition initBeanDefinition(BeanDefinition define) {
 		Class<?> pureClass = define.getMetaType();
 		// 解析其中需要注入的成员变量
-		PropertyDescriptor[] beanPropArr = BeanInfoUtil.getPropertyDescriptors(pureClass);
+		PropertyDescriptor[] beanPropArr = BeanInfoUtils.getPropertyDescriptors(pureClass);
 		for (PropertyDescriptor prop : beanPropArr) {
 			// 不能写的属性就过滤啦
-			// if(GeneralUtil.isNull(prop.getWriteMethod()))
+			// if(GeneralUtils.isNull(prop.getWriteMethod()))
 			// continue;
 			// 只管理真实属性
-			Field propField = ReflectUtil.getSupportedField(pureClass, prop.getName());
-			if (GeneralUtil.isNull(propField))
+			Field propField = ReflectUtils.getSupportedField(pureClass, prop.getName());
+			if (GeneralUtils.isNull(propField))
 				continue;
 			SPI propSpi = getSPI(propField);
 			// 无注解不管理
-			if (GeneralUtil.isNull(propSpi))
+			if (GeneralUtils.isNull(propSpi))
 				continue;
-			define.setAttribute(prop.getName(), initObjectState(BeanProperty.of(propField)));
+			define.setAttr(prop.getName(), initObjectState(BeanProperty.of(propField)));
 		}
 		return define;
 	}
@@ -102,8 +102,8 @@ public class SPIUtil {
 	 */
 
 	public static BeanInvokable getConstructor(BeanDefinition define) {
-		BeanProperty beanProp = define.getAttribute(define.getGroup());
-		if (GeneralUtil.isNotNull(beanProp)) {
+		BeanProperty beanProp = define.getAttr(define.getGroup());
+		if (GeneralUtils.isNotNull(beanProp)) {
 			if (BeanInvokable.class.isAssignableFrom(beanProp.getClass())) {
 				return (BeanInvokable) beanProp;
 			}
@@ -120,21 +120,21 @@ public class SPIUtil {
 			HashMap<String, Constructor<?>> conHole = new HashMap<>();
 			for (Constructor<?> con : cons) {
 				SPI spi = getSPI(con);
-				if (GeneralUtil.isNull(spi))
+				if (GeneralUtils.isNull(spi))
 					continue;
 				String cGroup = spi.value();
 				if (conHole.containsKey(cGroup)) {
-					BeanUtil.throwDupConstructor(clazz, cGroup);
+					BeanUtils.throwDupConstructor(clazz, cGroup);
 				}
 				conHole.put(cGroup, con);
 			}
 			useCon = conHole.get(define.getGroup());
 		}
 
-		if (GeneralUtil.isNull(useCon)) {
-			useCon = ReflectUtil.getNoParamAndUsableConstructor(clazz);
-			if (GeneralUtil.isNull(useCon) || hasSPI(useCon)) {
-				BeanUtil.throwNoConstructor(clazz, define.getGroup());
+		if (GeneralUtils.isNull(useCon)) {
+			useCon = ReflectUtils.getNoParamAndUsableConstructor(clazz);
+			if (GeneralUtils.isNull(useCon) || hasSPI(useCon)) {
+				BeanUtils.throwNoConstructor(clazz, define.getGroup());
 			}
 		}
 
@@ -144,9 +144,9 @@ public class SPIUtil {
 		for (int i = 0; i < beanCon.getParameterCount(); i++) {
 			BeanProperty param = initObjectState(BeanProperty.of(params[i]));
 			checkAndThrowRefSelf(param, define);
-			beanCon.setAttribute(i, param);
+			beanCon.setAttr(i, param);
 		}
-		define.setAttribute(define.getGroup(), beanCon);
+		define.setAttr(define.getGroup(), beanCon);
 		return beanCon;
 	}
 
@@ -190,7 +190,7 @@ public class SPIUtil {
 
 	static <T extends ObjectState> T setObjectState(@NotNull T state, @NotNull AnnotatedElement element) {
 		SPI spi = getSPI(element);
-		if (GeneralUtil.isNull(spi)) {
+		if (GeneralUtils.isNull(spi)) {
 			spi = DEF_SPI;
 		}
 		setObjectState0(state, spi);
@@ -202,7 +202,7 @@ public class SPIUtil {
 	 */
 
 	static void setObjectState0(ObjectState state, SPI spi) {
-		if (!GeneralUtil.hasNull(state, spi)) {
+		if (!GeneralUtils.hasNull(state, spi)) {
 			state.setGroup(spi.value());
 			state.setScope(spi.scope());
 		}
@@ -210,18 +210,18 @@ public class SPIUtil {
 
 	public static String getGroup(Class<?> clazz) {
 		SPI spi = getSPI(clazz);
-		if (GeneralUtil.isNotNull(spi)) {
+		if (GeneralUtils.isNotNull(spi)) {
 			return spi.value();
 		}
 		return null;
 	}
 
 	public static SPI getSPI(AnnotatedElement element) {
-		return GeneralUtil.isNull(element) ? null : element.getAnnotation(SPI.class);
+		return GeneralUtils.isNull(element) ? null : element.getAnnotation(SPI.class);
 	}
 
 	public static boolean hasSPI(AnnotatedElement element) {
-		return GeneralUtil.isNotNull(getSPI(element));
+		return GeneralUtils.isNotNull(getSPI(element));
 	}
 
 	// throw

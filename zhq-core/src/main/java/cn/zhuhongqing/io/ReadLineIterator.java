@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
  * The recommended usage pattern is:
  * 
  * <pre>
- * ReadLineIterator it = FileUtil.lineIterator(file, &quot;UTF-8&quot;);
+ * ReadLineIterator it = FileUtils.lineIterator(file, &quot;UTF-8&quot;);
  * try {
  * 	while (it.hasNext()) {
  * 		String line = it.nextLine();
@@ -148,7 +148,7 @@ public class ReadLineIterator implements Iterator<String> {
 	 */
 	public void close() {
 		finished = true;
-		StreamUtil.close(bufferedReader);
+		StreamUtils.close(bufferedReader);
 		cachedLine = null;
 	}
 

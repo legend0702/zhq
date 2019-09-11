@@ -5,6 +5,8 @@ import java.net.URISyntaxException;
 
 import org.junit.Test;
 
+import cn.zhuhongqing.bean.spi.SPI;
+
 public class BeanAutowiredTest extends BeanAutowired {
 
 	@SPI

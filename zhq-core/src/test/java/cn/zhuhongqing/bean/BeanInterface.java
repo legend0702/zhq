@@ -1,5 +1,7 @@
 package cn.zhuhongqing.bean;
 
+import cn.zhuhongqing.bean.spi.SPI;
+
 @SPI("A")
 public interface BeanInterface {
 

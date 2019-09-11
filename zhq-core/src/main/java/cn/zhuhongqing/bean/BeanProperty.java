@@ -5,7 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.lang.reflect.Parameter;
 
-import cn.zhuhongqing.utils.meta.MetaData;
+import cn.zhuhongqing.util.meta.MetaData;
 
 public interface BeanProperty extends MetaData, ObjectState {
 

@@ -13,9 +13,9 @@ import cn.zhuhongqing.bean.BeanDefinition;
 import cn.zhuhongqing.bean.BeanDefinitionGroup;
 import cn.zhuhongqing.bean.BeanInvokable;
 import cn.zhuhongqing.bean.BeanProperty;
-import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.LockUtil;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.ClassUtils;
+import cn.zhuhongqing.util.LockUtils;
+import cn.zhuhongqing.util.StringUtils;
 
 public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 
@@ -26,7 +26,7 @@ public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 	private List<String> roots;
 
 	SPIAbstractBeanFactory(String root) {
-		this.roots = StringUtil.split(root);
+		this.roots = StringUtils.split(root);
 		load();
 	}
 
@@ -44,12 +44,12 @@ public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 		for (String root : this.roots) {
 			if (LOADED_DIR.contains(root))
 				continue;
-			if (LockUtil.tryLock(root)) {
+			if (LockUtils.tryLock(root)) {
 				try {
 					addBeanDefinitionGroup(loadClass(root));
 					LOADED_DIR.add(root);
 				} finally {
-					LockUtil.unlock(root);
+					LockUtils.unlock(root);
 				}
 			}
 		}
@@ -69,7 +69,7 @@ public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 		List<Class<?>> noPureClass = new ArrayList<>(classes.size());
 		List<Class<?>> pureClass = new ArrayList<>(classes.size());
 		for (Class<?> clazz : classes) {
-			if (clazz.isInterface() || ClassUtil.isAbstract(clazz)) {
+			if (clazz.isInterface() || ClassUtils.isAbstract(clazz)) {
 				noPureClass.add(clazz);
 			} else {
 				pureClass.add(clazz);
@@ -99,7 +99,7 @@ public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 		BeanDefinitionGroup defineGroup = addBeanDefinitionGroup(clazz);
 		if (isPureClass) {
 			BeanDefinition define = SPIUtil.classToBeanDefinition(clazz);
-			if (StringUtil.isNotEmpty(group)) {
+			if (StringUtils.isNotEmpty(group)) {
 				define.setGroup(group);
 			}
 			if (checkAndAddDefineToGroup(defineGroup, define)) {
@@ -117,7 +117,7 @@ public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 		Object obj = null;
 		BeanInvokable invoker = SPIUtil.getConstructor(define);
 		if (invoker.hasParameter()) {
-			Collection<BeanProperty> paramProps = invoker.attributeValues();
+			Collection<BeanProperty> paramProps = invoker.attrValues();
 			Object[] params = new Object[paramProps.size()];
 			int index = 0;
 			for (BeanProperty prop : paramProps) {
@@ -136,13 +136,13 @@ public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 	 */
 
 	protected boolean isPureClass(Class<?> clazz) {
-		if (clazz.isInterface() || ClassUtil.isAbstract(clazz)) {
+		if (clazz.isInterface() || ClassUtils.isAbstract(clazz)) {
 			return false;
 		}
-		if (ClassUtil.isPureClass(clazz)) {
+		if (ClassUtils.isPureClass(clazz)) {
 			return true;
-			// if (ClassUtil.hasInterface(clazz) ||
-			// ClassUtil.hasSuperClass(clazz)) {
+			// if (ClassUtils.hasInterface(clazz) ||
+			// ClassUtils.hasSuperClass(clazz)) {
 			// return true;
 			// }
 			// throw new IllegalArgumentException(
@@ -153,6 +153,6 @@ public abstract class SPIAbstractBeanFactory extends AbstractBeanFactory {
 	}
 
 	protected ClassLoader findClassLoader() {
-		return ClassUtil.getDefaultClassLoader();
+		return ClassUtils.getDefaultClassLoader();
 	}
 }

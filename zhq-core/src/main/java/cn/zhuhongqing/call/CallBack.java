@@ -3,6 +3,8 @@ package cn.zhuhongqing.call;
 /**
  * Call Back.
  * 
+ * More CallBack interface see sub-interface.
+ * 
  * @author HongQing.Zhu
  *         <nl>
  *         <li>Mail:qwepoidjdj(a)gmail.com</li>

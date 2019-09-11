@@ -2,8 +2,8 @@ package cn.zhuhongqing.loader;
 
 import java.io.IOException;
 
-import cn.zhuhongqing.io.FileUtil;
-import cn.zhuhongqing.utils.loader.ClassPathResourceLoader;
+import cn.zhuhongqing.util.file.FileUtils;
+import cn.zhuhongqing.util.loader.ClassPathResourceLoader;
 
 public class ClassPathLoaderTest {
 
@@ -17,7 +17,7 @@ public class ClassPathLoaderTest {
 	}
 
 	public void readFile() throws IOException {
-		System.out.println(FileUtil.readString(classPathLoader
+		System.out.println(FileUtils.readString(classPathLoader
 				.loadAsFile(DEFAULT_CONFIG_PREFIX + "core.js")));
 	}
 
@@ -27,7 +27,7 @@ public class ClassPathLoaderTest {
 	}
 
 	public void readStream() throws IOException {
-		System.out.println(FileUtil.readUTFString(classPathLoader
+		System.out.println(FileUtils.readUTFString(classPathLoader
 				.loaderAsStream(DEFAULT_CONFIG_PREFIX + "core.js")));
 	}
 

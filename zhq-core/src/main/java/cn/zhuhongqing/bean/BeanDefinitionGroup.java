@@ -1,16 +1,16 @@
 package cn.zhuhongqing.bean;
 
-import cn.zhuhongqing.utils.meta.MetaData;
-import cn.zhuhongqing.utils.struct.AttributeHole;
-import cn.zhuhongqing.utils.struct.MapAttrbuteHole;
+import cn.zhuhongqing.util.meta.MetaData;
+import cn.zhuhongqing.util.struct.AttrHole;
+import cn.zhuhongqing.util.struct.MapAttrHole;
 
-public interface BeanDefinitionGroup extends AttributeHole<String, BeanDefinition>, MetaData {
+public interface BeanDefinitionGroup extends AttrHole<String, BeanDefinition>, MetaData {
 
 	public static BeanDefinitionGroup build(Class<?> clazz) {
 		return new DefaultBeanDefinitionGroup(clazz);
 	}
 
-	public static class DefaultBeanDefinitionGroup extends MapAttrbuteHole<String, BeanDefinition>
+	public static class DefaultBeanDefinitionGroup extends MapAttrHole<String, BeanDefinition>
 			implements BeanDefinitionGroup {
 
 		private Class<?> clazz;

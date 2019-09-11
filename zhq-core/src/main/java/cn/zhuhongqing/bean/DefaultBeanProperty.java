@@ -4,8 +4,8 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 
-import cn.zhuhongqing.utils.GeneralUtil;
-import cn.zhuhongqing.utils.meta.MetaData;
+import cn.zhuhongqing.util.GeneralUtils;
+import cn.zhuhongqing.util.meta.MetaData;
 
 public class DefaultBeanProperty extends AbstractObjectState implements BeanProperty {
 
@@ -43,13 +43,13 @@ public class DefaultBeanProperty extends AbstractObjectState implements BeanProp
 
 	@Override
 	Object getTarget() {
-		return GeneralUtil.isNotNull(meta) ? meta : GeneralUtil.isNotNull(field) ? field : member;
+		return GeneralUtils.isNotNull(meta) ? meta : GeneralUtils.isNotNull(field) ? field : member;
 	}
 
 	@Override
 	public Class<?> getMetaType() {
-		return GeneralUtil.isNotNull(meta) ? meta.getMetaType()
-				: GeneralUtil.isNotNull(field) ? field.getType() : member.getDeclaringClass();
+		return GeneralUtils.isNotNull(meta) ? meta.getMetaType()
+				: GeneralUtils.isNotNull(field) ? field.getType() : member.getDeclaringClass();
 	}
 
 }

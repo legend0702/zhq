@@ -1,6 +1,6 @@
 package cn.zhuhongqing.bean.spi;
 
-import cn.zhuhongqing.utils.scan.ResourceFilter;
+import cn.zhuhongqing.util.scan.ResourceFilter;
 
 public class SPIClassResourceFilter implements ResourceFilter<Class<?>> {
 

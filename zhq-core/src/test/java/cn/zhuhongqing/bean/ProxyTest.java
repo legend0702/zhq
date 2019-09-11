@@ -4,9 +4,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.ClassUtils;
+import cn.zhuhongqing.util.StringPool;
+import cn.zhuhongqing.util.StringUtils;
 
 public class ProxyTest {
 
@@ -25,7 +25,7 @@ public class ProxyTest {
 			if (!method.getName().startsWith(StringPool.BEAN_SET)) {
 				return method.invoke(p, args);
 			}
-			String fieldName = StringUtil.cutPrefix(method.getName(), StringPool.BEAN_SET);
+			String fieldName = StringUtils.cutPrefix(method.getName(), StringPool.BEAN_SET);
 			String keySign = p.getClass() + fieldName;
 			// 一般set参数应该只有一个 如有特殊情况 则需要特殊处理
 			Object o = args[0];
@@ -45,7 +45,7 @@ public class ProxyTest {
 	}
 
 	public static void main(String[] args) {
-		Play p = (Play) Proxy.newProxyInstance(ClassUtil.getDefaultClassLoader(), new Class<?>[] { Play.class },
+		Play p = (Play) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(), new Class<?>[] { Play.class },
 				new PlayerProxy(new Player()));
 		p.setName("zhangsan");
 		System.out.println(p.getName());

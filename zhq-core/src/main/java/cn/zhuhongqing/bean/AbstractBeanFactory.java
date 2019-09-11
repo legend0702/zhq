@@ -10,12 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.zhuhongqing.bean.spi.SPIUtil;
-import cn.zhuhongqing.utils.ArraysUtil;
-import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.GeneralUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.ArraysUtils;
+import cn.zhuhongqing.util.ClassUtils;
+import cn.zhuhongqing.util.GeneralUtils;
+import cn.zhuhongqing.util.ReflectUtils;
+import cn.zhuhongqing.util.StringPool;
+import cn.zhuhongqing.util.StringUtils;
 
 public abstract class AbstractBeanFactory implements BeanFactory {
 
@@ -32,9 +32,9 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 	public <T> T getBean(Class<T> clazz, String group) {
 		BeanDefinitionGroup defineGroup = checkAndGetDefGroup(clazz);
 		String group0 = getGroup(clazz, group);
-		BeanDefinition define = defineGroup.getAttribute(group0);
-		if (GeneralUtil.isNull(define)) {
-			Collection<BeanDefinition> defineArr = defineGroup.attributeValues();
+		BeanDefinition define = defineGroup.getAttr(group0);
+		if (GeneralUtils.isNull(define)) {
+			Collection<BeanDefinition> defineArr = defineGroup.attrValues();
 			// 如果就一个就返回该实例吧
 			if (defineArr.size() == 1) {
 				define = defineArr.iterator().next();
@@ -47,7 +47,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 		}
 		// TODO 如果考虑属性重写 这里就要改
 		Object bean = getSingletonInstance(define);
-		if (GeneralUtil.isNotNull(bean))
+		if (GeneralUtils.isNotNull(bean))
 			return clazz.cast(bean);
 		bean = createBeanWithOutProperty(define);
 		if (define.isSingleton()) {
@@ -62,7 +62,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 	public <T> List<T> getBeans(Class<T> clazz) {
 		BeanDefinitionGroup defineGroup = checkAndGetDefGroup(clazz);
 		List<T> instances = new ArrayList<>();
-		for (BeanDefinition beanDef : defineGroup.attributeValues()) {
+		for (BeanDefinition beanDef : defineGroup.attrValues()) {
 			instances.add((T) getBean(beanDef.getMetaType(), beanDef.getGroup()));
 		}
 		return instances;
@@ -70,14 +70,14 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 
 	private BeanDefinitionGroup checkAndGetDefGroup(Class<?> clazz) {
 		BeanDefinitionGroup defineGroup = getBeanDefinitionGroup(clazz);
-		if (GeneralUtil.isNull(defineGroup) || defineGroup.isEmptyAttribute()) {
-			BeanUtil.throwNoBeanFind(clazz);
+		if (GeneralUtils.isNull(defineGroup) || defineGroup.isEmptyAttr()) {
+			BeanUtils.throwNoBeanFind(clazz);
 		}
 		return defineGroup;
 	}
 
 	private String getGroup(Class<?> clazz, String groupParam) {
-		if (GeneralUtil.isNull(groupParam)) {
+		if (GeneralUtils.isNull(groupParam)) {
 			groupParam = getGroup(clazz);
 		}
 		return groupParam;
@@ -90,13 +90,13 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 
 	@Override
 	public Class<?>[] getRegisterClasses() {
-		return BEAN_DEFINITION_GROUP.keySet().toArray(ArraysUtil.emptyArray(Class.class));
+		return BEAN_DEFINITION_GROUP.keySet().toArray(ArraysUtils.emptyArray(Class.class));
 	}
 
 	@Override
 	public void inject(Object bean) {
 		BeanDefinition define = getBeanDefinition(bean.getClass());
-		if (GeneralUtil.isNull(define)) {
+		if (GeneralUtils.isNull(define)) {
 			register(bean.getClass());
 			define = getBeanDefinition(bean.getClass());
 		}
@@ -116,8 +116,8 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 	protected void registerToSupported(BeanDefinition define) {
 		Class<?> ownerClass = define.getMetaType();
 		Collection<Class<?>> supported = new ArrayList<>();
-		supported.addAll(ReflectUtil.getSuperClasses(ownerClass));
-		supported.addAll(ClassUtil.getAllInterfacesForClassAsSet(ownerClass));
+		supported.addAll(ReflectUtils.getSuperClasses(ownerClass));
+		supported.addAll(ClassUtils.getAllInterfacesForClassAsSet(ownerClass));
 		for (Class<?> clazz : supported) {
 			BeanDefinitionGroup defineGroup = register(clazz);
 			checkAndAddDefineToGroup(defineGroup, define);
@@ -138,32 +138,32 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 		String group0 = define.getGroup();
 		String metaGroup = getAnnotationGroup(defineGroup.getMetaType());
 		// 声明上不带标记的 并且是默认名字的 则按不怎么会冲突的方式处理
-		if (StringUtil.isEmpty(metaGroup)
-				&& (define.isDefaultScope() || ClassUtil.isObjectClass(defineGroup.getMetaType()))) {
-			group0 = BeanUtil.getClassNameForGroup(define);
+		if (StringUtils.isEmpty(metaGroup)
+				&& (define.isDefaultScope() || ClassUtils.isObjectClass(defineGroup.getMetaType()))) {
+			group0 = BeanUtils.getClassNameForGroup(define);
 		}
-		BeanDefinition defineOld = defineGroup.getAttribute(group0);
-		if (GeneralUtil.isNotNull(defineOld)) {
+		BeanDefinition defineOld = defineGroup.getAttr(group0);
+		if (GeneralUtils.isNotNull(defineOld)) {
 			// 如果是自己或者子类就不管了
 			if (defineOld.getMetaType().isAssignableFrom(define.getMetaType())) {
 				return true;
 			}
 			/* 1.针对拥有标记需要管理的数据 必须保证他们不会冲突 2.类名冲突也要改 */
-			BeanUtil.throwDupGroup(defineGroup.getMetaType(), group0, defineOld.getMetaType(), define.getMetaType());
+			BeanUtils.throwDupGroup(defineGroup.getMetaType(), group0, defineOld.getMetaType(), define.getMetaType());
 			return false;// 不会到这里
 		} else {
 			// 如果是自己 则直接按标准存放
 			if (defineGroup.getMetaType().equals(define.getMetaType())) {
-				defineGroup.setAttribute(define.getGroup(), define);
+				defineGroup.setAttr(define.getGroup(), define);
 				return false;
 			}
-			defineGroup.setAttribute(group0, define);
+			defineGroup.setAttr(group0, define);
 			return false;
 		}
 	}
 
 	protected void injectBeanProperty(Object bean, BeanDefinition define) {
-		Collection<BeanProperty> fieldProps = define.attributeValues();
+		Collection<BeanProperty> fieldProps = define.attrValues();
 		if (fieldProps.isEmpty())
 			return;
 		for (BeanProperty fieldProp : fieldProps) {
@@ -171,7 +171,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 			if (!prop.isField())
 				continue;
 			Object obj = getBeanForProperty(prop);
-			BeanUtil.setProperty(bean, prop.getName(), obj);
+			BeanUtils.setProperty(bean, prop.getName(), obj);
 		}
 	}
 
@@ -181,9 +181,9 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 
 	protected BeanDefinition getBeanDefinition(Class<?> clazz) {
 		BeanDefinitionGroup defineGroup = getBeanDefinitionGroup(clazz);
-		if (GeneralUtil.isNull(defineGroup))
+		if (GeneralUtils.isNull(defineGroup))
 			return null;
-		return defineGroup.getAttribute(getGroup(clazz));
+		return defineGroup.getAttr(getGroup(clazz));
 	}
 
 	protected BeanDefinitionGroup getBeanDefinitionGroup(Class<?> clazz) {
@@ -192,12 +192,12 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 
 	protected BeanDefinitionGroup putBeanDefinitionGroup(Class<?> clazz, BeanDefinitionGroup defineGroup) {
 		BeanDefinitionGroup old = BEAN_DEFINITION_GROUP.putIfAbsent(clazz, defineGroup);
-		return GeneralUtil.defValue(old, defineGroup);
+		return GeneralUtils.defValue(old, defineGroup);
 	}
 
 	protected Object putSingletonInstance(BeanDefinition define, Object instance) {
 		Object old = SINGLETON_INSTANCES.putIfAbsent(define, instance);
-		return GeneralUtil.defValue(old, instance);
+		return GeneralUtils.defValue(old, instance);
 	}
 
 	protected Object getSingletonInstance(BeanDefinition define) {
@@ -205,7 +205,7 @@ public abstract class AbstractBeanFactory implements BeanFactory {
 	}
 
 	protected String getGroup(Class<?> clazz) {
-		return GeneralUtil.defValue(getAnnotationGroup(clazz), DEF_GROUP);
+		return GeneralUtils.defValue(getAnnotationGroup(clazz), DEF_GROUP);
 	}
 
 	protected String getAnnotationGroup(Class<?> clazz) {

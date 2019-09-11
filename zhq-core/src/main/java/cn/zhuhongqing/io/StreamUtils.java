@@ -21,7 +21,7 @@ import cn.zhuhongqing.exception.UtilsException;
 /**
  * Optimized byte and character stream utilities.
  */
-public class StreamUtil {
+public class StreamUtils {
 
 	// ---------------------------------------------------------------- silent
 	// close

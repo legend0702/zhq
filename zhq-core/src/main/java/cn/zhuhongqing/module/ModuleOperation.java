@@ -6,10 +6,10 @@ import java.util.Set;
 
 import cn.zhuhongqing.ZHQ;
 import cn.zhuhongqing.exception.ModuleException;
-import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.StringUtil;
-import cn.zhuhongqing.utils.scan.ClassScan;
+import cn.zhuhongqing.util.ClassUtils;
+import cn.zhuhongqing.util.ReflectUtils;
+import cn.zhuhongqing.util.StringUtils;
+import cn.zhuhongqing.util.scan.ClassScan;
 
 /**
  * Load and init {@link Module}.
@@ -47,7 +47,7 @@ public class ModuleOperation {
 	@SafeVarargs
 	public static void loadModule(Class<? extends Module>... moduleClasses) {
 		for (Class<? extends Module> moduleClass : moduleClasses) {
-			addModule(ReflectUtil.newInstance(moduleClass));
+			addModule(ReflectUtils.newInstance(moduleClass));
 		}
 	}
 
@@ -72,15 +72,15 @@ public class ModuleOperation {
 	public static void loadModule(String... packageNames) {
 		Set<Class<?>> moduleClasses = new LinkedHashSet<Class<?>>();
 		for (String packageName : packageNames) {
-			packageName = ClassUtil.classToSlash(packageName);
-			moduleClasses.addAll(new ClassScan().getResources(StringUtil
+			packageName = ClassUtils.classToSlash(packageName);
+			moduleClasses.addAll(new ClassScan().getResources(StringUtils
 					.endPadAsterisk(packageName)));
 		}
 		Iterator<Class<?>> classItr = moduleClasses.iterator();
 		while (classItr.hasNext()) {
 			Class<?> clazz = classItr.next();
 			if (Module.class.isAssignableFrom(clazz)
-					&& ReflectUtil.isOrdinaryClass(clazz)) {
+					&& ReflectUtils.isOrdinaryClass(clazz)) {
 				continue;
 			}
 			classItr.remove();

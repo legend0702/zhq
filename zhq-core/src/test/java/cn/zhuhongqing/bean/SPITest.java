@@ -6,12 +6,10 @@ import java.lang.reflect.Method;
 
 import org.junit.Test;
 
-import cn.zhuhongqing.bean.AbstractBeanFactory;
-import cn.zhuhongqing.bean.BeanFactory;
 import cn.zhuhongqing.bean.spi.SPIBeanFactory;
-import cn.zhuhongqing.utils.ArraysUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.meta.MetaData;
+import cn.zhuhongqing.util.ArraysUtils;
+import cn.zhuhongqing.util.ReflectUtils;
+import cn.zhuhongqing.util.meta.MetaData;
 
 public class SPITest {
 
@@ -19,14 +17,14 @@ public class SPITest {
 	public void fileLoad() {
 		BeanFactory factory = SPIBeanFactory.Builder.Build();
 		System.out.println(factory.getRegisterCount());
-		System.out.println(ArraysUtil.toString(factory.getRegisterClasses()));
+		System.out.println(ArraysUtils.toString(factory.getRegisterClasses()));
 	}
 
 	@Test
 	public void classLoad() {
-		BeanFactory factory = SPIBeanFactory.Builder.BuildByBasePackage("cn/zhuhongqing/bean/*");
+		BeanFactory factory = SPIBeanFactory.Builder.Build("cn/zhuhongqing/bean/*");
 		System.out.println(factory.getRegisterCount());
-		System.out.println(ArraysUtil.toString(factory.getRegisterClasses()));
+		System.out.println(ArraysUtils.toString(factory.getRegisterClasses()));
 	}
 
 	@Test
@@ -47,7 +45,7 @@ public class SPITest {
 
 	@Test
 	public void getBean() {
-		BeanFactory factory = SPIBeanFactory.Builder.BuildByBasePackage("cn/zhuhongqing/bean/*");
+		BeanFactory factory = SPIBeanFactory.Builder.Build("cn/zhuhongqing/bean/*");
 		BeanInterface fis = factory.getBean(BeanInterface.class, "Bean");
 		BeanInterface fis2 = factory.getBean(BeanInterface.class);
 		System.out.println(fis + ":" + fis.create("Hello SPI!").getName());
@@ -65,8 +63,8 @@ public class SPITest {
 		System.out.println(f);
 
 		System.out.println(factory.getRegisterCount());
-		System.out.println(ArraysUtil.toString(factory.getRegisterClasses()));
-		System.out.println(AbstractBeanFactory.BEAN_DEFINITION_GROUP.values());
+		System.out.println(ArraysUtils.toString(factory.getRegisterClasses()));
+		// System.out.println(AbstractBeanFactory.BEAN_DEFINITION_GROUP.values());
 	}
 
 	@Test
@@ -80,7 +78,7 @@ public class SPITest {
 		System.out.println(clazz.getName());
 
 		// Field
-		Field field = ReflectUtil.getSupportedField(Bean2Implment.class, "beanInterface");
+		Field field = ReflectUtils.getSupportedField(Bean2Implment.class, "beanInterface");
 		MetaData m = MetaData.of(field);
 		System.out.println(m);
 		System.out.println(m.getMember().getClass());
@@ -89,7 +87,7 @@ public class SPITest {
 		System.out.println(m.getName());
 
 		// Method
-		Method m1 = ReflectUtil.findMethod(ABC.class, "hello");
+		Method m1 = ReflectUtils.findMethod(ABC.class, "hello");
 		m = MetaData.of(m1);
 		System.out.println(m);
 		System.out.println(m.getMember().getClass());
@@ -98,7 +96,7 @@ public class SPITest {
 		System.out.println(m.getName());
 
 		// Constructor
-		Constructor<ABC> abc = ReflectUtil.getParamsAndUsableConstructor(ABC.class, SPITest.class);
+		Constructor<ABC> abc = ReflectUtils.getParamsAndUsableConstructor(ABC.class, SPITest.class);
 		// Invokable invoker = Invokable.of(abc);
 		m = MetaData.of(abc);
 		System.out.println(m);

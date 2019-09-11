@@ -7,12 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cn.zhuhongqing.exception.UtilsException;
-import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.StringUtil;
-import cn.zhuhongqing.utils.scan.ResourceFilter;
-import cn.zhuhongqing.utils.scan.ResourceScanManager;
+import cn.zhuhongqing.util.ClassUtils;
+import cn.zhuhongqing.util.ReflectUtils;
+import cn.zhuhongqing.util.StringPool;
+import cn.zhuhongqing.util.StringUtils;
+import cn.zhuhongqing.util.scan.ResourceFilter;
+import cn.zhuhongqing.util.scan.ResourceScanManager;
 
 /**
  * 一个简单的门面工具类 <br>
@@ -60,7 +60,7 @@ public final class SingleImplementFacadeFactory {
 			SINGLE_IMPLEMENT_PAIR.put(ifs, implClass);
 		}
 		try {
-			return (I) ReflectUtil.newInstance(implClass, constructorArgs);
+			return (I) ReflectUtils.newInstance(implClass, constructorArgs);
 		} catch (Exception e) {
 			throw new UtilsException("Try newInstance  [" + implClass + "] base on [" + ifs + "] with args: ["
 					+ constructorArgs + "] fail!", e);
@@ -93,11 +93,11 @@ public final class SingleImplementFacadeFactory {
 	@SuppressWarnings({ "rawtypes" })
 	static Class<?> tryToCheckMutliImplAndGetOne(final Class<?> ifs) {
 		String packName = createImplPackagePattern(ifs);
-		Set<Class> clazs = ResourceScanManager.autoGetResources(StringUtil.replaceDotToSlash(packName), Class.class,
+		Set<Class> clazs = ResourceScanManager.autoGetResources(StringUtils.replaceDotToSlash(packName), Class.class,
 				new ResourceFilter<Class>() {
 					@Override
 					public boolean accept(Class resource) {
-						if (ClassUtil.isOrdinaryAndDiectNewAndAssignable(ifs, resource)) {
+						if (ClassUtils.isOrdinaryAndDiectNewAndAssignable(ifs, resource)) {
 							return true;
 						}
 						return false;

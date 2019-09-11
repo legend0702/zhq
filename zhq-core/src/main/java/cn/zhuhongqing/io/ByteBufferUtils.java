@@ -2,7 +2,7 @@ package cn.zhuhongqing.io;
 
 import java.nio.ByteBuffer;
 
-public class ByteBufferUtil {
+public class ByteBufferUtils {
 
 	public static final byte[] toPositionByte(ByteBuffer byteBuffer) {
 		int old = byteBuffer.position();

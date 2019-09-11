@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import cn.zhuhongqing.bean.spi.SPIClassResourceFilter;
 import cn.zhuhongqing.bean.spi.SPIUtil;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.StringUtils;
 
 public final class BeanFactoryHole {
 
@@ -18,7 +18,7 @@ public final class BeanFactoryHole {
 		if (beanClassScanConfigInstance instanceof BeanClassScanConfig) {
 			BeanClassScanConfig scan = (BeanClassScanConfig) beanClassScanConfigInstance;
 			String pkg = scan.startPackage();
-			pkg = StringUtil.endPadSlashAndAllPattern(StringUtil.replaceDotToSlash(pkg));
+			pkg = StringUtils.endPadSlashAndAllPattern(StringUtils.replaceDotToSlash(pkg));
 			register(BeanClassScanConfig.CLASS_SCAN.getResources(pkg, SPIClassResourceFilter.INSTANCE));
 			register(scan.getScanClass());
 		}

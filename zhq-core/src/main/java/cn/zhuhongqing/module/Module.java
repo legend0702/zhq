@@ -1,7 +1,7 @@
 package cn.zhuhongqing.module;
 
 import cn.zhuhongqing.exception.ModuleException;
-import cn.zhuhongqing.utils.ReflectUtil;
+import cn.zhuhongqing.util.ReflectUtils;
 
 /**
  * ZHQ module's design and config-store.
@@ -54,7 +54,7 @@ public abstract class Module {
 
 	public static final Class<? extends Module> getModuleType(
 			Class<? extends Module> claz) {
-		return ReflectUtil.getTopClass(claz, Module.class);
+		return ReflectUtils.getTopClass(claz, Module.class);
 	}
 
 	/**

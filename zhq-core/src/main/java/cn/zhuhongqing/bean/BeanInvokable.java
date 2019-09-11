@@ -3,8 +3,8 @@ package cn.zhuhongqing.bean;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import cn.zhuhongqing.utils.meta.Invokable;
-import cn.zhuhongqing.utils.struct.AttributeHole;
+import cn.zhuhongqing.util.meta.Invokable;
+import cn.zhuhongqing.util.struct.AttrHole;
 
 /**
  * Bean中可执行对象
@@ -18,7 +18,7 @@ import cn.zhuhongqing.utils.struct.AttributeHole;
  *
  */
 
-public interface BeanInvokable extends BeanProperty, Invokable, AttributeHole<Integer, BeanProperty> {
+public interface BeanInvokable extends BeanProperty, Invokable, AttrHole<Integer, BeanProperty> {
 
 	public static BeanInvokable of(Constructor<?> invokable) {
 		return new DefaultBeanConstructor(invokable);

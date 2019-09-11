@@ -7,10 +7,10 @@ import java.util.TimeZone;
 
 import org.junit.Test;
 
-import cn.zhuhongqing.utils.DateUtil;
-import cn.zhuhongqing.utils.date.GenericDateFormat;
-import cn.zhuhongqing.utils.date.Iso8601DateFormat;
-import cn.zhuhongqing.utils.date.UTCDateFormat;
+import cn.zhuhongqing.util.DateUtils;
+import cn.zhuhongqing.util.date.GenericDateFormat;
+import cn.zhuhongqing.util.date.Iso8601DateFormat;
+import cn.zhuhongqing.util.date.UTCDateFormat;
 
 public class ModuleTest {
 
@@ -45,7 +45,7 @@ public class ModuleTest {
 		String _format = "YYYY-MM-MML-MMS-DD-DL-DS-D-DDD/WW/WWW/W E hh:mm:ss.mss TZL/TZS";
 		// "YYYY-MM-DD hh:mm:ss.mss TZS";
 		Iso8601DateFormat dateFormat = new Iso8601DateFormat();
-		Calendar date = DateUtil.getCurrentCalendar();
+		Calendar date = DateUtils.getCurrentCalendar();
 		String format = dateFormat.format(date, _format);
 		System.out.println(format);
 		// date = dateFormat.parse(format, _format);
@@ -56,7 +56,7 @@ public class ModuleTest {
 	public void showUTC() {
 		String _format = "YYYY/MM-DD T HH:mm:SS";
 		UTCDateFormat dateFormat = new UTCDateFormat();
-		Calendar calendar = DateUtil.getCurrentCalendar();
+		Calendar calendar = DateUtils.getCurrentCalendar();
 		String calendarFormat = dateFormat.format(calendar, _format);
 		System.out.println(calendarFormat);
 		// Core.TIME_ZONE = "America/New_York";
@@ -86,7 +86,7 @@ public class ModuleTest {
 		Core.TIME_ZONE = TimeZone.getTimeZone("GMT+1130").getID();
 		Core.LOCALE_LANGUAGE_TAG = Locale.UK.toLanguageTag();
 		GenericDateFormat dateFormat = new GenericDateFormat();
-		Calendar calendar = DateUtil.getCurrentCalendar();
+		Calendar calendar = DateUtils.getCurrentCalendar();
 		System.out.println(dateFormat.format(calendar, SIMPLE_FORMAT));
 		HTTP_DATE_FORMAT.setTimeZone(calendar.getTimeZone());
 		System.out.println(HTTP_DATE_FORMAT.format(calendar.getTime()));
@@ -94,7 +94,7 @@ public class ModuleTest {
 
 	@Test
 	public void showRawoff() {
-		Calendar calendar = DateUtil.getCurrentCalendar();
+		Calendar calendar = DateUtils.getCurrentCalendar();
 		int raw = calendar.get(Calendar.ZONE_OFFSET)
 				+ calendar.get(Calendar.DST_OFFSET);
 		System.out.println(calendar.get(Calendar.DST_OFFSET));

@@ -2,9 +2,9 @@ package cn.zhuhongqing;
 
 import java.nio.charset.Charset;
 
-import cn.zhuhongqing.utils.ClassUtil;
-import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.ClassUtils;
+import cn.zhuhongqing.util.StringPool;
+import cn.zhuhongqing.util.StringUtils;
 
 /**
  * 
@@ -37,14 +37,14 @@ public class ZHQ {
 	 * ZHQ's package-name.
 	 */
 
-	public static final String DEFAULT_PACKAGE_NAME = ClassUtil.getPackageName(ZHQ.class);
+	public static final String DEFAULT_PACKAGE_NAME = ClassUtils.getPackageName(ZHQ.class);
 
 	/**
 	 * Checks module is loaded.
 	 */
 	public static boolean checkModule(String moduleName) {
 		ClassLoader classLoader = ZHQ.class.getClassLoader();
-		moduleName = StringUtil.capitalize(moduleName);
+		moduleName = StringUtils.capitalize(moduleName);
 		try {
 			classLoader.loadClass(DEFAULT_PACKAGE_NAME.concat(StringPool.DOT).concat(moduleName));
 			return true;

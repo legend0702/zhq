@@ -1,6 +1,6 @@
 package cn.zhuhongqing.bean;
 
-import cn.zhuhongqing.utils.StringPool;
+import cn.zhuhongqing.util.StringPool;
 
 public class DefaultObjectState implements ObjectState {
 
