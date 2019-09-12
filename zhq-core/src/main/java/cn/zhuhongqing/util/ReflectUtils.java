@@ -1101,6 +1101,15 @@ public class ReflectUtils {
 
 	// ---------------------------------------------------------------- generics
 
+
+	/**
+	 * ListT tors ==> T.class
+	 */
+
+	public static Class<?> getFieldCollectionGenericType(Field field) {
+		return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+	}
+	
 	public static Class<?> getComponentType(Type type) {
 		return getComponentType(type, null, 0);
 	}
