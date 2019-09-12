@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import cn.zhuhongqing.dbmeta.type.SQLTypeMapping;
 import cn.zhuhongqing.dbmeta.utils.DBUtil;
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.util.GeneralUtils;
 
 /**
  * DBMeta配置.
@@ -50,7 +50,7 @@ public class DBMetaConfig {
 	};
 
 	public DBMetaConfig(String propPath) {
-		prop = GeneralUtil.loadProp(propPath);
+		prop = GeneralUtils.loadProp(propPath);
 	}
 
 	public DBMetaConfig(String driver, String url, String user, String password) {

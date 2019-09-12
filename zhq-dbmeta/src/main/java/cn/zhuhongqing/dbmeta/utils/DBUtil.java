@@ -12,10 +12,10 @@ import java.util.Set;
 
 import cn.zhuhongqing.dbmeta.DBMetaConfig;
 import cn.zhuhongqing.dbmeta.exception.DBMetaException;
-import cn.zhuhongqing.utils.ArraysUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.ArraysUtils;
+import cn.zhuhongqing.util.ReflectUtils;
+import cn.zhuhongqing.util.StringPool;
+import cn.zhuhongqing.util.StringUtils;
 
 /**
  * 链接帮助类
@@ -28,16 +28,16 @@ public class DBUtil {
 
 	public static Connection createConnection(DBMetaConfig config) {
 		String driverStr = config.getDriver();
-		if (StringUtil.isEmpty(driverStr)) {
+		if (StringUtils.isEmpty(driverStr)) {
 			throw new DBMetaException("驱动类不能为空!");
 		}
-		if (StringUtil.isEmpty(config.getUrl())) {
+		if (StringUtils.isEmpty(config.getUrl())) {
 			throw new DBMetaException("链接不能为空!");
 		}
-		if (StringUtil.isEmpty(config.getUser())) {
+		if (StringUtils.isEmpty(config.getUser())) {
 			throw new DBMetaException("用户名不能为空!");
 		}
-		Driver driver = (Driver) ReflectUtil.newInstance(driverStr);
+		Driver driver = (Driver) ReflectUtils.newInstance(driverStr);
 		try {
 			return driver.connect(config.getUrl(), config.getConnectProp());
 		} catch (SQLException e) {
@@ -69,7 +69,7 @@ public class DBUtil {
 
 	public static String queryForString(Connection conn, String sql, Object... params) {
 		try (PreparedStatement s = conn.prepareStatement(sql)) {
-			if (!ArraysUtil.isEmpty(params)) {
+			if (!ArraysUtils.isEmpty(params)) {
 				for (int i = 0; i < params.length; i++) {
 					s.setObject(i + 1, params[i]);
 				}

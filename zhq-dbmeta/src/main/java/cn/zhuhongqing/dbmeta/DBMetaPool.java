@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 import cn.zhuhongqing.dbmeta.oracle.Oracle11DBMetaInfo;
 import cn.zhuhongqing.dbmeta.postgresql.Postgresql9MetaInfo;
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.util.GeneralUtils;
 
 /**
  * 用于存放{@link DBMetaInfo}的具体子类实现
@@ -43,7 +43,7 @@ public class DBMetaPool {
 
 	public static final void register(DBMetaInfo metaInfo) {
 		ConcurrentSkipListMap<Double, DBMetaInfo> dataBaseMap = META_POOL.get(metaInfo.getDataBaseName());
-		if (GeneralUtil.isNull(dataBaseMap)) {
+		if (GeneralUtils.isNull(dataBaseMap)) {
 			dataBaseMap = new ConcurrentSkipListMap<Double, DBMetaInfo>();
 			META_POOL.put(metaInfo.getDataBaseName().toLowerCase(), dataBaseMap);
 		}
@@ -52,7 +52,7 @@ public class DBMetaPool {
 
 	public static final DBMetaInfo unregister(String dataBaseName, Double version) {
 		ConcurrentSkipListMap<Double, DBMetaInfo> dataBaseMap = META_POOL.get(dataBaseName.toLowerCase());
-		if (GeneralUtil.isNull(dataBaseMap)) {
+		if (GeneralUtils.isNull(dataBaseMap)) {
 			return null;
 		}
 		return dataBaseMap.remove(version);
@@ -60,13 +60,13 @@ public class DBMetaPool {
 
 	public static final DBMetaInfo get(String dataBaseName, Double version) {
 		ConcurrentSkipListMap<Double, DBMetaInfo> dataBaseMap = META_POOL.get(dataBaseName.toLowerCase());
-		if (GeneralUtil.isNull(dataBaseMap)) {
+		if (GeneralUtils.isNull(dataBaseMap)) {
 			// throw new DBMetaException("没有找到链接为[" + url +
 			// "]的DBMeta实现类,要不你来试着做一个?");
 			return new DBMetaInfoDef();
 		}
 		DBMetaInfo info = dataBaseMap.get(version);
-		if (GeneralUtil.isNotNull(info)) {
+		if (GeneralUtils.isNotNull(info)) {
 			return info.clone();
 		}
 		/**
@@ -75,7 +75,7 @@ public class DBMetaPool {
 		 * 如果存在 那么返回最高版本的实例
 		 */
 		Entry<Double, DBMetaInfo> entry = dataBaseMap.higherEntry(version);
-		if (GeneralUtil.isNotNull(entry)) {
+		if (GeneralUtils.isNotNull(entry)) {
 			return dataBaseMap.lastEntry().getValue().clone();
 		}
 		// 没有就返回最接近的

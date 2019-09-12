@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import cn.zhuhongqing.DBMetaConst;
-import cn.zhuhongqing.call.CallBack;
+import cn.zhuhongqing.call.CallBackThr;
 import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 import cn.zhuhongqing.dbmeta.struct.Column;
 import cn.zhuhongqing.dbmeta.struct.Table;
@@ -19,9 +19,9 @@ import cn.zhuhongqing.dbmeta.utils.DBUtil;
 import cn.zhuhongqing.dbmeta.utils.DBUtil.CloseHelper;
 import cn.zhuhongqing.dbmeta.utils.UnCatchSQLExceptionUtil;
 import cn.zhuhongqing.exception.ValidationException;
-import cn.zhuhongqing.utils.GeneralUtil;
-import cn.zhuhongqing.utils.ReflectUtil;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.GeneralUtils;
+import cn.zhuhongqing.util.ReflectUtils;
+import cn.zhuhongqing.util.StringUtils;
 
 /**
  * 描述数据库元信息<br/>
@@ -198,7 +198,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	public Set<Table> getTables(String catalog, String schema) {
-		if (StringUtil.hasEmpty(catalog, schema)) {
+		if (StringUtils.hasEmpty(catalog, schema)) {
 			throw new ValidationException("参数不能为空!");
 		}
 		return getTables0(catalog, schema, null);
@@ -216,7 +216,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	public Table getTable(String catalog, String schema, String table) {
-		if (StringUtil.hasEmpty(catalog, schema, table)) {
+		if (StringUtils.hasEmpty(catalog, schema, table)) {
 			throw new ValidationException("参数不能为空!");
 		}
 		Set<Table> t = getTables0(catalog, schema, table);
@@ -310,7 +310,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 		try {
 			rs = getTableResultSet(catalog, schema, table);
 			Set<Table> tables = new LinkedHashSet<Table>();
-			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBack<ResultSet>() {
+			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBackThr<ResultSet>() {
 				@Override
 				public void invokeThr(ResultSet r) throws Exception {
 					Table t = createTable(r, catalog, schema);
@@ -385,7 +385,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 		try {
 			rs = getColumnResultSet(table.getCatalog(), table.getSchema(), table.getName(), null);
 			Set<Column> columns = new LinkedHashSet<Column>();
-			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBack<ResultSet>() {
+			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBackThr<ResultSet>() {
 				@Override
 				public void invokeThr(ResultSet r) throws Exception {
 					Column c = createColumn(r, table);
@@ -446,7 +446,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	private SQLType _getSQLType(int sqlTypeInt) {
 		SQLType type = getSQLType(sqlTypeInt);
-		if (GeneralUtil.isNotNull(type)) {
+		if (GeneralUtils.isNotNull(type)) {
 			return type;
 		}
 		return SQLTypeMapping.getSQLType(sqlTypeInt);
@@ -472,27 +472,27 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 
 	private Class<?> convertSQLTypeToJavaType(int sqlTypeInt, String typeName, SQLType type) {
 		Class<?> jType = config.findJavaType(type);
-		if (GeneralUtil.isNotNull(jType)) {
+		if (GeneralUtils.isNotNull(jType)) {
 			return jType;
 		}
 		jType = config.findJavaType(typeName);
-		if (GeneralUtil.isNotNull(jType)) {
+		if (GeneralUtils.isNotNull(jType)) {
 			return jType;
 		}
 		jType = SQLTypeMapping.get(typeName);
-		if (GeneralUtil.isNotNull(jType)) {
+		if (GeneralUtils.isNotNull(jType)) {
 			return jType;
 		}
 		jType = findJavaType(sqlTypeInt, type);
-		if (GeneralUtil.isNotNull(jType)) {
+		if (GeneralUtils.isNotNull(jType)) {
 			return jType;
 		}
 		jType = findJavaType(typeName);
-		if (GeneralUtil.isNotNull(jType)) {
+		if (GeneralUtils.isNotNull(jType)) {
 			return jType;
 		}
 		jType = SQLTypeMapping.get(type);
-		if (GeneralUtil.isNotNull(jType)) {
+		if (GeneralUtils.isNotNull(jType)) {
 			return jType;
 		}
 		return Object.class;
@@ -516,7 +516,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 		ResultSet rs = null;
 		try {
 			rs = getPrimaryKeysResultSet(table.getCatalog(), table.getSchema(), table.getName());
-			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBack<ResultSet>() {
+			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBackThr<ResultSet>() {
 				@Override
 				public void invokeThr(ResultSet r) throws Exception {
 					setPrimaryKeys(table, r);
@@ -542,7 +542,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 		try {
 			return (DBMetaInfo) super.clone();
 		} catch (CloneNotSupportedException e) {
-			return ReflectUtil.newInstanceWithoutArgs(this.getClass());
+			return ReflectUtils.newInstanceWithoutArgs(this.getClass());
 		}
 	}
 

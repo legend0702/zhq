@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import cn.zhuhongqing.call.CallBack;
+import cn.zhuhongqing.call.CallBackThr;
 import cn.zhuhongqing.dbmeta.exception.DBMetaException;
 
 public class UnCatchSQLExceptionUtil {
@@ -35,7 +35,7 @@ public class UnCatchSQLExceptionUtil {
 		}
 	}
 
-	public static void reslutSetNext(ResultSet rs, CallBack<ResultSet> cb) {
+	public static void reslutSetNext(ResultSet rs, CallBackThr<ResultSet> cb) {
 		try {
 			while (rs.next()) {
 				cb.invokeThr(rs);
@@ -47,7 +47,7 @@ public class UnCatchSQLExceptionUtil {
 
 	public static Set<String> getReslutSetOneColumn(ResultSet rs, String columnName) {
 		Set<String> set = new LinkedHashSet<String>();
-		reslutSetNext(rs, new CallBack<ResultSet>() {
+		reslutSetNext(rs, new CallBackThr<ResultSet>() {
 			@Override
 			public void invokeThr(ResultSet r) throws SQLException {
 				set.add(rs.getString(columnName));

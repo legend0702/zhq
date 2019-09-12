@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import cn.zhuhongqing.utils.GeneralUtil;
+import cn.zhuhongqing.util.GeneralUtils;
 
 public class Table {
 
@@ -84,7 +84,7 @@ public class Table {
 
 	public Column addPrimaryColumn(String primaryColumnName) {
 		Column c = getColumn(primaryColumnName);
-		if (GeneralUtil.isNotNull(c)) {
+		if (GeneralUtils.isNotNull(c)) {
 			c.setPrimary(true);
 			this.primaryColumns.add(c);
 		}
