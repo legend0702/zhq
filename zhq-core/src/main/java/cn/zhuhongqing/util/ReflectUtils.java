@@ -1107,7 +1107,7 @@ public class ReflectUtils {
 	 */
 
 	public static Class<?> getFieldCollectionGenericType(Field field) {
-		return (Class<?>) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
+		return getComponentType(field.getGenericType());
 	}
 	
 	public static Class<?> getComponentType(Type type) {
