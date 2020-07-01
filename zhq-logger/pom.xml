@@ -15,7 +15,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<log4j2.ver>2.5</log4j2.ver>
+		<log4j2.ver>2.13.3</log4j2.ver>
 	</properties>
 
 	<dependencies>
