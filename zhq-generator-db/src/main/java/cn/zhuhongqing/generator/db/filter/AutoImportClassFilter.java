@@ -5,8 +5,8 @@ import java.util.HashSet;
 import cn.zhuhongqing.dbmeta.struct.Column;
 import cn.zhuhongqing.dbmeta.struct.Table;
 import cn.zhuhongqing.generator.filter.GeneratorFilter;
-import cn.zhuhongqing.utils.BeanWrap;
-import cn.zhuhongqing.utils.StringPool;
+import cn.zhuhongqing.util.BeanWrap;
+import cn.zhuhongqing.util.StringPool;
 
 /**
  * 主要用于{@link Column}渲染文件时 自动根据{@link Column#getJavaType()}去引入相关的Class<br/>
@@ -29,7 +29,6 @@ public class AutoImportClassFilter implements GeneratorFilter {
 	private AutoImportClassFilter() {
 	};
 
-	@Override
 	public boolean beforeAll(BeanWrap modelWrap) {
 		Table t = (Table) modelWrap.get();
 		HashSet<String> types = new HashSet<String>();
@@ -39,7 +38,7 @@ public class AutoImportClassFilter implements GeneratorFilter {
 				return;
 			}
 			types.add(StringPool.IMPORT + StringPool.SPACE + javaType.getName() + StringPool.SEMICOLON
-					+ StringPool.RETURN);
+					+ StringPool.CRLF);
 		});
 		StringBuilder importText = new StringBuilder();
 		types.forEach(s -> {

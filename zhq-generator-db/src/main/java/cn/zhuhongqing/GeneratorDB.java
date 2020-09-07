@@ -8,7 +8,7 @@ import cn.zhuhongqing.generator.db.GeneratorDBProcess;
 /**
  * 根据数据库表以及表中列的元数据信息
  * 
- * 配合Generator以及Template生成想要的文件(比如.java文件以及配置文件等等)
+ *  配合Generator以及Template生成想要的文件(比如.java文件以及配置文件等等)
  *
  * @author HongQing.Zhu
  *         <nl>
@@ -36,8 +36,7 @@ public class GeneratorDB extends Generator {
 
 	public static GeneratorDBProcess create(String connPropPath, String tempFileRoot, String outFileRoot,
 			GeneratorDBConfig generatorDBConfig) {
-		return create(DBMeta.createDBMetaInfo(connPropPath), new GenConfig(tempFileRoot, outFileRoot),
-				generatorDBConfig);
+		return create(DBMeta.createDBMetaInfo(connPropPath), new GenConfig(tempFileRoot, outFileRoot), generatorDBConfig);
 	}
 
 	/**

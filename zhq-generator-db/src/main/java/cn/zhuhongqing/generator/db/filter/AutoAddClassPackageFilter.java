@@ -1,12 +1,12 @@
 package cn.zhuhongqing.generator.db.filter;
 
 import cn.zhuhongqing.generator.filter.GeneratorFilter;
-import cn.zhuhongqing.io.FileIOParams;
-import cn.zhuhongqing.io.FileUtil;
-import cn.zhuhongqing.utils.BeanWrap;
-import cn.zhuhongqing.utils.StringPool;
-import cn.zhuhongqing.utils.StringUtil;
-import cn.zhuhongqing.utils.URIUtil;
+import cn.zhuhongqing.util.BeanWrap;
+import cn.zhuhongqing.util.StringPool;
+import cn.zhuhongqing.util.StringUtils;
+import cn.zhuhongqing.util.URIUtils;
+import cn.zhuhongqing.util.file.FileIOParams;
+import cn.zhuhongqing.util.file.FileUtils;
 
 /**
  * 针对每个.java模板文件追加package信息<br/>
@@ -22,33 +22,39 @@ public class AutoAddClassPackageFilter implements GeneratorFilter {
 	private String basePackage;
 
 	private static final String JAVA_PACKAGE = "JAVA_PACKAGE";
+	private static final String JAVA_PACKAGE_NAME = "JAVA_PACKAGE_NAME";
 
 	public AutoAddClassPackageFilter(String basePackage) {
 		this.basePackage = basePackage;
 	};
 
-	@Override
 	public boolean beforeGen(BeanWrap modelWrap, FileIOParams tempRootParams, FileIOParams currentInParams) {
+		StringBuilder pkgName = new StringBuilder();
+		pkgName.append(basePackage);
 		StringBuilder pkg = new StringBuilder();
 		pkg.append(StringPool.PACKAGE).append(StringPool.SPACE);
 		pkg.append(basePackage);
 		// 如果是根目录文件 那么就不追加模板文件的路径到package路径中
-		if (FileUtil.isParent(tempRootParams.getFile(), currentInParams.getFile())) {
+		if (FileUtils.isParent(tempRootParams.getFile(), currentInParams.getFile())) {
 			// 既没有basePackage 也没有在模板文件路径 那么返回空字符串
-			if (StringUtil.isEmpty(basePackage)) {
+			if (StringUtils.isEmpty(basePackage)) {
 				modelWrap.putExParam(JAVA_PACKAGE, StringPool.EMPTY);
+				modelWrap.putExParam(JAVA_PACKAGE_NAME, pkgName.toString());
 				return true;
 			}
 		} else {
-			String subPkg = StringUtil.cutStartToLastIndex(URIUtil.getSchemeSpecificPart(currentInParams.getFile()),
-					URIUtil.getSchemeSpecificPart(tempRootParams.getFile()), StringPool.SLASH);
-			if (StringUtil.isNotEmpty(subPkg)) {
-				if (StringUtil.isNotEmpty(basePackage)) {
+			String subPkg = StringUtils.cutStartToLastIndex(URIUtils.getSchemeSpecificPart(currentInParams.getFile()),
+					URIUtils.getSchemeSpecificPart(tempRootParams.getFile()), StringPool.SLASH);
+			if (StringUtils.isNotEmpty(subPkg)) {
+				if (StringUtils.isNotEmpty(basePackage)) {
+					pkgName.append(StringPool.DOT);
 					pkg.append(StringPool.DOT);
 				}
-				pkg.append(StringUtil.replaceSlashToDot(subPkg));
+				pkgName.append(StringUtils.replaceSlashToDot(subPkg));
+				pkg.append(StringUtils.replaceSlashToDot(subPkg));
 			}
 		}
+		modelWrap.putExParam(JAVA_PACKAGE_NAME, pkgName.toString());
 		modelWrap.putExParam(JAVA_PACKAGE, pkg.append(StringPool.SEMICOLON).toString());
 		return true;
 	}

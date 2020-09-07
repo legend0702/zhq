@@ -2,7 +2,7 @@ package cn.zhuhongqing.generator.db.filter;
 
 import cn.zhuhongqing.generator.db.GeneratorDBConfig;
 import cn.zhuhongqing.generator.filter.GeneratorFilter;
-import cn.zhuhongqing.utils.BeanWrap;
+import cn.zhuhongqing.util.BeanWrap;
 
 /**
  * 添加一个全局参数的{@link GeneratorFilter}<br/>

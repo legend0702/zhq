@@ -14,9 +14,9 @@ import cn.zhuhongqing.generator.GenConfig;
 import cn.zhuhongqing.generator.GenProcess;
 import cn.zhuhongqing.generator.db.filter.AddGlobalDataFilter;
 import cn.zhuhongqing.generator.db.filter.GeneratorDBFilter;
-import cn.zhuhongqing.utils.CollectionUtil;
-import cn.zhuhongqing.utils.GeneralUtil;
-import cn.zhuhongqing.utils.StringUtil;
+import cn.zhuhongqing.util.CollectionUtils;
+import cn.zhuhongqing.util.GeneralUtils;
+import cn.zhuhongqing.util.StringUtils;
 
 /**
  * 具体生成执行器
@@ -110,18 +110,18 @@ public class GeneratorDBProcess {
 
 	private Collection<Table> getTables() {
 		Collection<Table> cTables = config.getTables();
-		if (CollectionUtil.isEmpty(cTables)) {
+		if (CollectionUtils.isEmpty(cTables)) {
 			return dbInfo.getTables();
 		}
 		Collection<Table> reTables = new LinkedHashSet<Table>(cTables.size());
 		for (Table t : cTables) {
 			Table db = null;
-			if (StringUtil.isNotEmpty(t.getCatalog()) && StringUtil.isNotEmpty(t.getSchema())) {
+			if (StringUtils.isNotEmpty(t.getCatalog()) && StringUtils.isNotEmpty(t.getSchema())) {
 				db = dbInfo.getTable(t.getCatalog(), t.getSchema(), t.getName());
 			} else {
 				db = dbInfo.getTable(t.getName());
 			}
-			if (GeneralUtil.isNotNull(db)) {
+			if (GeneralUtils.isNotNull(db)) {
 				reTables.add(db);
 			}
 		}
