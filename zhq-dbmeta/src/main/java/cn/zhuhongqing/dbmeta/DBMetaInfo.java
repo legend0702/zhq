@@ -15,9 +15,8 @@ import cn.zhuhongqing.dbmeta.struct.Column;
 import cn.zhuhongqing.dbmeta.struct.Table;
 import cn.zhuhongqing.dbmeta.struct.TableType;
 import cn.zhuhongqing.dbmeta.type.SQLTypeMapping;
-import cn.zhuhongqing.dbmeta.utils.DBUtil;
-import cn.zhuhongqing.dbmeta.utils.DBUtil.CloseHelper;
-import cn.zhuhongqing.dbmeta.utils.UnCatchSQLExceptionUtil;
+import cn.zhuhongqing.dbmeta.util.DBUtils;
+import cn.zhuhongqing.dbmeta.util.UnCatchSQLExceptionUtils;
 import cn.zhuhongqing.exception.ValidationException;
 import cn.zhuhongqing.util.GeneralUtils;
 import cn.zhuhongqing.util.ReflectUtils;
@@ -67,7 +66,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	public static final DBMetaInfo getDBMetaInfo(Connection conn) {
 		try {
 			String name = conn.getMetaData().getDatabaseProductName();
-			return DBMetaPool.get(name, DBUtil.concatMajorAndMinor(conn.getMetaData())).init(conn);
+			return DBMetaPool.get(name, DBUtils.concatMajorAndMinor(conn.getMetaData())).init(conn);
 		} catch (Exception e) {
 			throw new DBMetaException(e);
 		}
@@ -257,7 +256,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	protected Set<String> initCatalogs() throws Exception {
-		return UnCatchSQLExceptionUtil.getReslutSetOneColumn(dbMetaData.getCatalogs(), TABLE_CATALOG);
+		return UnCatchSQLExceptionUtils.getReslutSetOneColumn(dbMetaData.getCatalogs(), TABLE_CATALOG);
 	}
 
 	/**
@@ -275,7 +274,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	protected Set<String> initSchemas() throws Exception {
-		return UnCatchSQLExceptionUtil.getReslutSetOneColumn(dbMetaData.getSchemas(), TABLE_SCHEME);
+		return UnCatchSQLExceptionUtils.getReslutSetOneColumn(dbMetaData.getSchemas(), TABLE_SCHEME);
 	}
 
 	/**
@@ -306,25 +305,18 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	private Set<Table> getTables0(String catalog, String schema, String table) {
-		ResultSet rs = null;
-		try {
-			rs = getTableResultSet(catalog, schema, table);
-			Set<Table> tables = new LinkedHashSet<Table>();
-			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBackThr<ResultSet>() {
-				@Override
-				public void invokeThr(ResultSet r) throws Exception {
-					Table t = createTable(r, catalog, schema);
-					t.setColumn(getColumns0(t));
-					initPrimaryKeys(t);
-					tables.add(t);
-				}
-			});
-			return tables;
-		} catch (Exception e) {
-			throw new DBMetaException(e);
-		} finally {
-			CloseHelper.close(rs);
-		}
+		Set<Table> tables = new LinkedHashSet<Table>();
+		ResultSet rs = getTableResultSet(catalog, schema, table);
+		UnCatchSQLExceptionUtils.reslutSetNext(rs, new CallBackThr<ResultSet>() {
+			@Override
+			public void invokeThr(ResultSet r) throws Exception {
+				Table t = createTable(r, catalog, schema);
+				t.setColumn(getColumns0(t));
+				initPrimaryKeys(t);
+				tables.add(t);
+			}
+		});
+		return tables;
 	}
 
 	/**
@@ -344,8 +336,8 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 * @throws Exception
 	 */
 
-	protected ResultSet getTableResultSet(String catalog, String schema, String table) throws Exception {
-		return UnCatchSQLExceptionUtil.getTables(dbMetaData, catalog, schema, table, tableType);
+	protected ResultSet getTableResultSet(String catalog, String schema, String table) {
+		return UnCatchSQLExceptionUtils.getTables(dbMetaData, catalog, schema, table, tableType);
 	}
 
 	/**
@@ -381,23 +373,16 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 */
 
 	private Set<Column> getColumns0(Table table) {
-		ResultSet rs = null;
-		try {
-			rs = getColumnResultSet(table.getCatalog(), table.getSchema(), table.getName(), null);
-			Set<Column> columns = new LinkedHashSet<Column>();
-			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBackThr<ResultSet>() {
-				@Override
-				public void invokeThr(ResultSet r) throws Exception {
-					Column c = createColumn(r, table);
-					columns.add(c);
-				}
-			});
-			return columns;
-		} catch (Exception e) {
-			throw new DBMetaException(e);
-		} finally {
-			CloseHelper.close(rs);
-		}
+		Set<Column> columns = new LinkedHashSet<Column>();
+		ResultSet rs = getColumnResultSet(table.getCatalog(), table.getSchema(), table.getName(), null);;
+		UnCatchSQLExceptionUtils.reslutSetNext(rs, new CallBackThr<ResultSet>() {
+			@Override
+			public void invokeThr(ResultSet r) throws Exception {
+				Column c = createColumn(r, table);
+				columns.add(c);
+			}
+		});
+		return columns;
 	}
 
 	/**
@@ -416,9 +401,8 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	 * @return
 	 * @throws Exception
 	 */
-	protected ResultSet getColumnResultSet(String catalog, String schema, String table, String column)
-			throws Exception {
-		return UnCatchSQLExceptionUtil.getColumns(dbMetaData, catalog, schema, table, column);
+	protected ResultSet getColumnResultSet(String catalog, String schema, String table, String column) {
+		return UnCatchSQLExceptionUtils.getColumns(dbMetaData, catalog, schema, table, column);
 	}
 
 	/**
@@ -440,8 +424,7 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 		boolean isNullable = (DatabaseMetaData.columnNullable == rs.getInt(COLUMN_NULLABLE));
 		int size = rs.getInt(COLUMN_SIZE);
 		int decDigits = rs.getInt(COLUMN_DECIMAL_DIGITS);
-		return new Column(table, name, sqlTypeInt, typeName, sqlType, javaType, isNullable, defVal, remarks, size,
-				decDigits);
+		return new Column(table, name, sqlTypeInt, typeName, sqlType, javaType, isNullable, defVal, remarks, size, decDigits);
 	}
 
 	private SQLType _getSQLType(int sqlTypeInt) {
@@ -513,24 +496,17 @@ public abstract class DBMetaInfo implements Cloneable, DBMetaConst {
 	}
 
 	protected void initPrimaryKeys(Table table) {
-		ResultSet rs = null;
-		try {
-			rs = getPrimaryKeysResultSet(table.getCatalog(), table.getSchema(), table.getName());
-			UnCatchSQLExceptionUtil.reslutSetNext(rs, new CallBackThr<ResultSet>() {
-				@Override
-				public void invokeThr(ResultSet r) throws Exception {
-					setPrimaryKeys(table, r);
-				}
-			});
-		} catch (Exception e) {
-			throw new DBMetaException(e);
-		} finally {
-			CloseHelper.close(rs);
-		}
+		ResultSet rs = getPrimaryKeysResultSet(table.getCatalog(), table.getSchema(), table.getName());;
+		UnCatchSQLExceptionUtils.reslutSetNext(rs, new CallBackThr<ResultSet>() {
+			@Override
+			public void invokeThr(ResultSet r) throws Exception {
+				setPrimaryKeys(table, r);
+			}
+		});
 	}
 
-	protected ResultSet getPrimaryKeysResultSet(String catalog, String schema, String table) throws Exception {
-		return UnCatchSQLExceptionUtil.getPrimaryKeys(dbMetaData, catalog, schema, table);
+	protected ResultSet getPrimaryKeysResultSet(String catalog, String schema, String table) {
+		return UnCatchSQLExceptionUtils.getPrimaryKeys(dbMetaData, catalog, schema, table);
 	}
 
 	protected void setPrimaryKeys(Table table, ResultSet r) throws SQLException {

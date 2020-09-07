@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import cn.zhuhongqing.dbmeta.type.SQLTypeMapping;
-import cn.zhuhongqing.dbmeta.utils.DBUtil;
+import cn.zhuhongqing.dbmeta.util.DBUtils;
 import cn.zhuhongqing.util.GeneralUtils;
 
 /**
@@ -109,7 +109,7 @@ public class DBMetaConfig {
 	}
 
 	public Connection createConn() {
-		return DBUtil.createConnection(this);
+		return DBUtils.createConnection(this);
 	}
 
 	public Map<SQLType, Class<?>> getSqlTypeMapping() {
