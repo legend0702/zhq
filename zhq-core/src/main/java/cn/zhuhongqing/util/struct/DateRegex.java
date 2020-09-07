@@ -10,11 +10,7 @@ public class DateRegex {
 	private String pattern;
 	private String regex;
 
-	public DateRegex() {
-	}
-
 	public DateRegex(String pattern, String regex) {
-		super();
 		this.pattern = pattern;
 		this.regex = regex;
 	}

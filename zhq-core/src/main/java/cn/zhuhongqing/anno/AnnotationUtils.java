@@ -57,8 +57,7 @@ public class AnnotationUtils {
 		}
 	}
 
-	public static <T> Collection<T> parser(Class<T> beanClass, Class<?> fromClass,
-			Class<? extends Annotation> annoClass) {
+	public static <T> Collection<T> parser(Class<T> beanClass, Class<?> fromClass, Class<? extends Annotation> annoClass) {
 		ArrayList<T> beanList = new ArrayList<>();
 		AnnotationHole annoHole = getAnnotations(fromClass, annoClass);
 		for (AnnotationWrap wrap : annoHole.getAnnotationWraps()) {

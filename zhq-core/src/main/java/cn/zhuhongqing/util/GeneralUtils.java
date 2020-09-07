@@ -2,6 +2,8 @@ package cn.zhuhongqing.util;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import cn.zhuhongqing.exception.RuntimeExceptionWrapper;
@@ -70,6 +72,18 @@ public class GeneralUtils {
 
 	public static <T> T defValue(T val, T def) {
 		return isNull(val) ? def : val;
+	}
+	
+	public static <K> K mapValueGetKey(Map<K, ?> map, Object value) {
+		if (!map.containsValue(value)) {
+			return null;
+		}
+		for (Entry<K, ?> entry : map.entrySet()) {
+			if (entry.getValue().equals(value)) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 
 	/**

@@ -11,10 +11,10 @@ public interface CallBackFailure<P> extends CallBackThr<P> {
 		try {
 			invokeThr(param);
 		} catch (Exception e) {
-			failure(e);
+			failure(e, param);
 		}
 	}
 
-	void failure(Exception e);
+	void failure(Exception e, P param);
 
 }
