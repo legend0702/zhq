@@ -363,6 +363,15 @@ public class StringUtils {
 
 		return prefix + collectionToDelimitedString(pathElements, FOLDER_SEPARATOR);
 	}
+	
+	public static String cleanRegex(String regexStr) {
+        // Only check if there exists the valid left parenthesis, leave regex validation for Pattern.
+        if (StringUtils.countMatches(regexStr, "(") - StringUtils.countMatches(regexStr, "\\(") ==
+                StringUtils.countMatches(regexStr, "(?:") - StringUtils.countMatches(regexStr, "\\(?:")) {
+            regexStr = "(" + regexStr + ")";
+        }
+        return regexStr;
+	}
 
 	/**
 	 * Convenience method to return a Collection as a delimited (e.g. CSV)
@@ -875,5 +884,39 @@ public class StringUtils {
 
 		return string.substring(start, end);
 	}
+	
+	// Count matches
+    //-----------------------------------------------------------------------
+    /**
+     * <p>Counts how many times the substring appears in the larger string.</p>
+     *
+     * <p>A {@code null} or empty ("") String input returns {@code 0}.</p>
+     *
+     * <pre>
+     * StringUtils.countMatches(null, *)       = 0
+     * StringUtils.countMatches("", *)         = 0
+     * StringUtils.countMatches("abba", null)  = 0
+     * StringUtils.countMatches("abba", "")    = 0
+     * StringUtils.countMatches("abba", "a")   = 2
+     * StringUtils.countMatches("abba", "ab")  = 1
+     * StringUtils.countMatches("abba", "xxx") = 0
+     * </pre>
+     *
+     * @param str  the String to check, may be null
+     * @param sub  the String to count, may be null
+     * @return the number of occurrences, 0 if either String is {@code null}
+     */
+	public static int countMatches(String str, String sub) {
+        if (isEmpty(str) || isEmpty(sub)) {
+            return 0;
+        }
+        int count = 0;
+        int idx = 0;
+        while ((idx = str.indexOf(sub, idx)) != -1) {
+            count++;
+            idx += sub.length();
+        }
+        return count;
+    }
 
 }

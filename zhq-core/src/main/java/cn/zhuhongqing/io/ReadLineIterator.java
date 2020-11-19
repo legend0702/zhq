@@ -148,7 +148,7 @@ public class ReadLineIterator implements Iterator<String> {
 	 */
 	public void close() {
 		finished = true;
-		StreamUtils.close(bufferedReader);
+		IOUtils.close(bufferedReader);
 		cachedLine = null;
 	}
 

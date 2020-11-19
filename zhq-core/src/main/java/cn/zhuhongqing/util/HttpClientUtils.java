@@ -8,7 +8,7 @@ import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.List;
 
-import cn.zhuhongqing.io.StreamUtils;
+import cn.zhuhongqing.io.IOUtils;
 
 /**
  * Simple HttpClient.
@@ -41,9 +41,9 @@ public class HttpClientUtils {
 			String resp = null;
 
 			if (HttpURLConnection.HTTP_OK == respCode) {
-				resp = StreamUtils.toString(conn.getInputStream(), encoding);
+				resp = IOUtils.toString(conn.getInputStream(), encoding);
 			} else {
-				resp = StreamUtils.toString(conn.getErrorStream(), encoding);
+				resp = IOUtils.toString(conn.getErrorStream(), encoding);
 			}
 			return new HttpResult(respCode, resp);
 		} finally {
@@ -85,9 +85,9 @@ public class HttpClientUtils {
 			String resp = null;
 
 			if (HttpURLConnection.HTTP_OK == respCode) {
-				resp = StreamUtils.toString(conn.getInputStream(), encoding);
+				resp = IOUtils.toString(conn.getInputStream(), encoding);
 			} else {
-				resp = StreamUtils.toString(conn.getErrorStream(), encoding);
+				resp = IOUtils.toString(conn.getErrorStream(), encoding);
 			}
 			return new HttpResult(respCode, resp);
 		} finally {

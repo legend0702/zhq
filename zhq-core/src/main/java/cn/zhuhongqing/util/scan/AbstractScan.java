@@ -19,7 +19,7 @@ import cn.zhuhongqing.util.StringUtils;
 import cn.zhuhongqing.util.URIUtils;
 import cn.zhuhongqing.util.file.FileUtils;
 import cn.zhuhongqing.util.matcher.PathMatcher;
-import cn.zhuhongqing.util.matcher.URIMatch;
+import cn.zhuhongqing.util.matcher.URIMatcher;
 
 /**
  * 1.Clean the pathPattern to {@link URI} and init {@link PathCouple}.<br/>
@@ -42,7 +42,7 @@ abstract class AbstractScan<R> implements ResourceScan<R> {
 	/**
 	 * Use URIMatch.
 	 */
-	private static final PathMatcher PATH_MATCHER = new URIMatch();
+	private static final PathMatcher PATH_MATCHER = new URIMatcher();
 
 	/**
 	 * To comparison path with pattern.

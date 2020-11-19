@@ -32,14 +32,14 @@ import cn.zhuhongqing.ZHQ;
 import cn.zhuhongqing.exception.UtilsException;
 import cn.zhuhongqing.io.FastCharArrayWriter;
 import cn.zhuhongqing.io.ReadLineIterator;
-import cn.zhuhongqing.io.StreamUtils;
+import cn.zhuhongqing.io.IOUtils;
 import cn.zhuhongqing.io.UnicodeInputStream;
 import cn.zhuhongqing.util.ArraysUtils;
 import cn.zhuhongqing.util.SchemeAndProtocol;
 import cn.zhuhongqing.util.StringPool;
 import cn.zhuhongqing.util.SystemUtils;
 import cn.zhuhongqing.util.URIUtils;
-import cn.zhuhongqing.util.matcher.URIMatch;
+import cn.zhuhongqing.util.matcher.URIMatcher;
 
 /**
  * File utilities.
@@ -260,7 +260,7 @@ public class FileUtils {
 	public static void touch(File file) {
 		if (file.exists() == false) {
 			try {
-				StreamUtils.close(new FileOutputStream(file));
+				IOUtils.close(new FileOutputStream(file));
 			} catch (FileNotFoundException e) {
 				throw new UtilsException(e);
 			}
@@ -355,7 +355,7 @@ public class FileUtils {
 
 		// do copy file
 		try {
-			StreamUtils.copy(new FileInputStream(src), new FileOutputStream(dest));
+			IOUtils.copy(new FileInputStream(src), new FileOutputStream(dest));
 		} catch (FileNotFoundException e) {
 			throw new UtilsException(e);
 		}
@@ -737,12 +737,12 @@ public class FileUtils {
 			if (encoding == null) {
 				encoding = DEFAULT_ENCODING;
 			}
-			StreamUtils.copy(in, fastCharArrayWriter, encoding);
+			IOUtils.copy(in, fastCharArrayWriter, encoding);
 			return fastCharArrayWriter.toCharArray();
 		} catch (FileNotFoundException e) {
 			throw new UtilsException(e);
 		} finally {
-			StreamUtils.close(in);
+			IOUtils.close(in);
 		}
 	}
 
@@ -780,12 +780,12 @@ public class FileUtils {
 				in = new UnicodeInputStream(in, encoding);
 			}
 			FastCharArrayWriter fastCharArrayWriter = new FastCharArrayWriter((int) len);
-			StreamUtils.copy(in, fastCharArrayWriter, encoding);
+			IOUtils.copy(in, fastCharArrayWriter, encoding);
 			return fastCharArrayWriter.toCharArray();
 		} catch (FileNotFoundException e) {
 			throw new UtilsException(e);
 		} finally {
-			StreamUtils.close(in);
+			IOUtils.close(in);
 		}
 	}
 
@@ -848,7 +848,7 @@ public class FileUtils {
 			if (encoding == null) {
 				encoding = DEFAULT_ENCODING;
 			}
-			StreamUtils.copy(in, out, encoding);
+			IOUtils.copy(in, out, encoding);
 			return out.toString();
 		} catch (IOException e) {
 			throw new UtilsException(e);
@@ -866,7 +866,7 @@ public class FileUtils {
 			if (encoding == null) {
 				encoding = DEFAULT_ENCODING;
 			}
-			StreamUtils.copy(in, out, encoding);
+			IOUtils.copy(in, out, encoding);
 			return out.toString();
 		} catch (IOException e) {
 			throw new UtilsException(e);
@@ -907,12 +907,12 @@ public class FileUtils {
 				in = new UnicodeInputStream(in, encoding);
 			}
 			FastCharArrayWriter out = new FastCharArrayWriter((int) len);
-			StreamUtils.copy(in, out, encoding);
+			IOUtils.copy(in, out, encoding);
 			return out.toString();
 		} catch (FileNotFoundException e) {
 			throw new UtilsException(e);
 		} finally {
-			StreamUtils.close(in);
+			IOUtils.close(in);
 		}
 	}
 
@@ -965,7 +965,7 @@ public class FileUtils {
 
 	public static void writeStream(File dest, InputStream in) {
 		try (FileOutputStream out = new FileOutputStream(dest)) {
-			StreamUtils.copy(in, out);
+			IOUtils.copy(in, out);
 		} catch (IOException e) {
 			throw new UtilsException(e);
 		}
@@ -1017,8 +1017,8 @@ public class FileUtils {
 		} catch (IOException e) {
 			throw new UtilsException(e);
 		} finally {
-			StreamUtils.close(in);
-			StreamUtils.close(br);
+			IOUtils.close(in);
+			IOUtils.close(br);
 		}
 		return list.toArray(new String[list.size()]);
 	}
@@ -1192,7 +1192,7 @@ public class FileUtils {
 		}
 
 		try (InputStream input1 = new FileInputStream(file1); InputStream input2 = new FileInputStream(file2);) {
-			return StreamUtils.compare(input1, input2);
+			return IOUtils.compare(input1, input2);
 		} catch (IOException e) {
 			throw new UtilsException(e);
 		}
@@ -1391,8 +1391,8 @@ public class FileUtils {
 						return false;
 					}
 				} else {
-					if (URIMatch.INSTANCE.hasPattern(str)) {
-						if (URIMatch.INSTANCE.match(str, name)) {
+					if (URIMatcher.INSTANCE.hasPattern(str)) {
+						if (URIMatcher.INSTANCE.match(str, name)) {
 							return false;
 						}
 					} else {
@@ -1410,8 +1410,8 @@ public class FileUtils {
 						return true;
 					}
 				} else {
-					if (URIMatch.INSTANCE.hasPattern(str)) {
-						if (URIMatch.INSTANCE.match(str, name)) {
+					if (URIMatcher.INSTANCE.hasPattern(str)) {
+						if (URIMatcher.INSTANCE.match(str, name)) {
 							return true;
 						}
 					} else {

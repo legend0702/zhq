@@ -1,6 +1,11 @@
 package cn.zhuhongqing.util.struct;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 import cn.zhuhongqing.anno.NotNull;
 import cn.zhuhongqing.util.ObjectUtils;
@@ -24,14 +29,12 @@ public class NameValuePair implements Cloneable, Serializable {
 
 	protected final String name;
 	protected final String value;
-
+	
 	/**
 	 * Default Constructor taking a name and a value. The value may be null.
 	 *
-	 * @param name
-	 *            The name.
-	 * @param value
-	 *            The value.
+	 * @param name  The name.
+	 * @param value The value.
 	 */
 	public NameValuePair(@NotNull final String name, final String value) {
 		this.name = name;
@@ -72,5 +75,44 @@ public class NameValuePair implements Cloneable, Serializable {
 	public Object clone() {
 		return new NameValuePair(name, value);
 	}
+	
+	public static Builder builder(String name, String value) {
+		return new Builder().add(name, value);
+	}
 
+	public static class Builder {
+		private List<NameValuePair> pairs = new ArrayList<>();
+
+		public Builder add(String name, String value) {
+			pairs.add(new NameValuePair(name, value));
+			return this;
+		}
+
+		public NameValuePair build() {
+			if (pairs.isEmpty())
+				return null;
+			return pairs.get(0);
+		}
+
+		// Just Call once
+		public List<NameValuePair> buildList() {
+			try {
+				return pairs;
+			} finally {
+				pairs = new ArrayList<>();
+			}
+		}
+
+		// Same name will return first value
+		public Set<NameValuePair> buildSet() {
+			Set<NameValuePair> set = new LinkedHashSet<>(pairs.size() * 2);
+			Set<String> names = new HashSet<>(pairs.size() * 2);
+			for (NameValuePair pair : pairs) {
+				if (names.contains(pair.name))
+					continue;
+				set.add(pair);
+			}
+			return set;
+		}
+	}
 }

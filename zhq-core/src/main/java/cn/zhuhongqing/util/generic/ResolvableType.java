@@ -18,9 +18,9 @@ import java.util.Map;
 
 import cn.zhuhongqing.util.ArraysUtils;
 import cn.zhuhongqing.util.ClassUtils;
-import cn.zhuhongqing.util.ConcurrentReferenceHashMap;
 import cn.zhuhongqing.util.ObjectUtils;
 import cn.zhuhongqing.util.StringUtils;
+import cn.zhuhongqing.util.struct.collect.ConcurrentReferenceHashMap;
 
 /**
  * Encapsulates a Java {@link java.lang.reflect.Type}, providing access to

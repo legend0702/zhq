@@ -31,8 +31,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 	 * PatternMatcher cache.
 	 */
 
-	final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<String, AntPathStringMatcher>(
-			256);
+	final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<String, AntPathStringMatcher>(256);
 
 	@Override
 	public boolean match(String pattern, String path) {
@@ -47,8 +46,8 @@ public abstract class AbstractMatcher implements PathMatcher {
 	@Override
 	public boolean isPattern(String path) {
 		return (path.indexOf(ALL_WORD_PATTERN) != -1
-				|| path.indexOf(SINGLE_WORD_PATTERN) != -1 || path
-					.indexOf(ALL_PATTERN) != -1);
+				|| path.indexOf(SINGLE_WORD_PATTERN) != -1 
+				|| path .indexOf(ALL_PATTERN) != -1);
 	}
 
 	@Override
@@ -64,15 +63,12 @@ public abstract class AbstractMatcher implements PathMatcher {
 	 * @param path
 	 *            the path String to test
 	 * @param fullMatch
-	 *            whether a full pattern match is required (else a pattern match
-	 *            as far as the given base path goes is sufficient)
-	 * @return {@code true} if the supplied {@code path} matched, {@code false}
-	 *         if it didn't
+	 *            whether a full pattern match is required 
+	 *            (else a pattern match as far as the given base path goes is sufficient)
+	 * @return {@code true} if the supplied {@code path} matched, {@code false} if it didn't
 	 */
 	protected boolean doMatch(String pattern, String path, boolean fullMatch) {
-
-		if (path.startsWith(getPathSeparator()) != pattern
-				.startsWith(getPathSeparator())) {
+		if (path.startsWith(getPathSeparator()) != pattern .startsWith(getPathSeparator())) {
 			return false;
 		}
 
@@ -98,12 +94,11 @@ public abstract class AbstractMatcher implements PathMatcher {
 		}
 
 		if (pathIdxStart > pathIdxEnd) {
-			// Path is exhausted, only match if rest of pattern is * or
-			// {ALL_PATTERN}'s
+			// Path is exhausted, only match if rest of pattern is * or {ALL_PATTERN}'s
 			if (pattIdxStart > pattIdxEnd) {
-				return (pattern.endsWith(getPathSeparator()) ? path
-						.endsWith(getPathSeparator()) : !path
-						.endsWith(getPathSeparator()));
+				return (pattern.endsWith(getPathSeparator()) ? 
+						path.endsWith(getPathSeparator()) : 
+						!path.endsWith(getPathSeparator()));
 			}
 			if (!fullMatch) {
 				return true;
@@ -123,8 +118,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 			// String not exhausted, but pattern is. Failure.
 			return false;
 		} else if (!fullMatch && ALL_PATTERN.equals(pattDirs[pattIdxStart])) {
-			// Path start definitely matches due to {ALL_PATTERN} part in
-			// pattern.
+			// Path start definitely matches due to {ALL_PATTERN} part in pattern.
 			return true;
 		}
 
@@ -163,8 +157,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 				pattIdxStart++;
 				continue;
 			}
-			// Find the pattern between padIdxStart & padIdxTmp in str between
-			// strIdxStart & strIdxEnd
+			// Find the pattern between padIdxStart & padIdxTmp in str between strIdxStart & strIdxEnd
 			int patLength = (patIdxTmp - pattIdxStart - 1);
 			int strLength = (pathIdxEnd - pathIdxStart + 1);
 			int foundIdx = -1;
@@ -207,10 +200,8 @@ public abstract class AbstractMatcher implements PathMatcher {
 	 * @param pattern
 	 *            pattern to match against. Must not be {@code null}.
 	 * @param str
-	 *            string which must be matched against the pattern. Must not be
-	 *            {@code null}.
-	 * @return {@code true} if the string matches against the pattern, or
-	 *         {@code false} otherwise.
+	 *            string which must be matched against the pattern. Must not be {@code null}.
+	 * @return {@code true} if the string matches against the pattern, or {@code false} otherwise.
 	 */
 	private boolean matchStrings(String pattern, String str) {
 		AntPathStringMatcher matcher = stringMatcherCache.get(pattern);
@@ -234,13 +225,11 @@ public abstract class AbstractMatcher implements PathMatcher {
 		/**
 		 * 正则 查找字符串内是否包含?,*,{,?:,},{},[,],[]
 		 */
-		final Pattern GLOB_PATTERN = Pattern.compile("\\" + SINGLE_WORD_PATTERN
-				+ "|\\" + ALL_WORD_PATTERN);
+		final Pattern GLOB_PATTERN = Pattern.compile("\\" + SINGLE_WORD_PATTERN + "|\\" + ALL_WORD_PATTERN);
 		// "\\" + SINGLE_WORD_PATTERN + "|\\" + ALL_WORD_PATTERN
 		// "\\?|\\*|\\{((?:\\{[^/]+?\\}|[^/{}]|\\\\[{}])+?)\\}"
 
-		static final String DEFAULT_VARIABLE_PATTERN = "(." + ALL_WORD_PATTERN
-				+ ")";
+		static final String DEFAULT_VARIABLE_PATTERN = "(." + ALL_WORD_PATTERN + ")";
 
 		private final Pattern pattern;
 
@@ -263,8 +252,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 						patternBuilder.append(DEFAULT_VARIABLE_PATTERN);
 						this.variableNames.add(m.group(1));
 					} else {
-						String variablePattern = match.substring(colonIdx + 1,
-								match.length() - 1);
+						String variablePattern = match.substring(colonIdx + 1, match.length() - 1);
 						patternBuilder.append('(');
 						patternBuilder.append(variablePattern);
 						patternBuilder.append(')');
@@ -288,8 +276,7 @@ public abstract class AbstractMatcher implements PathMatcher {
 		/**
 		 * Main entry point.
 		 * 
-		 * @return {@code true} if the string matches against the pattern, or
-		 *         {@code false} otherwise.
+		 * @return {@code true} if the string matches against the pattern, or {@code false} otherwise.
 		 */
 		public boolean matchStrings(String str) {
 			return this.pattern.matcher(str).matches();
@@ -298,10 +285,6 @@ public abstract class AbstractMatcher implements PathMatcher {
 
 	/**
 	 * split str by delimiters
-	 * 
-	 * @param str
-	 * @param reg
-	 * @return String[]
 	 */
 
 	private static String[] tokenizeToStringArray(String str, String delimiters) {

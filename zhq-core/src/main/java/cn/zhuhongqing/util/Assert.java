@@ -111,18 +111,21 @@ public interface Assert {
 	 * <pre class="code">
 	 * Assert.notNull(clazz, "The class must not be null");
 	 * </pre>
+	 * @param <O>
 	 * 
 	 * @param object
 	 *            the object to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
+	 * @return object
 	 * @throws IllegalArgumentException
 	 *             if the object is {@code null}
 	 */
-	public static void notNull(Object object, String message) {
+	public static <O> O notNull(O object, String message) {
 		if (object == null) {
 			throw new IllegalArgumentException(message);
 		}
+		return object;
 	}
 
 	/**
@@ -131,14 +134,16 @@ public interface Assert {
 	 * <pre class="code">
 	 * Assert.notNull(clazz);
 	 * </pre>
+	 * @param <O>
 	 * 
 	 * @param object
 	 *            the object to check
+	 * @return object
 	 * @throws IllegalArgumentException
 	 *             if the object is {@code null}
 	 */
-	public static void notNull(Object object) {
-		notNull(object, "[Assertion failed] - this argument is required; it must not be null");
+	public static <O> O notNull(O object) {
+		return notNull(object, "[Assertion failed] - this argument is required; it must not be null");
 	}
 
 	/**
@@ -151,14 +156,16 @@ public interface Assert {
 	 * 
 	 * @param text
 	 *            the String to check
+	 * @return text
 	 * @see StringUtils#isEmpty
 	 * @throws IllegalArgumentException
 	 *             if the text does not contain valid text content
 	 */
-	public static void notEmpty(String text, String message) {
+	public static String notEmpty(String text, String message) {
 		if (StringUtils.isEmpty(text)) {
 			throw new IllegalArgumentException(message);
 		}
+		return text;
 	}
 
 	/**
@@ -171,12 +178,13 @@ public interface Assert {
 	 * 
 	 * @param text
 	 *            the String to check
+	 * @return text
 	 * @see StringUtils#isEmpty
 	 * @throws IllegalArgumentException
 	 *             if the text does not contain valid text content
 	 */
-	public static void notEmpty(String text) {
-		notEmpty(text,
+	public static String notEmpty(String text) {
+		return notEmpty(text,
 				"[Assertion failed] - this String argument must have text; it must not be null, empty, or blank");
 	}
 
@@ -192,13 +200,15 @@ public interface Assert {
 	 *            the array to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
+	 * @return array
 	 * @throws IllegalArgumentException
 	 *             if the object array is {@code null} or has no elements
 	 */
-	public static void notEmpty(Object[] array, String message) {
+	public static Object[] notEmpty(Object[] array, String message) {
 		if (ArraysUtils.isEmpty(array)) {
 			throw new IllegalArgumentException(message);
 		}
+		return array;
 	}
 
 	/**
@@ -211,11 +221,12 @@ public interface Assert {
 	 * 
 	 * @param array
 	 *            the array to check
+	 * @return array
 	 * @throws IllegalArgumentException
 	 *             if the object array is {@code null} or has no elements
 	 */
-	public static void notEmpty(Object[] array) {
-		notEmpty(array, "[Assertion failed] - this array must not be empty: it must contain at least 1 element");
+	public static Object[] notEmpty(Object[] array) {
+		return notEmpty(array, "[Assertion failed] - this array must not be empty: it must contain at least 1 element");
 	}
 
 	/**
@@ -267,18 +278,21 @@ public interface Assert {
 	 * <pre class="code">
 	 * Assert.notEmpty(collection, "Collection must have elements");
 	 * </pre>
+	 * @param <E>
 	 * 
 	 * @param collection
 	 *            the collection to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
+	 * @return collection
 	 * @throws IllegalArgumentException
 	 *             if the collection is {@code null} or has no elements
 	 */
-	public static void notEmpty(Collection<?> collection, String message) {
+	public static <E> Collection<E> notEmpty(Collection<E> collection, String message) {
 		if (CollectionUtils.isEmpty(collection)) {
 			throw new IllegalArgumentException(message);
 		}
+		return collection;
 	}
 
 	/**
@@ -288,14 +302,16 @@ public interface Assert {
 	 * <pre class="code">
 	 * Assert.notEmpty(collection, "Collection must have elements");
 	 * </pre>
+	 * @param <E>
 	 * 
 	 * @param collection
 	 *            the collection to check
+	 * @return collection
 	 * @throws IllegalArgumentException
 	 *             if the collection is {@code null} or has no elements
 	 */
-	public static void notEmpty(Collection<?> collection) {
-		notEmpty(collection,
+	public static <E> Collection<E> notEmpty(Collection<E> collection) {
+		return notEmpty(collection,
 				"[Assertion failed] - this collection must not be empty: it must contain at least 1 element");
 	}
 
@@ -306,18 +322,22 @@ public interface Assert {
 	 * <pre class="code">
 	 * Assert.notEmpty(map, "Map must have entries");
 	 * </pre>
+	 * @param <K>
+	 * @param <V>
 	 * 
 	 * @param map
 	 *            the map to check
 	 * @param message
 	 *            the exception message to use if the assertion fails
+	 * @return map
 	 * @throws IllegalArgumentException
 	 *             if the map is {@code null} or has no entries
 	 */
-	public static void notEmpty(Map<?, ?> map, String message) {
+	public static <K, V> Map<K, V> notEmpty(Map<K, V> map, String message) {
 		if (CollectionUtils.isEmpty(map)) {
 			throw new IllegalArgumentException(message);
 		}
+		return map;
 	}
 
 	/**
@@ -327,14 +347,17 @@ public interface Assert {
 	 * <pre class="code">
 	 * Assert.notEmpty(map);
 	 * </pre>
+	 * @param <K>
+	 * @param <V>
 	 * 
 	 * @param map
 	 *            the map to check
+	 * @return map
 	 * @throws IllegalArgumentException
 	 *             if the map is {@code null} or has no entries
 	 */
-	public static void notEmpty(Map<?, ?> map) {
-		notEmpty(map, "[Assertion failed] - this map must not be empty; it must contain at least one entry");
+	public static <K, V> Map<K, V> notEmpty(Map<K, V> map) {
+		return notEmpty(map, "[Assertion failed] - this map must not be empty; it must contain at least one entry");
 	}
 
 	/**

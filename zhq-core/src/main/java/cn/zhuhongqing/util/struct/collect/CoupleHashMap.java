@@ -1,4 +1,4 @@
-package cn.zhuhongqing.util;
+package cn.zhuhongqing.util.struct.collect;
 
 import java.util.HashMap;
 import java.util.Map;

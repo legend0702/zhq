@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
  *
  */
 
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.CONSTRUCTOR })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotNull {
 

@@ -1,7 +1,8 @@
-package cn.zhuhongqing.util.struct;
+package cn.zhuhongqing.util.struct.collect;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -70,10 +71,10 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
 
 	@Override
 	public void putAll(Map<? extends String, ? extends V> m) {
-		if (map.isEmpty()) {
+		if (m.isEmpty()) {
 			return;
 		}
-		for (Map.Entry<? extends String, ? extends V> entry : map.entrySet()) {
+		for (Map.Entry<? extends String, ? extends V> entry : m.entrySet()) {
 			put(entry.getKey(), entry.getValue());
 		}
 	}
@@ -101,5 +102,24 @@ public class CaseInsensitiveMap<V> implements Map<String, V> {
 	protected String convertKey(String key) {
 		return key.toLowerCase();
 	}
+	
+	public String toString() {
+        Iterator<Entry<String, V>> i = entrySet().iterator();
+        if (! i.hasNext())
+            return "{}";
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        for (;;) {
+            Entry<String,V> e = i.next();
+            String key = e.getKey();
+            V value = e.getValue();
+            sb.append(key);
+            sb.append('=');
+            sb.append(value == this ? "(this Map)" : value);
+            if (! i.hasNext())
+                return sb.append('}').toString();
+            sb.append(',').append(' ');
+        }
+    }
 
 }

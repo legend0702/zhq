@@ -15,7 +15,12 @@ import java.util.Set;
 public final class ArraysUtils {
 
 	public static final String[] EMPTY_ARRAY = new String[0];
-
+	
+	@SafeVarargs
+	public static <T> T[] to(T ...t) {
+		return t;
+	}
+	
 	/**
 	 * Creates an empty array.
 	 * 

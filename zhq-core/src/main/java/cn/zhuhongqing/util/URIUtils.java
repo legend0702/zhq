@@ -125,4 +125,8 @@ public class URIUtils implements SchemeAndProtocol {
 		return file.toURI().getSchemeSpecificPart();
 	}
 
+	public static String toHostAndPath(URI uri) {
+		return uri.getHost() + uri.getPath();
+	}
+
 }

@@ -40,19 +40,20 @@ public class Core extends Module {
 	 */
 
 	public static int BYTE_SIZE = 4096;
+	
+	public static TimeZone GMT = TimeZone.getTimeZone("GMT");
 
 	/**
 	 * Default TimeZone,use id like "Asia/Shanghai".
 	 */
 
-	public static String TIME_ZONE = TimeZone.getDefault().getID();
+	public static String TIME_ZONE = GMT.getID();
 
 	/**
 	 * Used to create Locale,like "zh-CN".
 	 */
 
-	public static String LOCALE_LANGUAGE_TAG = Locale.getDefault()
-			.toLanguageTag();
+	public static String LOCALE_LANGUAGE_TAG = Locale.getDefault().toLanguageTag();
 
 	public static int getByteSize() {
 		return BYTE_SIZE;

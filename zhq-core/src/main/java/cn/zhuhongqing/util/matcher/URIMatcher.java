@@ -9,9 +9,9 @@ import cn.zhuhongqing.util.StringPool;
  * 
  */
 
-public class URIMatch extends AbstractMatcher {
+public class URIMatcher extends AbstractMatcher {
 
-	public static URIMatch INSTANCE = new URIMatch();
+	public static URIMatcher INSTANCE = new URIMatcher();
 
 	@Override
 	String getPathSeparator() {

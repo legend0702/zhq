@@ -6,6 +6,7 @@ import static cn.zhuhongqing.ZHQ.DEFAULT_ENCODING;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +22,10 @@ import cn.zhuhongqing.exception.UtilsException;
 /**
  * Optimized byte and character stream utilities.
  */
-public class StreamUtils {
+public class IOUtils {
 
+	private static final byte[] EMPTY_CONTENT = new byte[0];
+	
 	// ---------------------------------------------------------------- silent
 	// close
 
@@ -438,6 +441,14 @@ public class StreamUtils {
 			close(input1);
 			close(input2);
 		}
+	}
+
+	/**
+	 * Return an efficient empty {@link InputStream}.
+	 * @return a {@link ByteArrayInputStream} based on an empty byte array
+	 */
+	public static InputStream emptyInput() {
+		return new ByteArrayInputStream(EMPTY_CONTENT);
 	}
 
 }

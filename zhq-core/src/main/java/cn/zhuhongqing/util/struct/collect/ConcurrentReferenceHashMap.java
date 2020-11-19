@@ -1,4 +1,4 @@
-package cn.zhuhongqing.util;
+package cn.zhuhongqing.util.struct.collect;
 
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.SoftReference;
@@ -16,6 +16,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
+
+import cn.zhuhongqing.util.ObjectUtils;
 
 /**
  * A {@link ConcurrentHashMap} that uses {@link ReferenceType#SOFT soft} or
