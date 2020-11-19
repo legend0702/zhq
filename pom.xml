@@ -27,7 +27,7 @@
 	<properties>
 		<jetty.version>9.2.0.M0</jetty.version>
 		<javax.websocket>1.1</javax.websocket>
-		<poi.version>3.17</poi.version>
+		<poi.version>4.1.2</poi.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 	</properties>
@@ -67,9 +67,6 @@
     	<module>zhq-template-velocity</module>
     	<module>zhq-generator</module>
     	<module>zhq-generator-db</module>
-    	<module>zhq-webspider</module>
-    	<module>zhq-webspider-impl</module>
-    	<module>zhq-core-ext</module>
   </modules>
 
 	<dependencyManagement>
@@ -80,12 +77,14 @@
 				<version>4.12</version>
 				<scope>test</scope>
 			</dependency>
+			<!-- 
 			<dependency>
 			    <groupId>org.projectlombok</groupId>
 			    <artifactId>lombok</artifactId>
 			    <version>1.16.10</version>
 			    <scope>provided</scope>
 			</dependency>
+			 -->
 			
 			<!-- webServer src -->
 			<dependency>
@@ -118,7 +117,7 @@
 			<dependency>
 				<groupId>com.alibaba</groupId>
 				<artifactId>fastjson</artifactId>
-				<version>1.1.40</version>
+				<version>1.2.73</version>
 			</dependency>
 			<dependency>
 				<groupId>org.msgpack</groupId>

@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 import org.junit.Test;
 
-import cn.zhuhongqing.io.StreamUtils;
+import cn.zhuhongqing.io.IOUtils;
 import cn.zhuhongqing.reflect.FieldReference;
 
 public class FieldUtilTest {
@@ -55,7 +55,7 @@ public class FieldUtilTest {
 			if (hr != 108281899) {
 				System.out.println("error:" + hr);
 			}
-			StreamUtils.close(in);
+			IOUtils.close(in);
 		}
 		ts = System.currentTimeMillis() - ts;
 		System.out.println("time: " + ts);
