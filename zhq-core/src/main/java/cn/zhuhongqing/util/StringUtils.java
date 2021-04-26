@@ -56,6 +56,18 @@ public class StringUtils {
 	}
 
 	/**
+	 * All Empty string.
+	 */
+
+	public static boolean AllEmpty(CharSequence... strs) {
+		for (CharSequence s : strs) {
+			if (!isEmpty(s))
+				return false;
+		}
+		return true;
+	}
+	
+	/**
 	 * Is not empty string.
 	 * 
 	 * @see StringUtils#isEmpty(String)
@@ -274,7 +286,7 @@ public class StringUtils {
 	 * @return a String with the replacements
 	 */
 	public static String replace(String inString, String oldPattern, String newPattern) {
-		if (isEmpty(inString) || isEmpty(oldPattern) || isEmpty(newPattern)) {
+		if (isEmpty(inString) || oldPattern == null || newPattern == null) {
 			return inString;
 		}
 		StringBuilder sb = new StringBuilder();
@@ -510,6 +522,14 @@ public class StringUtils {
 			}
 		}
 		return sb.toString();
+	}
+	
+	public static StringBuffer deleteLast(StringBuffer sb) {
+		return sb.deleteCharAt(sb.length() - 1);
+	}
+	
+	public static StringBuffer deleteLast(StringBuffer sb, int num) {
+		return sb.delete(sb.length() - num, sb.length());
 	}
 
 	/**
@@ -760,26 +780,34 @@ public class StringUtils {
 		}
 		return string;
 	}
+	
+	public static String cutToLastIndexOf(String str, String cut) {
+		int i = str.lastIndexOf(cut);
+		if (i != -1) {
+			return str.substring(0, i);
+		}
+		return str;
+	}
 
 	/**
 	 * Cuts this String from beginning to the first lastIndex of provided
 	 * subString.
 	 */
 
-	public static String cutToLastIndexOf(String string, String subString) {
+	public static String cutFromLastIndexOf(String string, String subString) {
 		int i = string.lastIndexOf(subString);
 		if (i != -1) {
 			return string.substring(i, string.length());
 		}
 		return string;
 	}
-
+	
 	/**
 	 * Cuts this String from beginning to the first lastIndex of provided
 	 * subString and add addLength
 	 */
 
-	public static String cutToLastIndexOf(String string, String subString, int addLength) {
+	public static String cutFromLastIndexOf(String string, String subString, int addLength) {
 		int i = string.lastIndexOf(subString);
 		if (i != -1) {
 			return string.substring(i + addLength, string.length());

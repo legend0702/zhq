@@ -16,7 +16,13 @@ public class RandomUtils {
 	public static Integer nextInt(int max) {
 		return _random.nextInt(max);
 	}
-
+	
+	/**
+	 * Returns min to (max-1).
+	 */
+	public static Integer nextInt(int min, int max) {
+		return nextInt(max - min + 1) + min;
+	}
 	/**
 	 * <p>
 	 * Returns the next pseudorandom, uniformly distributed long value from the

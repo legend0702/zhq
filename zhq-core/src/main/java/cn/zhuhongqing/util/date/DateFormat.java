@@ -1,5 +1,8 @@
 package cn.zhuhongqing.util.date;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -241,8 +244,7 @@ public abstract class DateFormat {
 				parseValue(n, sb.toString(), time);
 			} else {
 				if (!useSeparators) {
-					throw new IllegalArgumentException("Invalid value: "
-							+ value);
+					throw new IllegalArgumentException("Invalid value: " + value);
 				}
 				if (formatChars[i] == valueChars[j]) {
 					j++;
@@ -269,15 +271,21 @@ public abstract class DateFormat {
 	 *            destination to store date-time
 	 */
 
-	protected abstract void parseValue(int patternIndex, String value,
-			DateTimeZoneStamp destination);
+	protected abstract void parseValue(int patternIndex, String value, DateTimeZoneStamp destination);
 
 	/**
 	 * @see DateFormat#parse(String,String)
 	 */
-
 	public Date parseToDate(String value, String format) {
 		return parse(value, format).getTime();
 	}
+	
+	public LocalDate parserToLocalDate(String value, String format) {
+		return parse(value, format).toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+	}
+	
+	public LocalDateTime parserToLocalDateTime(String value, String format) {
+		return parse(value, format).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+	} 
 
 }

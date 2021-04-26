@@ -467,4 +467,18 @@ public class NumberUtils {
 		return result;
 	}
 
+	/// Compare
+	
+	public static boolean isBigger(BigDecimal mayBig, BigDecimal mayLess) {
+		return mayBig.compareTo(mayLess) > 0;
+	}
+	
+	public static boolean isBiggerOrEq(BigDecimal mayBig, BigDecimal mayLess) {
+		return mayBig.compareTo(mayLess) >= 0;
+	}
+	
+	public static boolean isBiggerThanZero(Number num) {
+		return num.doubleValue() > 0;
+	}
+	
 }

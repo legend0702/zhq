@@ -117,6 +117,10 @@ public class GeneralUtils {
 	public static void runtimeExceptionWrapper(Exception e) {
 		throw new RuntimeExceptionWrapper(e);
 	}
+	
+	public static String uuid() {
+		return java.util.UUID.randomUUID().toString().replaceAll("-", "");
+	}
 
 	// ----------------------------------------------------------------
 	// System.print

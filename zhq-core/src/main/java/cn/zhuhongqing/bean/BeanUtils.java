@@ -93,12 +93,13 @@ public class BeanUtils {
 		return bean;
 	}
 
-	public static void mapToBean(Map<String, Object> beanMap, Object target) {
+	public static <T> T mapToBean(Map<String, Object> beanMap, T target) {
 		Iterator<Entry<String, Object>> originItr = beanMap.entrySet().iterator();
 		while (originItr.hasNext()) {
 			Entry<String, Object> entry = originItr.next();
 			setProperty(target, entry.getKey(), entry.getValue());
 		}
+		return target;
 	}
 
 	public static <T> List<T> listMapToListBean(List<Map<String, Object>> listMap, Class<T> tClass) {

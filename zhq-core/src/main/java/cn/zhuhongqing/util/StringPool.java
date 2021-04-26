@@ -103,6 +103,7 @@ public interface StringPool {
 	// final String FILE_SEPARATOR = SLASH;
 	final String DOT_CLASS = ".class";
 	final String DOT_JAVA = ".java";
+	final String DOT_JS = ".js";
 	final String BEAN_SET = "set";
 	final String BEAN_GET = "get";
 

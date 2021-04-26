@@ -36,7 +36,7 @@ public class URLUtils {
 	}
 
 	public static String getLastPath(URL url) {
-		return StringUtils.cutToLastIndexOf(url.getPath(), StringPool.SLASH, 1);
+		return StringUtils.cutFromLastIndexOf(url.getPath(), StringPool.SLASH, 1);
 	}
 
 }

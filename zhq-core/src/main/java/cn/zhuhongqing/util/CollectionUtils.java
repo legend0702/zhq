@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
+import cn.zhuhongqing.call.CallBack;
 import cn.zhuhongqing.exception.ZHQRuntimeException;
 
 /**
@@ -140,6 +141,30 @@ public class CollectionUtils {
 	
 	public static <V> void iteratorAndRemove(Collection<V> colData, Function<V, Boolean> doIter) {
 		while (!colData.isEmpty()) {
+			Iterator<V> iter = colData.iterator();
+			while (iter.hasNext()) {
+				V v = iter.next();
+				if (doIter.apply(v))
+					iter.remove();
+			}
+		}
+	}
+	
+	public static <V> void iteratorAndRemove(Collection<V> colData, Function<V, Boolean> doIter, CallBack<Collection<V>> deadLockCall) {
+		int dealCount = 0;
+		int preCount = 0;
+		while (!colData.isEmpty()) {
+			int nowCount = colData.size();
+			if (preCount != nowCount) {
+				preCount = nowCount;
+				dealCount = 0;
+			} else {
+				if (dealCount > (nowCount + 3)) {
+					deadLockCall.invoke(colData);
+					break;
+				}
+				dealCount++;
+			}
 			Iterator<V> iter = colData.iterator();
 			while (iter.hasNext()) {
 				V v = iter.next();

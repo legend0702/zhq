@@ -1,6 +1,7 @@
 package cn.zhuhongqing.util.scan;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ public final class ResourceScanManager {
 		TYPE_MAPPING.put(JarEntry.class, new JarScan());
 		TYPE_MAPPING.put(Class.class, new ClassScan());
 		TYPE_MAPPING.put(URL.class, new URLScan());
+		TYPE_MAPPING.put(InputStream.class, new InputStreamScan());
 	}
 
 	public static <R> R autoGetResource(String path, Class<R> type) {

@@ -46,8 +46,7 @@ public class AnnotationUtils {
 		return bean;
 	}
 
-	public static void parserSingleAnnoAndExtend(Object bean, Class<?> fromClass,
-			Class<? extends Annotation> annoClass) {
+	public static void parserSingleAnnoAndExtend(Object bean, Class<?> fromClass, Class<? extends Annotation> annoClass) {
 		AnnotationHole annoHole = getAnnotations(fromClass, annoClass);
 		if (annoHole.isEmpty() || !annoHole.isSingleType())
 			return;

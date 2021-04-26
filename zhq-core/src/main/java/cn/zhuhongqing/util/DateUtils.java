@@ -1,6 +1,10 @@
 package cn.zhuhongqing.util;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -18,8 +22,9 @@ import cn.zhuhongqing.util.date.GenericDateFormat;
 
 public class DateUtils {
 
-	private static final GenericDateFormat DEFAULT_DATE_FORMAT = new GenericDateFormat();
+	private static final GenericDateFormat DATE_FORMAT = new GenericDateFormat();
 
+	public static final String YYYYMMDD = "yyyyMMdd";
 	public static final String YYYY_MM_DD = "yyyy-MM-dd";
 	public static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
 
@@ -110,7 +115,7 @@ public class DateUtils {
 	}
 
 	public static String format(Date date, String format) {
-		return DEFAULT_DATE_FORMAT.format(date, format);
+		return DATE_FORMAT.format(date, format);
 	}
 
 	public static Date defaultParse(String date) {
@@ -118,6 +123,41 @@ public class DateUtils {
 	}
 
 	public static Date parse(String date, String format) {
-		return DEFAULT_DATE_FORMAT.parseToDate(date, format);
+		return DATE_FORMAT.parseToDate(date, format);
 	}
+	
+	public static LocalDate parseToLocalDate(String date) {
+		return parseToLocalDate(date, YYYY_MM_DD);
+	}
+	
+	public static LocalDate parseToLocalDate(String date, String format) {
+		return DATE_FORMAT.parserToLocalDate(date, format);
+	}
+	
+	public static LocalDateTime parserToLocalDateTime(String date, String format) {
+		return DATE_FORMAT.parserToLocalDateTime(date, format);
+	}
+
+	// JDK8 DATE INSTANT LOCALDATE LOCALDATE TIME
+
+	public static LocalDateTime toLocalDateTime(Date date) {
+		return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+	}
+
+	public static LocalDate toLocalDate(Date date) {
+		return toLocalDateTime(date).toLocalDate();
+	}
+
+	public static Date toDate(LocalDateTime dateTime) {
+		return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+	}
+
+	public static Date toDate(LocalDate date) {
+		return toDate(date.atStartOfDay());
+	}
+
+	public static String toString(LocalDate date) {
+		return date.format(DateTimeFormatter.ISO_LOCAL_DATE);
+	}
+
 }
